@@ -47,10 +47,14 @@ const Home = () => {
       {/* Main Content Container */}
       <div className="relative z-10">
         <Navbar openContactModal={() => setIsContactModalOpen(true)} />
-        <Hero openContactModal={() => setIsContactModalOpen(true)} />
-        <Logos />
+        
+        {/* Full Viewport Hero Screen: Navbar at top, Hero centered in middle, Logos at bottom */}
+        <div className="min-h-[100svh] flex flex-col justify-between pt-20 sm:pt-24 relative">
+          <Hero openContactModal={() => setIsContactModalOpen(true)} />
+          <Logos />
+        </div>
 
-        <div className="relative z-20 w-full max-w-[1360px] mx-auto px-6 pt-4 pb-2 text-left mt-4">
+        <div className="relative z-20 w-full max-w-[1360px] mx-auto px-6 pt-12 sm:pt-16 pb-2 text-left">
           <h2 className="text-tier-1">Announcements</h2>
         </div>
 

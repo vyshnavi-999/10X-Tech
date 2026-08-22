@@ -89,13 +89,19 @@ const Navbar = ({ openContactModal }) => {
                 <Link 
                   to="/product" 
                   onClick={(e) => handleNavClick(e, '/product')} 
-                  className={`whitespace-nowrap shrink-0 text-sm xl:text-[15px] font-medium transition-all duration-300 ${
+                  className={`whitespace-nowrap shrink-0 text-sm xl:text-[15px] font-medium transition-all duration-300 inline-flex items-center gap-1.5 ${
                     location.pathname === '/product' 
                       ? 'text-white font-semibold drop-shadow-[0_0_8px_rgba(255,255,255,0.45)]' 
                       : 'hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.45)]'
                   }`}
                 >
-                  LUCA •• | Smart Speaker
+                  <span>LUCA</span>
+                  <span className="inline-flex items-center gap-[3.5px] mx-0.5" aria-hidden="true">
+                    <span className="w-[5px] h-[5px] xl:w-[5.5px] xl:h-[5.5px] rounded-full bg-white shadow-[0_0_4px_rgba(255,255,255,0.8)] inline-block"></span>
+                    <span className="w-[5px] h-[5px] xl:w-[5.5px] xl:h-[5.5px] rounded-full bg-white shadow-[0_0_4px_rgba(255,255,255,0.8)] inline-block"></span>
+                  </span>
+                  <span className="text-white/50 mx-0.5">|</span>
+                  <span>Smart Speaker</span>
                 </Link>
                 <Link 
                   to="/ai" 
@@ -165,7 +171,15 @@ const Navbar = ({ openContactModal }) => {
                         ? 'bg-[#a882ff] shadow-[0_0_8px_#a882ff]' 
                         : 'bg-white/20 group-hover:bg-white/50'
                     }`} />
-                    <span className="text-sm sm:text-base font-semibold tracking-tight whitespace-nowrap">LUCA •• | Smart Speaker</span>
+                    <span className="text-sm sm:text-base font-semibold tracking-tight whitespace-nowrap inline-flex items-center gap-1.5">
+                      <span>LUCA</span>
+                      <span className="inline-flex items-center gap-[3px] mx-0.5" aria-hidden="true">
+                        <span className="w-[5px] h-[5px] rounded-full bg-white shadow-[0_0_4px_rgba(255,255,255,0.8)] inline-block"></span>
+                        <span className="w-[5px] h-[5px] rounded-full bg-white shadow-[0_0_4px_rgba(255,255,255,0.8)] inline-block"></span>
+                      </span>
+                      <span className="text-white/50 mx-0.5">|</span>
+                      <span>Smart Speaker</span>
+                    </span>
                   </div>
                   <ArrowRight className={`w-4 h-4 shrink-0 ml-2 transition-all duration-200 ${
                     location.pathname === '/product'

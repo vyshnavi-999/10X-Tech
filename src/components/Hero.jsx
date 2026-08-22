@@ -148,122 +148,122 @@ const Hero = ({ openContactModal }) => {
   };
 
   return (
-    <section className="relative w-full px-8 sm:px-12 md:px-16 lg:px-20 xl:px-24 2xl:px-28 pt-44 sm:pt-48 md:pt-52 lg:pt-56 xl:pt-60 pb-4 sm:pb-6 md:pb-8 z-10 flex items-center">
+    <section className="relative w-full flex-1 flex items-center px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20 2xl:px-24 py-2 sm:py-4 z-10">
       
       {/* ── FULL WIDTH FLEX CONTAINER (OCCUPIES FULL VIEWPORT WIDTH) ── */}
-      <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8">
+      <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-4 my-auto">
         
         {/* ── LEFT COLUMN: ANCHORED DIRECTLY TO LEFT SIDE ── */}
         <div className="w-full lg:w-[54%] xl:w-[52%] flex flex-col items-start text-left z-20">
           
           {/* 1. Small contextual / credibility line */}
-          <div className="flex items-center gap-2 flex-wrap mb-5 sm:mb-6">
-            <span className="text-xs sm:text-sm font-normal text-zinc-400">
+          <div className="flex items-center gap-2 flex-wrap mb-2 sm:mb-2.5">
+            <span className="text-xs sm:text-[13px] font-normal text-zinc-400">
               Recognised by MeitY
             </span>
             <span className="text-purple-400 text-xs font-bold">•</span>
-            <span className="text-xs sm:text-sm font-normal text-zinc-400">
+            <span className="text-xs sm:text-[13px] font-normal text-zinc-400">
               NVIDIA Inception
             </span>
             <span className="text-purple-400 text-xs font-bold">•</span>
-            <span className="text-xs sm:text-sm font-normal text-zinc-400">
+            <span className="text-xs sm:text-[13px] font-normal text-zinc-400">
               AWS
             </span>
             <span className="text-purple-400 text-xs font-bold">•</span>
-            <span className="text-xs sm:text-sm font-normal text-zinc-400">
+            <span className="text-xs sm:text-[13px] font-normal text-zinc-400">
               DPIIT
             </span>
           </div>
 
           {/* 2. Large headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[70px] xl:text-[80px] font-bold tracking-tight text-white leading-[1.04] mb-5 sm:mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[54px] 2xl:text-[60px] font-bold tracking-tight text-white leading-[1.06] mb-2.5 sm:mb-3">
             Small language<br />
             models for<br />
             Indian languages.
           </h1>
 
           {/* 3. Short supporting description */}
-          <p className="text-base sm:text-lg md:text-xl text-zinc-300 font-normal leading-relaxed mb-4 sm:mb-5 max-w-xl">
+          <p className="text-xs sm:text-[14px] md:text-[15px] text-zinc-300 font-normal leading-relaxed mb-2 sm:mb-2.5 max-w-lg">
             Building small language models that run on<br className="hidden sm:inline" />
             {' '}your own server — or inside a device on your desk.
           </p>
 
           {/* 4. Short purple statement */}
-          <p className="text-sm sm:text-base md:text-lg text-purple-400 font-medium tracking-normal mb-8 sm:mb-9">
+          <p className="text-xs sm:text-[13px] md:text-[14px] text-purple-400 font-medium tracking-normal mb-4 sm:mb-4.5">
             You do not need frontier AI for every workflow.
           </p>
 
           {/* 5. Two CTA buttons */}
-          <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-3 sm:gap-3.5 flex-wrap">
             {/* Primary CTA (Filled Purple Pill) */}
             <button
               type="button"
               onClick={handleSeeItWork}
-              className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl bg-[#6d28d9] hover:bg-[#7c3aed] text-white text-sm sm:text-[15px] font-medium transition-all duration-200 cursor-pointer shadow-[0_0_24px_rgba(109,40,217,0.35)] active:scale-95 group"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#6d28d9] hover:bg-[#7c3aed] text-white text-xs sm:text-[13px] font-medium transition-all duration-200 cursor-pointer shadow-[0_0_20px_rgba(109,40,217,0.35)] active:scale-95 group"
             >
               <span>See it work</span>
-              <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+              <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
             </button>
 
             {/* Secondary CTA (Restrained Outline Pill) */}
             <button
               type="button"
               onClick={handleInstitutions}
-              className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl border border-white/20 hover:border-white/40 hover:bg-white/5 text-zinc-200 hover:text-white text-sm sm:text-[15px] font-medium transition-all duration-200 cursor-pointer active:scale-95 group"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-white/20 hover:border-white/40 hover:bg-white/5 text-zinc-200 hover:text-white text-xs sm:text-[13px] font-medium transition-all duration-200 cursor-pointer active:scale-95 group"
             >
               <span>For institutions</span>
-              <ArrowRight className="w-4 h-4 text-zinc-400 transition-transform duration-200 group-hover:translate-x-0.5" />
+              <ArrowRight className="w-3.5 h-3.5 text-zinc-400 transition-transform duration-200 group-hover:translate-x-0.5" />
             </button>
           </div>
 
         </div>
 
         {/* ── RIGHT COLUMN: ANCHORED DIRECTLY TO RIGHT SIDE ── */}
-        <div className="w-full lg:w-[46%] xl:w-[48%] flex flex-col items-center lg:items-end justify-center relative select-none mt-8 lg:mt-0">
+        <div className="w-full lg:w-[46%] xl:w-[48%] flex flex-col items-center lg:items-end justify-center relative select-none mt-2 lg:mt-0">
           
           <div 
             ref={eyesContainerRef}
             onClick={handleEyeClick}
             title="Click to blink"
-            className="relative cursor-pointer py-6 px-4 flex flex-col items-center justify-center group"
+            className="relative cursor-pointer py-2 px-1 flex flex-col items-center justify-center group"
           >
             {/* Ambient Soft Halo Glow Behind Eyes */}
             <div 
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 sm:w-96 md:w-[420px] h-40 sm:h-52 md:h-60 rounded-full blur-[85px] opacity-25 pointer-events-none"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-52 sm:w-64 md:w-72 h-28 sm:h-36 rounded-full blur-[55px] opacity-25 pointer-events-none"
               style={{
                 background: 'radial-gradient(circle, rgba(255,255,255,0.45) 0%, rgba(168,85,247,0.15) 50%, transparent 80%)'
               }}
             />
 
             {/* The Two Pure White Circular LUCA Eyes */}
-            <div className="flex items-center justify-center gap-8 sm:gap-10 md:gap-12 lg:gap-14 xl:gap-16 relative z-10">
+            <div className="flex items-center justify-center gap-5 sm:gap-6 md:gap-7 lg:gap-8 xl:gap-9 relative z-10">
               
               {/* Left Eye */}
               <div 
                 ref={leftEyeRef}
-                className="w-24 h-24 sm:w-28 sm:h-28 md:w-34 md:h-34 lg:w-[142px] lg:h-[142px] xl:w-[156px] xl:h-[156px] rounded-full bg-white transition-transform duration-75 ease-out shadow-[0_0_24px_rgba(255,255,255,0.28)]"
+                className="w-18 h-18 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-[98px] lg:h-[98px] xl:w-[110px] xl:h-[110px] rounded-full bg-white transition-transform duration-75 ease-out shadow-[0_0_20px_rgba(255,255,255,0.28)]"
               />
 
               {/* Right Eye */}
               <div 
                 ref={rightEyeRef}
-                className="w-24 h-24 sm:w-28 sm:h-28 md:w-34 md:h-34 lg:w-[142px] lg:h-[142px] xl:w-[156px] xl:h-[156px] rounded-full bg-white transition-transform duration-75 ease-out shadow-[0_0_24px_rgba(255,255,255,0.28)]"
+                className="w-18 h-18 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-[98px] lg:h-[98px] xl:w-[110px] xl:h-[110px] rounded-full bg-white transition-transform duration-75 ease-out shadow-[0_0_20px_rgba(255,255,255,0.28)]"
               />
 
             </div>
 
             {/* Natural Ground Surface Reflection Blur Beneath Eyes (Moves in sync with eyes) */}
-            <div className="flex items-center justify-center gap-8 sm:gap-10 md:gap-12 lg:gap-14 xl:gap-16 mt-4 opacity-25 pointer-events-none">
+            <div className="flex items-center justify-center gap-5 sm:gap-6 md:gap-7 lg:gap-8 xl:gap-9 mt-2.5 opacity-25 pointer-events-none">
               <div 
                 ref={leftReflectionRef}
-                className="w-24 sm:w-28 md:w-34 lg:w-[142px] xl:w-[156px] h-12 rounded-full blur-md transition-transform duration-75 ease-out"
+                className="w-18 sm:w-20 md:w-24 lg:w-[98px] xl:w-[110px] h-6 sm:h-7 rounded-full blur-md transition-transform duration-75 ease-out"
                 style={{
                   background: 'linear-gradient(to bottom, rgba(255,255,255,0.35) 0%, transparent 100%)'
                 }}
               />
               <div 
                 ref={rightReflectionRef}
-                className="w-24 sm:w-28 md:w-34 lg:w-[142px] xl:w-[156px] h-12 rounded-full blur-md transition-transform duration-75 ease-out"
+                className="w-18 sm:w-20 md:w-24 lg:w-[98px] xl:w-[110px] h-6 sm:h-7 rounded-full blur-md transition-transform duration-75 ease-out"
                 style={{
                   background: 'linear-gradient(to bottom, rgba(255,255,255,0.35) 0%, transparent 100%)'
                 }}
