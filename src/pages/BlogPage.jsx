@@ -296,7 +296,6 @@ const BlogPage = () => {
               </p>
             </div>
           </section>
-
           {/* All Blog Grid Section (Showing only approved SLM Guide card) */}
           <section className="relative z-20 w-full max-w-[1360px] mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-12">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-x-8 md:gap-y-12 lg:gap-y-16">
@@ -373,7 +372,7 @@ const BlogPage = () => {
                     {post.displayTitle || post.title}
                   </h2>
 
-                  {/* Short Description (if present) */}
+                  {/* Short Description */}
                   {post.description && (
                     <p className="text-[#888] text-sm leading-relaxed font-light line-clamp-2">
                       {post.description}
