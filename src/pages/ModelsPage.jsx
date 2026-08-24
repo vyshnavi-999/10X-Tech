@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import lottie from 'lottie-web';
 import mouseScrollAnimationData from '../assets/mouse_scroll_animation.json';
 
@@ -185,8 +186,7 @@ export default function ModelsPage() {
   // Section 6 Workflow active step
   const [activeWorkflowStep, setActiveWorkflowStep] = useState(0);
 
-  // Section 7 Pricing toggle
-  const [pricingPlan, setPricingPlan] = useState('assistants'); // 'assistants' | 'agents'
+  // Section 7 Pricing removed
 
   // Section 8 Integration scroll expansion progress (0 to 1)
   const [integrationProgress, setIntegrationProgress] = useState(0);
@@ -474,7 +474,7 @@ export default function ModelsPage() {
               letterSpacing: '0.288px'
             }}
           >
-            Automate decisions<br />with confidence.
+            <span className="text-violet-drift" style={{ animationDelay: '6s' }}>Automate decisions</span><br /><span style={{ color: 'white' }}>with confidence.</span>
           </h1>
         </div>
 
@@ -621,16 +621,16 @@ export default function ModelsPage() {
           <div className="flex items-start justify-between w-full z-30 pt-2">
             <div className="flex items-start gap-8 sm:gap-16 md:gap-24">
               
-              {/* 4x4 Plus Grid with Animated Rhythmic Color Waves matching reference */}
+              {/* 4x4 Plus Grid with Animated Rhythmic Color Waves matching Spendly Purple Theme */}
               <div className="flex items-start gap-4 select-none font-mono tracking-widest">
                 {[0, 1, 2, 3].map((colIdx) => {
                   const PLUS_RHYTHM_PALETTES = [
-                    ['#38bdf8', '#00f0ff', '#10b981', '#84cc16'],
-                    ['#00f0ff', '#10b981', '#84cc16', '#a3e635'],
-                    ['#10b981', '#84cc16', '#a3e635', '#ca8a04'],
-                    ['#84cc16', '#a3e635', '#ca8a04', '#38bdf8'],
-                    ['#a3e635', '#ca8a04', '#38bdf8', '#00f0ff'],
-                    ['#ca8a04', '#38bdf8', '#00f0ff', '#10b981'],
+                    ['#9575CD', '#7E57C2', '#673AB7', '#512DA8'],
+                    ['#B39DDB', '#9575CD', '#7E57C2', '#673AB7'],
+                    ['#D1C4E9', '#B39DDB', '#9575CD', '#7E57C2'],
+                    ['#7E57C2', '#673AB7', '#512DA8', '#9575CD'],
+                    ['#673AB7', '#512DA8', '#9575CD', '#B39DDB'],
+                    ['#512DA8', '#9575CD', '#B39DDB', '#7E57C2'],
                   ];
                   const currentPalette = PLUS_RHYTHM_PALETTES[plusRhythm % PLUS_RHYTHM_PALETTES.length];
 
@@ -639,7 +639,7 @@ export default function ModelsPage() {
                       {[0, 1, 2, 3].map((rowIdx) => {
                         let color = currentPalette[rowIdx];
                         if (rowIdx === 3) {
-                          const row4Gradients = ['#84cc16', '#a3e635', '#ca8a04', '#78716c'];
+                          const row4Gradients = ['#512DA8', '#673AB7', '#7E57C2', '#9575CD'];
                           color = row4Gradients[(colIdx + plusRhythm) % row4Gradients.length];
                         }
                         return (
@@ -648,7 +648,7 @@ export default function ModelsPage() {
                             className="font-normal text-base leading-none select-none"
                             style={{
                               color: color,
-                              textShadow: `0 0 5px ${color}50`,
+                              textShadow: `0 0 6px ${color}60`,
                               transition: 'color 0.6s cubic-bezier(0.4, 0, 0.2, 1), text-shadow 0.6s ease',
                             }}
                           >
@@ -678,12 +678,12 @@ export default function ModelsPage() {
                   style={{ fontFamily: "'Inter Tight', sans-serif" }}
                 >
                   <div className="flex items-center gap-3">
-                    <span style={{ color: 'rgb(210, 194, 229)' }}>The</span>
+                    <span style={{ color: '#B39DDB' }}>The</span>
                     <span style={{ color: 'rgb(253, 252, 253)' }}>Core</span>
                     <span style={{ color: '#ffffff' }}>Platform</span>
                   </div>
                   <div className="flex items-center gap-3 ml-[6vw] sm:ml-[8vw] md:ml-[140px]">
-                    <span style={{ color: 'rgb(44, 151, 252)' }}>Powering</span>
+                    <span style={{ color: '#9575CD' }}>Powering</span>
                     <span style={{ color: '#ffffff' }}>Tools</span>
                   </div>
                 </div>
@@ -701,7 +701,7 @@ export default function ModelsPage() {
           {/* Center Interactive Layout: Step Nav + 3D Diamond Center + Big Title */}
           <div className="relative w-full flex-1 flex items-center justify-between z-20 my-auto">
             
-            {/* Left Column: 01, 02, 03, 04 Vertical Step Selector with Solid White Active Pill */}
+            {/* Left Column: 01, 02, 03, 04 Vertical Step Selector with Solid Active Pill */}
             <div className={`flex flex-col items-center gap-3 z-30 transition-opacity duration-500 ${activeStep === -1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
               {PLATFORM_STEPS.map((step, idx) => {
                 const isActive = activeStep === idx;
@@ -711,7 +711,7 @@ export default function ModelsPage() {
                       onClick={() => scrollToStep(idx)}
                       className={`w-11 h-11 rounded-full flex items-center justify-center text-xs md:text-sm font-mono transition-all duration-500 cursor-pointer border ${
                         isActive
-                          ? 'bg-white text-black font-bold border-white shadow-[0_0_12px_rgba(255,255,255,0.35)] scale-105'
+                          ? 'bg-[#512DA8] text-white font-bold border-[#7E57C2] shadow-[0_0_16px_rgba(103,58,183,0.7)] scale-105'
                           : 'bg-[#09090c] border-white/20 text-white/50 hover:text-white hover:border-white/50'
                       }`}
                       style={{ fontFamily: "'IBM Plex Mono', monospace" }}
@@ -751,7 +751,7 @@ export default function ModelsPage() {
                     ? 'translate(-50%, calc(-50% - 15px)) scale(1.02)'
                     : 'translate(-50%, -50%) scale(1)',
                   zIndex: activeStep === 0 ? 35 : (hoveredBlock === 0 ? 25 : 10),
-                  filter: activeStep === 0 ? 'drop-shadow(0 10px 20px rgba(56, 189, 248, 0.25))' : 'none',
+                  filter: activeStep === 0 ? 'drop-shadow(0 8px 16px rgba(81, 45, 168, 0.25))' : 'none',
                 }}
               >
                 <img 
@@ -769,9 +769,9 @@ export default function ModelsPage() {
                     width: '53%',
                     height: '53%',
                     transform: 'translate(-50%, -50%)',
-                    filter: activeStep === 0 
-                      ? 'drop-shadow(0 0 10px rgba(56, 189, 248, 0.65)) brightness(1.15)' 
-                      : (hoveredBlock === 0 ? 'brightness(1.05)' : 'grayscale(100%) brightness(0.65) opacity(0.65)'),
+                    filter: (activeStep === 0 || hoveredBlock === 0)
+                      ? 'hue-rotate(58deg) saturate(1.2) brightness(0.95) drop-shadow(0 0 6px rgba(126, 87, 194, 0.5))' 
+                      : 'grayscale(100%) brightness(0.4) opacity(0.6)',
                   }}
                 />
               </div>
@@ -791,7 +791,7 @@ export default function ModelsPage() {
                     ? 'translate(-50%, calc(-50% - 15px)) scale(1.02)'
                     : 'translate(-50%, -50%) scale(1)',
                   zIndex: activeStep === 2 ? 35 : (hoveredBlock === 2 ? 25 : 15),
-                  filter: activeStep === 2 ? 'drop-shadow(0 10px 20px rgba(56, 189, 248, 0.25))' : 'none',
+                  filter: activeStep === 2 ? 'drop-shadow(0 8px 16px rgba(81, 45, 168, 0.25))' : 'none',
                 }}
               >
                 <img 
@@ -809,9 +809,9 @@ export default function ModelsPage() {
                     width: '53%',
                     height: '53%',
                     transform: 'translate(-50%, -50%)',
-                    filter: activeStep === 2 
-                      ? 'drop-shadow(0 0 10px rgba(56, 189, 248, 0.65)) brightness(1.15)' 
-                      : (hoveredBlock === 2 ? 'brightness(1.05)' : 'grayscale(100%) brightness(0.65) opacity(0.65)'),
+                    filter: (activeStep === 2 || hoveredBlock === 2)
+                      ? 'hue-rotate(58deg) saturate(1.2) brightness(0.95) drop-shadow(0 0 6px rgba(126, 87, 194, 0.5))' 
+                      : 'grayscale(100%) brightness(0.4) opacity(0.6)',
                   }}
                 />
               </div>
@@ -831,7 +831,7 @@ export default function ModelsPage() {
                     ? 'translate(-50%, calc(-50% - 15px)) scale(1.02)'
                     : 'translate(-50%, -50%) scale(1)',
                   zIndex: activeStep === 1 ? 35 : (hoveredBlock === 1 ? 25 : 15),
-                  filter: activeStep === 1 ? 'drop-shadow(0 10px 20px rgba(56, 189, 248, 0.25))' : 'none',
+                  filter: activeStep === 1 ? 'drop-shadow(0 8px 16px rgba(81, 45, 168, 0.25))' : 'none',
                 }}
               >
                 <img 
@@ -849,9 +849,9 @@ export default function ModelsPage() {
                     width: '53%',
                     height: '53%',
                     transform: 'translate(-50%, -50%)',
-                    filter: activeStep === 1 
-                      ? 'drop-shadow(0 0 10px rgba(56, 189, 248, 0.65)) brightness(1.15)' 
-                      : (hoveredBlock === 1 ? 'brightness(1.05)' : 'grayscale(100%) brightness(0.65) opacity(0.65)'),
+                    filter: (activeStep === 1 || hoveredBlock === 1)
+                      ? 'hue-rotate(58deg) saturate(1.2) brightness(0.95) drop-shadow(0 0 6px rgba(126, 87, 194, 0.5))' 
+                      : 'grayscale(100%) brightness(0.4) opacity(0.6)',
                   }}
                 />
               </div>
@@ -871,7 +871,7 @@ export default function ModelsPage() {
                     ? 'translate(-50%, calc(-50% - 15px)) scale(1.02)'
                     : 'translate(-50%, -50%) scale(1)',
                   zIndex: activeStep === 3 ? 35 : (hoveredBlock === 3 ? 25 : 20),
-                  filter: activeStep === 3 ? 'drop-shadow(0 10px 20px rgba(56, 189, 248, 0.25))' : 'none',
+                  filter: activeStep === 3 ? 'drop-shadow(0 8px 16px rgba(81, 45, 168, 0.25))' : 'none',
                 }}
               >
                 <img 
@@ -889,9 +889,9 @@ export default function ModelsPage() {
                     width: '53%',
                     height: '53%',
                     transform: 'translate(-50%, -50%)',
-                    filter: activeStep === 3 
-                      ? 'drop-shadow(0 0 10px rgba(56, 189, 248, 0.65)) brightness(1.15)' 
-                      : (hoveredBlock === 3 ? 'brightness(1.05)' : 'grayscale(100%) brightness(0.65) opacity(0.65)'),
+                    filter: (activeStep === 3 || hoveredBlock === 3)
+                      ? 'hue-rotate(58deg) saturate(1.2) brightness(0.95) drop-shadow(0 0 6px rgba(126, 87, 194, 0.5))' 
+                      : 'grayscale(100%) brightness(0.4) opacity(0.6)',
                   }}
                 />
               </div>
@@ -951,14 +951,14 @@ export default function ModelsPage() {
               <div className="flex items-center gap-1.5 h-6">
                 <div className="w-1 h-6 bg-white/40" />
                 <div className="w-1 h-4 bg-white/60" />
-                <div className="w-1 h-8 bg-[#38bdf8]" />
+                <div className="w-1 h-8 bg-[#7E57C2]" />
                 <div className="w-1 h-5 bg-white/30" />
               </div>
               <h2 
                 className="text-4xl sm:text-5xl md:text-[56px] font-normal text-white tracking-tight leading-none"
                 style={{ fontFamily: "'Inter Tight', sans-serif" }}
               >
-                The Features
+                <span className="text-violet-drift-b" style={{ animationDelay: '4s' }}>The Features</span>
               </h2>
               <div className="ml-4 px-3 py-1 bg-white/5 border border-white/15 rounded text-xs font-mono tracking-widest text-[#9f9f9f]">
                 <ScrambleText text="RELIABLE" speed={50} />
@@ -981,7 +981,7 @@ export default function ModelsPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             
             {/* Card 1: Multi-Orbit Planetary System */}
-            <div className="relative bg-[#070709] border border-white/10 rounded-2xl p-8 flex flex-col justify-between overflow-hidden min-h-[440px] group hover:border-[#38bdf8]/40 transition-all duration-500">
+            <div className="relative bg-[#070709] border border-white/10 rounded-2xl p-8 flex flex-col justify-between overflow-hidden min-h-[440px] group hover:border-[#7E57C2]/50 transition-all duration-500">
               <div className="relative w-full h-[220px] flex items-center justify-center">
                 <img 
                   src="https://cdn.prod.website-files.com/694f372b123017b1e0a43316/69538ffea86737e86bae05ee_Orbit%201.png" 
@@ -1014,7 +1014,7 @@ export default function ModelsPage() {
             </div>
 
             {/* Card 2: Futuristic Device Showcase */}
-            <div className="relative bg-[#070709] border border-white/10 rounded-2xl p-8 flex flex-col justify-between overflow-hidden min-h-[440px] group hover:border-[#38bdf8]/40 transition-all duration-500">
+            <div className="relative bg-[#070709] border border-white/10 rounded-2xl p-8 flex flex-col justify-between overflow-hidden min-h-[440px] group hover:border-[#7E57C2]/50 transition-all duration-500">
               <div className="relative w-full h-[220px] flex items-center justify-center">
                 <img 
                   src="https://cdn.prod.website-files.com/694f372b123017b1e0a43316/695486b1759333fb17c32adb_Futuristic%20Device%20Design.webp" 
@@ -1034,7 +1034,7 @@ export default function ModelsPage() {
             </div>
 
             {/* Card 3: Interactive Clock Counter Dial */}
-            <div className="relative bg-[#070709] border border-white/10 rounded-2xl p-8 flex flex-col justify-between overflow-hidden min-h-[440px] group hover:border-[#38bdf8]/40 transition-all duration-500">
+            <div className="relative bg-[#070709] border border-white/10 rounded-2xl p-8 flex flex-col justify-between overflow-hidden min-h-[440px] group hover:border-[#7E57C2]/50 transition-all duration-500">
               <div className="relative w-full h-[220px] flex items-center justify-center">
                 {/* Circular Clock Dial Layers */}
                 <div className="relative w-[190px] h-[190px] flex items-center justify-center">
@@ -1050,7 +1050,7 @@ export default function ModelsPage() {
                     style={{ transform: `rotate(${dialCount * 3.6}deg)` }}
                   />
                   <div className="relative z-10 w-20 h-20 rounded-full bg-[#000000]/80 border border-white/20 flex flex-col items-center justify-center">
-                    <span className="text-2xl font-bold font-mono text-[#38bdf8]">{dialCount}</span>
+                    <span className="text-2xl font-bold font-mono text-[#9575CD]">{dialCount}</span>
                     <span className="text-[9px] font-mono text-white/50 tracking-widest">INDEX</span>
                   </div>
                 </div>
@@ -1061,7 +1061,7 @@ export default function ModelsPage() {
                   <div className="text-lg font-medium text-white" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
                     Continuous Evolution
                   </div>
-                  <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#38bdf8]">
+                  <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#9575CD]">
                     <ScrambleText text="EVOLVING" speed={45} />
                   </span>
                 </div>
@@ -1108,8 +1108,8 @@ export default function ModelsPage() {
                 />
               </div>
 
-              <span className={isLabIntelegent ? "text-[#38bdf8] font-normal transition-colors duration-300" : "text-[#888888] font-light transition-colors duration-300"}>
-                Intelegent
+              <span className={isLabIntelegent ? "text-[#9575CD] font-normal transition-colors duration-300" : "text-[#888888] font-light transition-colors duration-300"}>
+                Intelligent
               </span>
             </h2>
           </div>
@@ -1129,36 +1129,36 @@ export default function ModelsPage() {
 
                 {/* 4-Quadrant Segmented Donut Ring SVG */}
                 <div className="relative w-full h-[240px] flex items-center justify-center p-4 my-auto">
-                  <svg viewBox="0 0 200 200" className="w-[170px] h-[170px] drop-shadow-[0_0_15px_rgba(30,111,186,0.3)]">
+                  <svg viewBox="0 0 200 200" className="w-[170px] h-[170px] drop-shadow-[0_0_15px_rgba(103,58,183,0.4)]">
                     {/* Top-Right Quadrant Arc */}
                     <path 
                       d="M 108 20 A 76 76 0 0 1 180 92 L 148 92 A 44 44 0 0 0 108 52 Z" 
-                      fill={isLabIntelegent ? "#0e3a66" : "none"} 
-                      stroke={isLabIntelegent ? "#1e70be" : "#333333"} 
+                      fill={isLabIntelegent ? "#2A1454" : "none"} 
+                      stroke={isLabIntelegent ? "#7E57C2" : "#333333"} 
                       strokeWidth={isLabIntelegent ? "1.5" : "1"}
                       className="transition-all duration-300"
                     />
                     {/* Bottom-Right Quadrant Arc */}
                     <path 
                       d="M 180 108 A 76 76 0 0 1 108 180 L 108 148 A 44 44 0 0 0 148 108 Z" 
-                      fill={isLabIntelegent ? "#0e3a66" : "none"} 
-                      stroke={isLabIntelegent ? "#1e70be" : "#222222"} 
+                      fill={isLabIntelegent ? "#2A1454" : "none"} 
+                      stroke={isLabIntelegent ? "#7E57C2" : "#222222"} 
                       strokeWidth={isLabIntelegent ? "1.5" : "1"}
                       className="transition-all duration-300"
                     />
                     {/* Bottom-Left Quadrant Arc */}
                     <path 
                       d="M 92 180 A 76 76 0 0 1 20 108 L 52 108 A 44 44 0 0 0 92 148 Z" 
-                      fill={isLabIntelegent ? "#0e3a66" : "none"} 
-                      stroke={isLabIntelegent ? "#1e70be" : "#222222"} 
+                      fill={isLabIntelegent ? "#2A1454" : "none"} 
+                      stroke={isLabIntelegent ? "#7E57C2" : "#222222"} 
                       strokeWidth={isLabIntelegent ? "1.5" : "1"}
                       className="transition-all duration-300"
                     />
                     {/* Top-Left Quadrant Arc */}
                     <path 
                       d="M 20 92 A 76 76 0 0 1 92 20 L 92 52 A 44 44 0 0 0 52 92 Z" 
-                      fill={isLabIntelegent ? "#0e3a66" : "none"} 
-                      stroke={isLabIntelegent ? "#1e70be" : "#222222"} 
+                      fill={isLabIntelegent ? "#2A1454" : "none"} 
+                      stroke={isLabIntelegent ? "#7E57C2" : "#222222"} 
                       strokeWidth={isLabIntelegent ? "1.5" : "1"}
                       className="transition-all duration-300"
                     />
@@ -1190,7 +1190,7 @@ export default function ModelsPage() {
                     <span className="text-sm font-normal text-white" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
                       Data Sync
                     </span>
-                    <span className="px-5 py-1 bg-[#0b3c6d] border border-[#1e6fba] text-[#38bdf8] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(30,111,186,0.6)]">
+                    <span className="px-5 py-1 bg-[#2A1454] border border-[#673AB7] text-[#B39DDB] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(103,58,183,0.5)]">
                       Success
                     </span>
                   </div>
@@ -1199,7 +1199,7 @@ export default function ModelsPage() {
                       Validation
                     </span>
                     {isLabIntelegent ? (
-                      <span className="px-5 py-1 bg-[#0b3c6d] border border-[#1e6fba] text-[#38bdf8] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(30,111,186,0.6)] transition-all duration-300">
+                      <span className="px-5 py-1 bg-[#2A1454] border border-[#673AB7] text-[#B39DDB] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(103,58,183,0.5)] transition-all duration-300">
                         Success
                       </span>
                     ) : (
@@ -1212,7 +1212,7 @@ export default function ModelsPage() {
                     <span className="text-sm font-normal text-white" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
                       Report
                     </span>
-                    <span className="px-5 py-1 bg-[#0b3c6d] border border-[#1e6fba] text-[#38bdf8] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(30,111,186,0.6)]">
+                    <span className="px-5 py-1 bg-[#2A1454] border border-[#673AB7] text-[#B39DDB] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(103,58,183,0.5)]">
                       Success
                     </span>
                   </div>
@@ -1232,15 +1232,15 @@ export default function ModelsPage() {
                   <img 
                     src="https://cdn.prod.website-files.com/694f372b123017b1e0a43316/69568fff2c8b026b2c4ca369_Chart%26Axis.png" 
                     alt="Chaotic Data Scatter" 
-                    className={`absolute inset-0 m-auto w-full h-auto object-contain transition-opacity duration-300 ${
-                      !isLabIntelegent ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                    className={`absolute inset-0 m-auto w-full h-auto object-contain transition-all duration-300 ${
+                      !isLabIntelegent ? 'opacity-100 filter grayscale' : 'opacity-0 pointer-events-none'
                     }`}
                   />
                   <img 
                     src="https://cdn.prod.website-files.com/694f372b123017b1e0a43316/6957360e9a68d374e7cf6424_Chart%26AxisFinal.png" 
                     alt="Linear Regression Data Scatter" 
-                    className={`absolute inset-0 m-auto w-full h-auto object-contain transition-opacity duration-300 ${
-                      isLabIntelegent ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                    className={`absolute inset-0 m-auto w-full h-auto object-contain transition-all duration-300 ${
+                      isLabIntelegent ? 'opacity-100 filter hue-rotate-[58deg] saturate-[1.4]' : 'opacity-0 pointer-events-none'
                     }`}
                   />
                 </div>
@@ -1259,13 +1259,13 @@ export default function ModelsPage() {
             >
               {/* Laser Line */}
               <div 
-                className="w-[3px] bg-[#229eff] shadow-[0_0_20px_#229eff,0_0_40px_#00f0ff] shrink-0" 
+                className="w-[3px] bg-[#9575CD] shadow-[0_0_20px_#7E57C2,0_0_40px_#512DA8] shrink-0" 
               />
-              {/* Dark Blue Overlay Curtain Body */}
+              {/* Purple Overlay Curtain Body */}
               <div 
                 className="w-full h-full opacity-60"
                 style={{
-                  background: 'linear-gradient(90deg, rgba(0, 43, 77, 0.65) 0%, rgba(0, 15, 30, 0.4) 60%, transparent 100%)'
+                  background: 'linear-gradient(90deg, rgba(42, 20, 84, 0.7) 0%, rgba(20, 10, 40, 0.45) 60%, transparent 100%)'
                 }}
               />
             </div>
@@ -1294,7 +1294,7 @@ export default function ModelsPage() {
             <div className="flex items-center gap-3">
               <div className="px-3 py-1 bg-[#111116] border border-white/15 rounded text-xs font-mono tracking-widest text-[#9f9f9f] flex items-center gap-2">
                 <span>PARTIAL</span>
-                <span className="text-[#38bdf8]">&gt;&gt;&gt;</span>
+                <span className="text-[#9575CD]">&gt;&gt;&gt;</span>
                 <span><ScrambleText text={`TASK [0${activeWorkflowStep + 1}]`} speed={40} key={activeWorkflowStep} /></span>
               </div>
             </div>
@@ -1304,17 +1304,17 @@ export default function ModelsPage() {
               
               {/* Vertical Tick Ruler Column */}
               <div className="flex flex-col items-center gap-2 font-mono text-[10px] text-white/30 select-none pt-2">
-                <span className="text-[#38bdf8] font-bold text-xs">0{activeWorkflowStep + 1}</span>
+                <span className="text-[#9575CD] font-bold text-xs">0{activeWorkflowStep + 1}</span>
                 {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((t) => (
                   <div key={t} className="w-2.5 h-[1px] bg-white/20" />
                 ))}
               </div>
 
-              {/* Large Radial Blue Spotlight / Curved Light Rays */}
+              {/* Large Radial Purple Spotlight / Curved Light Rays */}
               <div 
-                className="absolute -left-28 -top-32 w-[650px] h-[650px] rounded-full pointer-events-none opacity-40 filter blur-3xl z-0"
+                className="absolute -left-28 -top-32 w-[650px] h-[650px] rounded-full pointer-events-none opacity-45 filter blur-3xl z-0"
                 style={{
-                  background: 'radial-gradient(circle, rgba(0, 150, 255, 0.4) 0%, rgba(0, 70, 180, 0.15) 50%, transparent 80%)'
+                  background: 'radial-gradient(circle, rgba(103, 58, 183, 0.45) 0%, rgba(81, 45, 168, 0.2) 50%, transparent 80%)'
                 }}
               />
 
@@ -1351,8 +1351,8 @@ export default function ModelsPage() {
                   onClick={() => scrollToWorkflowStep(idx)}
                   className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-mono transition-all cursor-pointer border ${
                     activeWorkflowStep === idx
-                      ? 'bg-[#38bdf8] text-black font-bold border-[#38bdf8] shadow-[0_0_15px_rgba(56,189,248,0.7)] scale-110'
-                      : 'bg-[#111116] border-white/20 text-white/50 hover:text-white'
+                      ? 'bg-[#512DA8] text-white font-bold border-[#7E57C2] shadow-[0_0_18px_rgba(103,58,183,0.8)] scale-110'
+                      : 'bg-[#111116] border-white/20 text-white/50 hover:text-white hover:border-white/50'
                   }`}
                 >
                   {s.id}
@@ -1373,19 +1373,19 @@ export default function ModelsPage() {
             }}
           >
             {/* 3D Diagonal Stack of 4 Extruded Cards */}
-            <div className="relative flex items-center justify-center w-[540px] h-[480px]">
+            <div className="relative flex items-center justify-center w-[560px] h-[490px]">
               
-              {/* Card 1: Bottom Left (01 - Collect Data) */}
+              {/* Card 1: Bottom Left (01 - Collect Data) — FRONT / FOREGROUND CARD */}
               <div 
                 onClick={() => scrollToWorkflowStep(0)}
                 className={`absolute w-[180px] sm:w-[210px] h-[270px] sm:h-[310px] cursor-pointer transition-all duration-700 ease-out ${
                   activeWorkflowStep === 0
-                    ? 'z-40 -translate-y-8 scale-105 drop-shadow-[0_20px_40px_rgba(56,189,248,0.7)]'
-                    : 'z-10 translate-y-0 opacity-40 grayscale hover:opacity-80'
+                    ? 'z-50 -translate-y-7 scale-[1.02] drop-shadow-[0_12px_24px_rgba(81,45,168,0.4)] opacity-100'
+                    : 'z-40 translate-y-0 opacity-45 grayscale hover:opacity-85'
                 }`}
                 style={{
-                  top: '160px',
-                  left: '40px',
+                  top: '170px',
+                  left: '20px',
                   transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
                 }}
               >
@@ -1399,23 +1399,23 @@ export default function ModelsPage() {
                   alt="Collect Data Icon" 
                   className={`absolute inset-0 m-auto w-[48%] h-[48%] object-contain transition-all duration-500 ${
                     activeWorkflowStep === 0
-                      ? 'filter drop-shadow-[0_0_20px_rgba(56,189,248,0.9)] brightness-125'
-                      : 'grayscale brightness-75'
+                      ? 'filter drop-shadow-[0_0_8px_rgba(126,87,194,0.55)] hue-rotate-[58deg] saturate-[1.2] brightness-95'
+                      : 'grayscale brightness-50 opacity-60'
                   }`}
                 />
               </div>
 
-              {/* Card 2: Middle Lower (02 - Process Data) */}
+              {/* Card 2: Middle Lower (02 - Process Data) — Layer 2 */}
               <div 
                 onClick={() => scrollToWorkflowStep(1)}
                 className={`absolute w-[180px] sm:w-[210px] h-[270px] sm:h-[310px] cursor-pointer transition-all duration-700 ease-out ${
                   activeWorkflowStep === 1
-                    ? 'z-40 -translate-y-8 scale-105 drop-shadow-[0_20px_40px_rgba(56,189,248,0.7)]'
-                    : 'z-20 translate-y-0 opacity-40 grayscale hover:opacity-80'
+                    ? 'z-35 -translate-y-7 scale-[1.02] drop-shadow-[0_12px_24px_rgba(81,45,168,0.4)] opacity-100'
+                    : 'z-30 translate-y-0 opacity-45 grayscale hover:opacity-85'
                 }`}
                 style={{
-                  top: '100px',
-                  left: '130px',
+                  top: '102px',
+                  left: '124px',
                   transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
                 }}
               >
@@ -1429,23 +1429,23 @@ export default function ModelsPage() {
                   alt="Process Data Icon" 
                   className={`absolute inset-0 m-auto w-[48%] h-[48%] object-contain transition-all duration-500 ${
                     activeWorkflowStep === 1
-                      ? 'filter drop-shadow-[0_0_20px_rgba(56,189,248,0.9)] brightness-125'
-                      : 'grayscale brightness-75'
+                      ? 'filter drop-shadow-[0_0_8px_rgba(126,87,194,0.55)] hue-rotate-[58deg] saturate-[1.2] brightness-95'
+                      : 'grayscale brightness-50 opacity-60'
                   }`}
                 />
               </div>
 
-              {/* Card 3: Middle Upper (03 - Analyze Data) */}
+              {/* Card 3: Middle Upper (03 - Analyze Data) — Layer 3 */}
               <div 
                 onClick={() => scrollToWorkflowStep(2)}
                 className={`absolute w-[180px] sm:w-[210px] h-[270px] sm:h-[310px] cursor-pointer transition-all duration-700 ease-out ${
                   activeWorkflowStep === 2
-                    ? 'z-40 -translate-y-8 scale-105 drop-shadow-[0_20px_40px_rgba(56,189,248,0.7)]'
-                    : 'z-30 translate-y-0 opacity-40 grayscale hover:opacity-80'
+                    ? 'z-25 -translate-y-7 scale-[1.02] drop-shadow-[0_12px_24px_rgba(81,45,168,0.4)] opacity-100'
+                    : 'z-20 translate-y-0 opacity-45 grayscale hover:opacity-85'
                 }`}
                 style={{
-                  top: '40px',
-                  left: '220px',
+                  top: '34px',
+                  left: '228px',
                   transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
                 }}
               >
@@ -1459,23 +1459,23 @@ export default function ModelsPage() {
                   alt="Analyze Data Icon" 
                   className={`absolute inset-0 m-auto w-[48%] h-[48%] object-contain transition-all duration-500 ${
                     activeWorkflowStep === 2
-                      ? 'filter drop-shadow-[0_0_20px_rgba(56,189,248,0.9)] brightness-125'
-                      : 'grayscale brightness-75'
+                      ? 'filter drop-shadow-[0_0_8px_rgba(126,87,194,0.55)] hue-rotate-[58deg] saturate-[1.2] brightness-95'
+                      : 'grayscale brightness-50 opacity-60'
                   }`}
                 />
               </div>
 
-              {/* Card 4: Top Right (04 - Deliver Data) */}
+              {/* Card 4: Top Right (04 - Deliver Data) — REAR / BACKGROUND CARD */}
               <div 
                 onClick={() => scrollToWorkflowStep(3)}
                 className={`absolute w-[180px] sm:w-[210px] h-[270px] sm:h-[310px] cursor-pointer transition-all duration-700 ease-out ${
                   activeWorkflowStep === 3
-                    ? 'z-40 -translate-y-8 scale-105 drop-shadow-[0_20px_40px_rgba(56,189,248,0.8)]'
-                    : 'z-30 translate-y-0 opacity-40 grayscale hover:opacity-80'
+                    ? 'z-15 -translate-y-7 scale-[1.02] drop-shadow-[0_12px_24px_rgba(81,45,168,0.4)] opacity-100'
+                    : 'z-10 translate-y-0 opacity-45 grayscale hover:opacity-85'
                 }`}
                 style={{
-                  top: '-20px',
-                  left: '310px',
+                  top: '-34px',
+                  left: '332px',
                   transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
                 }}
               >
@@ -1489,8 +1489,8 @@ export default function ModelsPage() {
                   alt="Deliver Data Icon" 
                   className={`absolute inset-0 m-auto w-[48%] h-[48%] object-contain transition-all duration-500 ${
                     activeWorkflowStep === 3
-                      ? 'filter drop-shadow-[0_0_20px_rgba(56,189,248,0.9)] brightness-125'
-                      : 'grayscale brightness-75'
+                      ? 'filter drop-shadow-[0_0_8px_rgba(126,87,194,0.55)] hue-rotate-[58deg] saturate-[1.2] brightness-95'
+                      : 'grayscale brightness-50 opacity-60'
                   }`}
                 />
               </div>
@@ -1501,130 +1501,7 @@ export default function ModelsPage() {
         </div>
       </section>
 
-      {/* ========================================================================= */}
-      {/* SECTION 7: PRICING SECTION — Access Intelligence. On Your Terms.         */}
-      {/* ========================================================================= */}
-      <section className="relative w-full bg-[#000000] z-10 py-[140px] overflow-hidden border-t border-white/10">
-        <div className="w-full max-w-[1440px] mx-auto px-6 md:px-14 flex flex-col items-center">
-          
-          {/* Header */}
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <h2 
-              className="text-4xl sm:text-5xl md:text-[56px] font-normal leading-[1.1] text-white tracking-tight mb-4"
-              style={{ fontFamily: "'Inter Tight', sans-serif" }}
-            >
-              Access Intelligence.<br />
-              <span className="text-white/40">On Your Terms.</span>
-            </h2>
-            <p className="text-sm sm:text-base text-white/60 font-light">
-              Transparent, modular infrastructure designed to scale effortlessly with your compute requirements.
-            </p>
 
-            {/* Monthly / Yearly Switcher */}
-            <div className="inline-flex items-center gap-1 mt-8 p-1 bg-[#111116] border border-white/15 rounded-full">
-              <button
-                onClick={() => setPricingPlan('assistants')}
-                className={`px-5 py-2 rounded-full text-xs font-mono transition-all ${
-                  pricingPlan === 'assistants'
-                    ? 'bg-white text-black font-bold'
-                    : 'text-white/60 hover:text-white'
-                }`}
-              >
-                AI Assistants
-              </button>
-              <button
-                onClick={() => setPricingPlan('agents')}
-                className={`px-5 py-2 rounded-full text-xs font-mono transition-all ${
-                  pricingPlan === 'agents'
-                    ? 'bg-white text-black font-bold'
-                    : 'text-white/60 hover:text-white'
-                }`}
-              >
-                AI Agents
-              </button>
-            </div>
-          </div>
-
-          {/* Pricing Tier Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-            
-            {/* Starter Plan */}
-            <div className="bg-[#070709] border border-white/10 rounded-2xl p-8 flex flex-col justify-between min-h-[500px] hover:border-white/30 transition-all duration-300">
-              <div>
-                <span className="text-xs font-mono uppercase tracking-widest text-[#9f9f9f]">STARTER</span>
-                <div className="text-4xl font-normal text-white mt-4 mb-2 font-mono">Free</div>
-                <p className="text-xs text-white/50 font-light leading-relaxed mb-6">
-                  Ideal for testing autonomous workflows and exploring model orchestration.
-                </p>
-
-                <div className="border-t border-white/10 pt-6 flex flex-col gap-3 font-light text-xs text-white/80">
-                  <div className="flex items-center gap-2">✓ Core AI workflow automation</div>
-                  <div className="flex items-center gap-2">✓ Manual + assisted processing</div>
-                  <div className="flex items-center gap-2">✓ Basic analytics & reporting</div>
-                  <div className="flex items-center gap-2">✓ Community developer support</div>
-                </div>
-              </div>
-
-              <button className="w-full py-3 mt-8 bg-white/10 hover:bg-white hover:text-black text-white text-xs font-mono tracking-widest uppercase rounded-lg transition-all">
-                GET STARTED
-              </button>
-            </div>
-
-            {/* Growth Plan (Featured) */}
-            <div className="relative bg-[#0c0c12] border border-[#38bdf8]/60 rounded-2xl p-8 flex flex-col justify-between min-h-[500px] shadow-[0_0_40px_rgba(56,189,248,0.15)] hover:shadow-[0_0_50px_rgba(56,189,248,0.3)] transition-all duration-300">
-              <div className="absolute top-4 right-4 px-2.5 py-0.5 bg-[#38bdf8] text-black text-[10px] font-mono font-bold rounded-full">
-                POPULAR
-              </div>
-
-              <div>
-                <span className="text-xs font-mono uppercase tracking-widest text-[#38bdf8]">GROWTH</span>
-                <div className="text-4xl font-normal text-white mt-4 mb-2 font-mono">
-                  {pricingPlan === 'assistants' ? '$29' : '$89'} <span className="text-xs text-white/50 font-normal">/ Month</span>
-                </div>
-                <p className="text-xs text-white/50 font-light leading-relaxed mb-6">
-                  Built for scaling engineering teams with production pipeline requirements.
-                </p>
-
-                <div className="border-t border-white/10 pt-6 flex flex-col gap-3 font-light text-xs text-white/90">
-                  <div className="flex items-center gap-2">✓ Full autonomous execution</div>
-                  <div className="flex items-center gap-2">✓ Advanced predictive analytics</div>
-                  <div className="flex items-center gap-2">✓ Priority processing speed (0.18ms)</div>
-                  <div className="flex items-center gap-2">✓ Multi-channel API integration</div>
-                  <div className="flex items-center gap-2">✓ 24/7 dedicated support SLA</div>
-                </div>
-              </div>
-
-              <button className="w-full py-3 mt-8 bg-[#38bdf8] hover:bg-[#00f0ff] text-black text-xs font-mono font-bold tracking-widest uppercase rounded-lg shadow-[0_0_20px_rgba(56,189,248,0.5)] transition-all">
-                GET STARTED
-              </button>
-            </div>
-
-            {/* Enterprise Plan */}
-            <div className="bg-[#070709] border border-white/10 rounded-2xl p-8 flex flex-col justify-between min-h-[500px] hover:border-white/30 transition-all duration-300">
-              <div>
-                <span className="text-xs font-mono uppercase tracking-widest text-[#9f9f9f]">ENTERPRISE</span>
-                <div className="text-4xl font-normal text-white mt-4 mb-2 font-mono">Custom</div>
-                <p className="text-xs text-white/50 font-light leading-relaxed mb-6">
-                  Dedicated high-throughput hardware topologies with air-gapped security.
-                </p>
-
-                <div className="border-t border-white/10 pt-6 flex flex-col gap-3 font-light text-xs text-white/80">
-                  <div className="flex items-center gap-2">✓ Unlimited custom workflows</div>
-                  <div className="flex items-center gap-2">✓ Dedicated private model instance</div>
-                  <div className="flex items-center gap-2">✓ Custom security & SOC2 compliance</div>
-                  <div className="flex items-center gap-2">✓ 99.99% uptime guarantee SLA</div>
-                  <div className="flex items-center gap-2">✓ Dedicated VIP infrastructure engineer</div>
-                </div>
-              </div>
-
-              <button className="w-full py-3 mt-8 bg-white/10 hover:bg-white hover:text-black text-white text-xs font-mono tracking-widest uppercase rounded-lg transition-all">
-                CONTACT SALES
-              </button>
-            </div>
-
-          </div>
-        </div>
-      </section>
 
       {/* ========================================================================= */}
       {/* SECTION 8: INTEGRATION TRACK — Exact 7-Node Parabolic Arc Fan Track       */}
@@ -1640,7 +1517,7 @@ export default function ModelsPage() {
           <div className="flex items-center gap-3 z-30">
             <div className="px-3 py-1 bg-[#111116] border border-white/15 rounded text-xs font-mono tracking-widest text-[#9f9f9f] flex items-center gap-2">
               <span>INTEGRATION</span>
-              <span className="text-[#38bdf8]">---</span>
+              <span className="text-[#9575CD]">---</span>
               <span><ScrambleText text="ACTIVE MODULES" speed={40} /></span>
             </div>
           </div>
@@ -1661,7 +1538,7 @@ export default function ModelsPage() {
                 return (
                   <div
                     key={card.id}
-                    className="absolute w-[105px] sm:w-[125px] h-[105px] sm:h-[125px] rounded-2xl bg-[#0c0c0e] border border-white/15 p-5 flex items-center justify-center shadow-2xl transition-all duration-150 ease-out hover:border-[#38bdf8] hover:shadow-[0_0_30px_rgba(56,189,248,0.4)]"
+                    className="absolute w-[105px] sm:w-[125px] h-[105px] sm:h-[125px] rounded-2xl bg-[#0c0c0e] border border-white/15 p-5 flex items-center justify-center shadow-2xl transition-all duration-150 ease-out hover:border-[#7E57C2] hover:shadow-[0_0_30px_rgba(103,58,183,0.5)]"
                     style={{
                       transform: `translate3d(${t.x}px, ${t.y}px, 0px) rotate(${t.rot}deg) scale(${t.scale})`,
                       zIndex: t.zIndex,
@@ -1692,7 +1569,7 @@ export default function ModelsPage() {
               style={{ fontFamily: "'Inter Tight', sans-serif" }}
             >
               Connected Systems.<br />
-              <span className="bg-gradient-to-r from-[#00f0ff] to-[#3b82f6] bg-clip-text text-transparent">
+              <span className="text-violet-drift-b" style={{ animationDelay: '2s' }}>
                 Unified Intelligence.
               </span>
             </h2>
@@ -1702,87 +1579,11 @@ export default function ModelsPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 9 & 10: CALL TO ACTION & FOOTER                                   */}
+      {/* FOOTER — Shared Spendly Footer Component                                  */}
       {/* ========================================================================= */}
-      <footer id="contact" className="relative w-full bg-[#030305] z-10 pt-[120px] pb-16 border-t border-white/15">
-        <div className="w-full max-w-[1440px] mx-auto px-6 md:px-14 flex flex-col">
-          
-          {/* Top CTA Banner */}
-          <div className="relative w-full bg-gradient-to-b from-[#0e0e18] to-[#050508] border border-white/15 rounded-3xl p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8 mb-20 overflow-hidden">
-            <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-[#38bdf8]/10 rounded-full filter blur-3xl pointer-events-none" />
-            
-            <div className="flex flex-col gap-3 text-center md:text-left z-10">
-              <h3 
-                className="text-3xl sm:text-4xl md:text-5xl font-normal text-white tracking-tight"
-                style={{ fontFamily: "'Inter Tight', sans-serif" }}
-              >
-                Ready to automate your future?
-              </h3>
-              <p className="text-sm text-white/60 font-light max-w-lg">
-                Deploy autonomous models in minutes with enterprise-grade reliability and zero friction.
-              </p>
-            </div>
-
-            <button className="z-10 px-8 py-4 bg-[#38bdf8] hover:bg-[#00f0ff] text-black font-mono font-bold text-xs uppercase tracking-widest rounded-xl shadow-[0_0_30px_rgba(56,189,248,0.5)] transition-all">
-              GET STARTED NOW
-            </button>
-          </div>
-
-          {/* Main Footer Links */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 pb-16 border-b border-white/10">
-            
-            {/* Col 1: Brand & Bio */}
-            <div className="flex flex-col gap-4">
-              <img 
-                src="https://cdn.prod.website-files.com/694f372b123017b1e0a43316/695b78460c60ad939f6a28cb_Logo%20Quantara.png" 
-                alt="Quantara Logo" 
-                className="h-8 w-auto object-contain self-start"
-              />
-              <p className="text-xs text-white/50 font-light leading-relaxed">
-                Next-generation autonomous decision intelligence platform powering enterprise engineering workflows.
-              </p>
-            </div>
-
-            {/* Col 2: Explore */}
-            <div className="flex flex-col gap-3 font-mono text-xs">
-              <span className="text-white font-bold tracking-wider mb-1">EXPLORE</span>
-              <a href="#product" className="text-white/60 hover:text-white transition-colors">Product</a>
-              <a href="#lab" className="text-white/60 hover:text-white transition-colors">Lab Workbench</a>
-              <a href="#workflow" className="text-white/60 hover:text-white transition-colors">Workflow Automation</a>
-              <a href="#integration" className="text-white/60 hover:text-white transition-colors">Integrations</a>
-            </div>
-
-            {/* Col 3: Utilities */}
-            <div className="flex flex-col gap-3 font-mono text-xs">
-              <span className="text-white font-bold tracking-wider mb-1">UTILITIES</span>
-              <span className="text-white/60 hover:text-white transition-colors cursor-pointer">Style Guide</span>
-              <span className="text-white/60 hover:text-white transition-colors cursor-pointer">Licensing</span>
-              <span className="text-white/60 hover:text-white transition-colors cursor-pointer">Change Log</span>
-              <span className="text-white/60 hover:text-white transition-colors cursor-pointer">API Documentation</span>
-            </div>
-
-            {/* Col 4: Say Hello */}
-            <div className="flex flex-col gap-3 font-mono text-xs">
-              <span className="text-white font-bold tracking-wider mb-1">SAY HELLO</span>
-              <span className="text-white/60">hello@quantara.ai</span>
-              <span className="text-white/60">(+123) 456 789</span>
-              <span className="text-xs text-[#38bdf8] mt-2">SYSTEM OPERATIONAL 100%</span>
-            </div>
-
-          </div>
-
-          {/* Copyright & Meta */}
-          <div className="flex flex-col sm:flex-row items-center justify-between pt-8 text-[11px] font-mono text-white/40 gap-4">
-            <div>© 2026 Quantara Intelligence Inc. All rights reserved.</div>
-            <div className="flex items-center gap-6">
-              <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
-              <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
-              <span className="hover:text-white transition-colors cursor-pointer">Security Overview</span>
-            </div>
-          </div>
-
-        </div>
-      </footer>
+      <div className="bg-[#030305] border-t border-white/10">
+        <Footer />
+      </div>
 
       {/* Scoped CSS for Infinite Continuous Ticker & Animations */}
       <style>{`

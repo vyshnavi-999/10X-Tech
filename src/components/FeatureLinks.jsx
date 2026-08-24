@@ -67,12 +67,12 @@ const FeatureLinks = ({ mode = 'all' }) => {
     <section id="research-blog" className="relative z-20 w-full max-w-[1360px] mx-auto px-6 py-8 lg:py-12">
         {mode === 'home' && (
           <div className="mb-6 text-left">
-            <h2 className="text-tier-1">Research & Blog</h2>
+            <h2 className="text-tier-1"><span className="text-violet-drift-b" style={{ animationDelay: '7s' }}>Research & Blog</span></h2>
           </div>
         )}
         {mode === 'ai' && (
           <div className="mb-6 text-left">
-            <h2 className="text-tier-1">Explore our Tech</h2>
+            <h2 className="text-tier-1"><span className="text-violet-drift-c" style={{ animationDelay: '11s' }}>Explore our Tech</span></h2>
           </div>
         )}
         
@@ -129,7 +129,7 @@ const FeatureLinks = ({ mode = 'all' }) => {
                           {card.category}
                         </span>
                         <h2 className="text-tier-2 mb-4">
-                          <span className="text-white">Inside 10X Technologies & LUCA</span>
+                          <span className="text-white">Inside 10X Technologies & <span className="text-violet-drift-b" style={{ animationDelay: '3s' }}>LUCA</span></span>
                         </h2>
                         <p className="text-[0.95rem] text-[#A0A0A0] leading-[1.7] w-full mb-6">
                           Read our latest announcements, SOTA - Research updates, product breakthroughs, behind the scenes stories and get to know about our journey in Redefining Technology! Discover how we are pushing the boundaries of edge AI and building efficient, multilingual systems from the ground up. Join us as we explore the future of intelligent hardware and scalable on-device communication.

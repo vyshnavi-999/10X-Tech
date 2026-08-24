@@ -291,4 +291,128 @@
     border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
+
+  /* ─────────────────────────────────────────────────────────────
+   *  PERIODIC PURPLE GRADIENT TEXT  — Spendly Brand System
+   *
+   *  Usage:
+   *    <span class="text-violet-drift">heading text</span>
+   *    <span class="text-violet-drift-b">heading text</span>  (alt phase)
+   *    <span class="text-violet-drift-c">heading text</span>  (alt phase)
+   *
+   *  Add animation-delay inline to stagger elements:
+   *    style={{ animationDelay: '4s' }}
+   *
+   *  Palette (all derived from #512DA8):
+   *    #512DA8  deep violet
+   *    #7E57C2  purple
+   *    #9575CD  medium lavender
+   *    #B39DDB  soft lavender
+   *    #7B1FA2  magenta-violet
+   *    #4527A0  blue-violet
+   *    #6A1B9A  deep magenta-violet
+   *    #ffffff  white (neutral anchor)
+   * ───────────────────────────────────────────────────────────── */
+  .text-violet-drift,
+  .text-violet-drift-b,
+  .text-violet-drift-c {
+    background-clip: text;
+    -webkit-background-clip: text;
+    display: inline;
+  }
 }
+
+/* ── Brand CSS Variables ── */
+:root {
+  --vd-white:        #ffffff;
+  --vd-lavender:     #B39DDB;
+  --vd-mid-purple:   #9575CD;
+  --vd-purple:       #7E57C2;
+  --vd-deep-violet:  #512DA8;
+  --vd-blue-violet:  #4527A0;
+  --vd-magenta:      #7B1FA2;
+  --vd-deep-magenta: #6A1B9A;
+}
+
+/* ── Keyframes — three phases, each cycling through a nearby
+      sub-set of the palette. Long periods keep it occasional. ── */
+
+/* Phase A: white → lavender → purple → deep violet → back */
+@keyframes violet-drift-a {
+  0%   { color: var(--vd-white);       background-image: none; -webkit-text-fill-color: var(--vd-white); }
+  20%  { color: var(--vd-white);       background-image: none; -webkit-text-fill-color: var(--vd-white); }
+  30%  { -webkit-text-fill-color: transparent;
+          background-image: linear-gradient(95deg, var(--vd-lavender) 0%, var(--vd-mid-purple) 50%, var(--vd-purple) 100%); }
+  45%  { -webkit-text-fill-color: transparent;
+          background-image: linear-gradient(95deg, var(--vd-mid-purple) 0%, var(--vd-deep-violet) 55%, var(--vd-blue-violet) 100%); }
+  60%  { -webkit-text-fill-color: transparent;
+          background-image: linear-gradient(95deg, var(--vd-purple) 0%, var(--vd-mid-purple) 50%, var(--vd-lavender) 100%); }
+  78%  { color: var(--vd-white);       background-image: none; -webkit-text-fill-color: var(--vd-white); }
+  100% { color: var(--vd-white);       background-image: none; -webkit-text-fill-color: var(--vd-white); }
+}
+
+/* Phase B: white → magenta-violet → deep-violet → blue-violet → back */
+@keyframes violet-drift-b {
+  0%   { color: var(--vd-white);       background-image: none; -webkit-text-fill-color: var(--vd-white); }
+  25%  { color: var(--vd-white);       background-image: none; -webkit-text-fill-color: var(--vd-white); }
+  38%  { -webkit-text-fill-color: transparent;
+          background-image: linear-gradient(105deg, var(--vd-magenta) 0%, var(--vd-deep-violet) 55%, var(--vd-purple) 100%); }
+  52%  { -webkit-text-fill-color: transparent;
+          background-image: linear-gradient(105deg, var(--vd-deep-violet) 0%, var(--vd-blue-violet) 50%, var(--vd-deep-magenta) 100%); }
+  65%  { -webkit-text-fill-color: transparent;
+          background-image: linear-gradient(105deg, var(--vd-purple) 0%, var(--vd-magenta) 55%, var(--vd-lavender) 100%); }
+  82%  { color: var(--vd-white);       background-image: none; -webkit-text-fill-color: var(--vd-white); }
+  100% { color: var(--vd-white);       background-image: none; -webkit-text-fill-color: var(--vd-white); }
+}
+
+/* Phase C: white → soft lavender → magenta → purple → back (gentlest) */
+@keyframes violet-drift-c {
+  0%   { color: var(--vd-white);       background-image: none; -webkit-text-fill-color: var(--vd-white); }
+  30%  { color: var(--vd-white);       background-image: none; -webkit-text-fill-color: var(--vd-white); }
+  42%  { -webkit-text-fill-color: transparent;
+          background-image: linear-gradient(90deg, var(--vd-lavender) 0%, var(--vd-mid-purple) 60%, var(--vd-deep-magenta) 100%); }
+  58%  { -webkit-text-fill-color: transparent;
+          background-image: linear-gradient(90deg, var(--vd-mid-purple) 0%, var(--vd-purple) 50%, var(--vd-magenta) 100%); }
+  72%  { -webkit-text-fill-color: transparent;
+          background-image: linear-gradient(90deg, var(--vd-lavender) 0%, var(--vd-purple) 100%); }
+  85%  { color: var(--vd-white);       background-image: none; -webkit-text-fill-color: var(--vd-white); }
+  100% { color: var(--vd-white);       background-image: none; -webkit-text-fill-color: var(--vd-white); }
+}
+
+/* ── Utility Classes ── */
+
+/* Slowest — 22s cycle, good for hero h1 */
+.text-violet-drift {
+  animation: violet-drift-a 22s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+  will-change: background-image;
+}
+
+/* Mid — 18s cycle, good for section h2 */
+.text-violet-drift-b {
+  animation: violet-drift-b 18s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+  will-change: background-image;
+}
+
+/* Subtlest — 28s cycle, good for accent words inline */
+.text-violet-drift-c {
+  animation: violet-drift-c 28s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+  will-change: background-image;
+}
+
+/* ── Accessibility — respect reduced-motion preference ── */
+@media (prefers-reduced-motion: reduce) {
+  .text-violet-drift,
+  .text-violet-drift-b,
+  .text-violet-drift-c {
+    animation: none !important;
+    -webkit-text-fill-color: inherit !important;
+    background-image: none !important;
+  }
+}
+

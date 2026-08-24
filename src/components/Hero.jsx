@@ -176,10 +176,11 @@ const Hero = ({ openContactModal }) => {
           </div>
 
           {/* 2. Large headline */}
+          {/* 2. Large headline */}
           <h1 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[54px] 2xl:text-[60px] font-bold tracking-tight text-white leading-[1.06] mb-2.5 sm:mb-3">
             Small language<br />
             models for<br />
-            Indian languages.
+            <span className="text-violet-drift" style={{ animationDelay: '5s' }}>Indian languages.</span>
           </h1>
 
           {/* 3. Short supporting description */}
