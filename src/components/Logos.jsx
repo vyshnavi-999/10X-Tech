@@ -26,7 +26,7 @@ const LogoGroup = () => (
           alt={logo.alt}
           decoding="async"
           loading="lazy"
-          className="w-full h-full object-contain opacity-[0.65] hover:opacity-100 transition-all duration-500 brightness-0 invert drop-shadow-[0_0_12px_rgba(255,255,255,0.1)] hover:brightness-100 hover:invert-0 hover:drop-shadow-none"
+          className="w-full h-full object-contain opacity-[0.65] hover:opacity-100 transition-all duration-500 grayscale hover:grayscale-0"
           style={{ 
             transform: `scale(${logo.scale || 1})`
           }}

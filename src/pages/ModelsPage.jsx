@@ -20,7 +20,7 @@ function ScrambleText({ text, speed = 40, duration = 1.2, delay = 0 }) {
           text
             .split('')
             .map((char, i) => {
-              if (char === ' ' || char === '.' || char === '[' || char === ']' || char === '+' || char === '/' || char === '$' || char === '-' || char === '>') return char;
+              if (char === ' ' || char === '.' || char === "'" || char === '[' || char === ']' || char === '+' || char === '/' || char === '$' || char === '-' || char === '>') return char;
               if (i < (frame / totalFrames) * text.length) return text[i];
               return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
             })
@@ -72,52 +72,67 @@ function LottieScrollIndicator() {
   );
 }
 
-// Partner Logos
+// Partner Logos (Static 4 Logos in strict order: MeitY, AWS, NVIDIA, Bharat AI Mission)
 const PARTNER_LOGOS = [
-  { src: 'https://cdn.prod.website-files.com/694f372b123017b1e0a43316/6951ecc0730eaa0ec919b104_logo-1.png', alt: 'Logoipsum 1' },
-  { src: 'https://cdn.prod.website-files.com/694f372b123017b1e0a43316/6951ecc01fac44e8c729460f_logo-2.png', alt: 'Logoipsum 2' },
-  { src: 'https://cdn.prod.website-files.com/694f372b123017b1e0a43316/6951ecc020de041e30e7449c_logo-3.png', alt: 'Logoipsum 3' },
-  { src: 'https://cdn.prod.website-files.com/694f372b123017b1e0a43316/6951ecc0251f9ab52dfc8472_logo-4.png', alt: 'Logoipsum 4' },
-  { src: 'https://cdn.prod.website-files.com/694f372b123017b1e0a43316/6951ecc0994da8e11b711573_logo-5.png', alt: 'Logoipsum 5' },
+  { 
+    id: 1, 
+    name: 'Ministry of Electronics', 
+    src: `${import.meta.env.BASE_URL}partners/meity.png?v=5`, 
+    alt: 'Ministry of Electronics and Information Technology (MeitY)',
+    imgClass: 'h-13 sm:h-16 md:h-18 lg:h-20 max-w-[200px] sm:max-w-[240px]'
+  },
+  { 
+    id: 2, 
+    name: 'AWS', 
+    src: `${import.meta.env.BASE_URL}partners/aws.png?v=6`, 
+    alt: 'Amazon Web Services (AWS)',
+    imgClass: 'h-10 sm:h-12 md:h-14 lg:h-16 max-w-[150px] sm:max-w-[180px]'
+  },
+  { 
+    id: 3, 
+    name: 'NVIDIA', 
+    src: `${import.meta.env.BASE_URL}partners/nvidia.png?v=5`, 
+    alt: 'NVIDIA Inception Program',
+    imgClass: 'h-11 sm:h-13 md:h-15 lg:h-17 max-w-[170px] sm:max-w-[200px]'
+  },
+  { 
+    id: 4, 
+    name: 'Bharat AI Mission', 
+    src: `${import.meta.env.BASE_URL}partners/bharat_ai_mission.png?v=5`, 
+    alt: 'Bharat AI Mission',
+    imgClass: 'h-13 sm:h-16 md:h-18 lg:h-20 max-w-[180px] sm:max-w-[220px]'
+  },
 ];
 
-// Product Steps
+// Product Steps (01: YOUR Data, 02: YOUR Requirement, 03: YOUR Model, 04: YOUR Inference)
 const PLATFORM_STEPS = [
   {
     id: '01',
-    title: 'Analytics',
-    subtitle: 'Advanced Intelligent\nAnalytics Platform',
-    system: 'REAL-TIME',
-    performance: 'PREDICTIVE',
+    word: 'Data',
+    desc: 'We start with what you already have. Your documents, your records, your domain. We curate it specifically for your use case, not scraped.',
     iconSrc: 'https://cdn.prod.website-files.com/694f372b123017b1e0a43316/6952a95f258b8e73d7666537_bar-chart.png',
-    alt: 'Bar chart icon'
+    alt: 'Your data icon'
   },
   {
     id: '02',
-    title: 'Data',
-    subtitle: 'Unified Data Intelligence\nFoundation',
-    system: 'CONNECTED',
-    performance: 'SINGLE SOURCE',
+    word: 'Requirement',
+    desc: 'We train a small AI model for your exact task, purpose-built to do that one thing well, while still outperforming bigger models at a fraction of the cost.',
     iconSrc: 'https://cdn.prod.website-files.com/694f372b123017b1e0a43316/6952afed8d4ca6576fcbdedf_linked-services.png',
-    alt: 'Linked services network icon'
+    alt: 'Your requirement icon'
   },
   {
     id: '03',
-    title: 'Auto',
-    subtitle: 'Adaptive Automation\nWorkflow System',
-    system: 'SMART',
-    performance: 'EFFICIENCY',
+    word: 'Model',
+    desc: 'Your small AI model is licensed exclusively to you, giving you control over its deployment and use. The model trained for your organization is never shared with another customer.',
     iconSrc: 'https://cdn.prod.website-files.com/694f372b123017b1e0a43316/6952a95f1c8555865fea32ed_auto-renew.png',
-    alt: 'Auto renew loop icon'
+    alt: 'Your model icon'
   },
   {
     id: '04',
-    title: 'Security',
-    subtitle: 'Secure and Scalable\nCore Infrastructure',
-    system: 'ENTERPRISE',
-    performance: 'SEAMLESS',
+    word: 'Inference',
+    desc: 'Run your small AI model on your own server, hardware, smartphone, or device, fully offline, with one fixed cost and unlimited usage forever.',
     iconSrc: 'https://cdn.prod.website-files.com/694f372b123017b1e0a43316/6952a95f0b7d0e5d63ed20fb_encrypted.png',
-    alt: 'Encrypted shield keyhole icon'
+    alt: 'Your inference icon'
   }
 ];
 
@@ -190,6 +205,7 @@ export default function ModelsPage() {
 
   // Section 8 Integration scroll expansion progress (0 to 1)
   const [integrationProgress, setIntegrationProgress] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
 
   const heroRef = useRef(null);
   const trackRef = useRef(null);
@@ -197,9 +213,13 @@ export default function ModelsPage() {
   const workflowRef = useRef(null);
   const integrationRef = useRef(null);
   const scrollRaf = useRef(null);
+  const scrollLockTimeoutRef = useRef(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
 
     const handleMouseMove = (e) => {
       const { innerWidth, innerHeight } = window;
@@ -212,6 +232,13 @@ export default function ModelsPage() {
         rotX: -normY * 4,
         rotY: normX * 4
       });
+    };
+
+    const handleUserScrollInteraction = () => {
+      if (scrollLockTimeoutRef.current) {
+        clearTimeout(scrollLockTimeoutRef.current);
+      }
+      setManualStep(null);
     };
 
     const handleScroll = () => {
@@ -282,10 +309,17 @@ export default function ModelsPage() {
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('wheel', handleUserScrollInteraction, { passive: true });
+    window.addEventListener('touchmove', handleUserScrollInteraction, { passive: true });
+    
     return () => {
+      window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('wheel', handleUserScrollInteraction);
+      window.removeEventListener('touchmove', handleUserScrollInteraction);
       if (scrollRaf.current) cancelAnimationFrame(scrollRaf.current);
+      if (scrollLockTimeoutRef.current) clearTimeout(scrollLockTimeoutRef.current);
       clearInterval(counterInterval);
       clearInterval(rhythmInterval);
     };
@@ -310,11 +344,20 @@ export default function ModelsPage() {
 
   const scrollToStep = (idx) => {
     setManualStep(idx);
-    if (!trackRef.current) return;
-    const totalScrollable = trackRef.current.offsetHeight - window.innerHeight;
-    const stepTargetProgress = 0.18 + idx * 0.23;
-    const targetY = trackRef.current.offsetTop + totalScrollable * stepTargetProgress;
-    window.scrollTo({ top: targetY, behavior: 'smooth' });
+    if (scrollLockTimeoutRef.current) clearTimeout(scrollLockTimeoutRef.current);
+
+    if (trackRef.current) {
+      const totalScrollable = trackRef.current.offsetHeight - window.innerHeight;
+      const stepCenters = [0.23, 0.46, 0.69, 0.90];
+      const stepTargetProgress = stepCenters[idx] ?? (0.18 + idx * 0.23);
+      const targetY = trackRef.current.offsetTop + totalScrollable * stepTargetProgress;
+      window.scrollTo({ top: targetY, behavior: 'smooth' });
+    }
+
+    // Auto-release manual lock after smooth scrolling finishes
+    scrollLockTimeoutRef.current = setTimeout(() => {
+      setManualStep(null);
+    }, 700);
   };
 
   // Snappy Butter-Smooth Lab Trigger Function
@@ -369,54 +412,55 @@ export default function ModelsPage() {
 
   // Section 8 Arc Card Interpolation Functions
   const p = integrationProgress;
+  const screenScale = Math.min(1, Math.max(0.40, (windowWidth || 1200) / 1280));
   const cardTransforms = [
     {
-      x: -38 + (-607 * p),
-      y: 9 + (144 * p),
+      x: (-38 + (-607 * p)) * screenScale,
+      y: (9 + (144 * p)) * screenScale,
       rot: -1.2 + (-18.8 * p),
-      scale: 0.62 + (0.38 * p),
+      scale: (0.62 + (0.38 * p)) * (windowWidth < 640 ? 0.72 : 1),
       zIndex: 10
     },
     {
-      x: 0 + (-430 * p),
-      y: 0 + (76 * p),
+      x: (0 + (-430 * p)) * screenScale,
+      y: (0 + (76 * p)) * screenScale,
       rot: 0 + (-16 * p),
-      scale: 0.80 + (0.20 * p),
+      scale: (0.80 + (0.20 * p)) * (windowWidth < 640 ? 0.76 : 1),
       zIndex: 20
     },
     {
-      x: 0 + (-215 * p),
-      y: 0 + (23 * p),
+      x: (0 + (-215 * p)) * screenScale,
+      y: (0 + (23 * p)) * screenScale,
       rot: 0 + (-8 * p),
-      scale: 1.0,
+      scale: 1.0 * (windowWidth < 640 ? 0.82 : 1),
       zIndex: 30
     },
     {
       x: 0,
       y: 0,
       rot: 0,
-      scale: 2.45 - (1.45 * p),
+      scale: (2.45 - (1.45 * p)) * (windowWidth < 640 ? 0.85 : 1),
       zIndex: 40
     },
     {
-      x: 0 + (215 * p),
-      y: 0 + (23 * p),
+      x: (0 + (215 * p)) * screenScale,
+      y: (0 + (23 * p)) * screenScale,
       rot: 0 + (8 * p),
-      scale: 1.0,
+      scale: 1.0 * (windowWidth < 640 ? 0.82 : 1),
       zIndex: 30
     },
     {
-      x: 0 + (430 * p),
-      y: 0 + (76 * p),
+      x: (0 + (430 * p)) * screenScale,
+      y: (0 + (76 * p)) * screenScale,
       rot: 0 + (16 * p),
-      scale: 0.80 + (0.20 * p),
+      scale: (0.80 + (0.20 * p)) * (windowWidth < 640 ? 0.76 : 1),
       zIndex: 20
     },
     {
-      x: 38 + (607 * p),
-      y: 9 + (144 * p),
+      x: (38 + (607 * p)) * screenScale,
+      y: (9 + (144 * p)) * screenScale,
       rot: 1.2 + (18.8 * p),
-      scale: 0.62 + (0.38 * p),
+      scale: (0.62 + (0.38 * p)) * (windowWidth < 640 ? 0.72 : 1),
       zIndex: 10
     }
   ];
@@ -462,27 +506,27 @@ export default function ModelsPage() {
               className="text-xs sm:text-sm uppercase tracking-[0.18em] text-white font-normal"
               style={{ fontFamily: "'IBM Plex Mono', monospace" }}
             >
-              <ScrambleText text="AI THAT WORKS." duration={1.2} speed={45} delay={100} />
+              <ScrambleText text="AI THAT'S YOURS." duration={1.2} speed={45} delay={100} />
             </span>
           </div>
 
           {/* Main Hero Headline */}
           <h1 
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-[76px] font-normal tracking-[-0.025em] leading-[1.08] text-white max-w-[760px] mx-auto text-center"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-[68px] font-normal tracking-[-0.025em] leading-[1.08] text-white max-w-[700px] mx-auto text-center"
             style={{ 
               fontFamily: "'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
               letterSpacing: '0.288px'
             }}
           >
-            <span className="text-violet-drift" style={{ animationDelay: '6s' }}>Automate decisions</span><br /><span style={{ color: 'white' }}>with confidence.</span>
+            <span className="text-violet-drift" style={{ animationDelay: '6s' }}>AI models built for</span><br /><span style={{ color: 'white' }}>your institution.</span>
           </h1>
         </div>
 
         {/* Orbital Perspective Badges with subtle Parallax */}
 
-        {/* 1. VISION (Top-Left) */}
+        {/* 1. WORKS OFFLINE (Top-Left) */}
         <div 
-          className="absolute z-20 flex flex-col items-center gap-1.5 pointer-events-auto transition-transform duration-300 hover:scale-110 ease-out"
+          className="absolute z-20 hidden sm:flex flex-col items-center gap-1.5 pointer-events-auto transition-transform duration-300 hover:scale-110 ease-out"
           style={{ 
             top: '18%', 
             left: '17%',
@@ -491,20 +535,20 @@ export default function ModelsPage() {
         >
           <img 
             src="https://cdn.prod.website-files.com/694f372b123017b1e0a43316/694f9c97caa6687a94160b05_Square.png" 
-            alt="VISION Icon" 
+            alt="WORKS OFFLINE Icon" 
             className="w-3.5 h-3.5 object-contain opacity-90"
           />
           <span 
-            className="text-[11px] sm:text-xs uppercase tracking-[0.15em] text-[#9f9f9f] font-normal"
+            className="text-[11px] sm:text-xs uppercase tracking-[0.15em] text-[#9f9f9f] font-normal whitespace-nowrap"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
           >
-            <ScrambleText text="VISION" duration={1.2} speed={50} delay={400} />
+            <ScrambleText text="WORKS OFFLINE" duration={1.2} speed={50} delay={400} />
           </span>
         </div>
 
-        {/* 2. SMART (Middle-Right) */}
+        {/* 2. OWNED (Middle-Right) */}
         <div 
-          className="absolute z-20 flex flex-col items-center gap-1.5 pointer-events-auto transition-transform duration-300 hover:scale-110 ease-out"
+          className="absolute z-20 hidden sm:flex flex-col items-center gap-1.5 pointer-events-auto transition-transform duration-300 hover:scale-110 ease-out"
           style={{ 
             top: '47%', 
             right: '13%',
@@ -513,20 +557,20 @@ export default function ModelsPage() {
         >
           <img 
             src="https://cdn.prod.website-files.com/694f372b123017b1e0a43316/694f9c973c0be5bb32690004_Circle.png" 
-            alt="SMART Icon" 
+            alt="OWNED Icon" 
             className="w-3.5 h-3.5 object-contain opacity-90"
           />
           <span 
-            className="text-[11px] sm:text-xs uppercase tracking-[0.15em] text-[#9f9f9f] font-normal"
+            className="text-[11px] sm:text-xs uppercase tracking-[0.15em] text-[#9f9f9f] font-normal whitespace-nowrap"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
           >
-            <ScrambleText text="SMART" duration={1.5} speed={60} delay={800} />
+            <ScrambleText text="OWNED" duration={1.5} speed={60} delay={800} />
           </span>
         </div>
 
-        {/* 3. PRECISE (Bottom-Left) */}
+        {/* 3. TASK-SPECIFIC (Bottom-Left) */}
         <div 
-          className="absolute z-20 flex flex-col items-center gap-1.5 pointer-events-auto transition-transform duration-300 hover:scale-110 ease-out"
+          className="absolute z-20 hidden sm:flex flex-col items-center gap-1.5 pointer-events-auto transition-transform duration-300 hover:scale-110 ease-out"
           style={{ 
             bottom: '15%', 
             left: '22%',
@@ -535,14 +579,14 @@ export default function ModelsPage() {
         >
           <img 
             src="https://cdn.prod.website-files.com/694f372b123017b1e0a43316/694f9c9735e4184a62ba66f7_Triangle.png" 
-            alt="PRECISE Icon" 
+            alt="TASK-SPECIFIC Icon" 
             className="w-3.5 h-3.5 object-contain opacity-90"
           />
           <span 
-            className="text-[11px] sm:text-xs uppercase tracking-[0.15em] text-[#9f9f9f] font-normal"
+            className="text-[11px] sm:text-xs uppercase tracking-[0.15em] text-[#9f9f9f] font-normal whitespace-nowrap"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
           >
-            <ScrambleText text="PRECISE" duration={1.8} speed={65} delay={1200} />
+            <ScrambleText text="TASK-SPECIFIC" duration={1.8} speed={65} delay={1200} />
           </span>
         </div>
 
@@ -553,48 +597,43 @@ export default function ModelsPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 2: ECOSYSTEM / PARTNERS — Exact Quantara Replica                  */}
+      {/* SECTION 2: BACKED BY / PARTNERS                                           */}
       {/* ========================================================================= */}
-      <section className="relative w-full bg-[#000000] z-10 py-[150px] overflow-hidden">
+      <section className="relative w-full bg-[#000000] z-10 py-[120px] md:py-[140px] overflow-hidden">
         <div className="w-full max-w-[1440px] mx-auto px-6 md:px-14 flex flex-col">
           {/* Title Row */}
-          <div className="flex items-start justify-between mb-[60px] flex-wrap gap-6">
-            {/* Left Title: 2-Line arrangement */}
+          <div className="flex items-start justify-between mb-[50px] md:mb-[60px] flex-wrap gap-6">
+            {/* Left Title */}
             <div 
               className="text-[21.6px] font-light text-white leading-[28.8px] max-w-md tracking-normal"
               style={{ fontFamily: "'Inter Tight', sans-serif" }}
             >
-              Where Technology Meets<br />Partnership
+              Building in partnership with
             </div>
 
-            {/* Right Indicator: ECOSYSTEM + 5-dot cross icon */}
+            {/* Right Indicator: BACKED BY */}
             <div className="flex items-center gap-3">
               <span 
                 className="text-[14.4px] font-normal tracking-[0.2em] text-white uppercase"
                 style={{ fontFamily: "'IBM Plex Mono', monospace" }}
               >
-                <ScrambleText text="ECOSYSTEM" duration={1.6} speed={60} delay={600} />
+                <ScrambleText text="BACKED BY" duration={1.6} speed={60} delay={600} />
               </span>
-              <div className="w-3.5 h-3.5 flex items-center justify-center text-white">
-                <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5">
-                  <path d="M7 1h2v5h5v2H9v5H7V8H2V6h5V1z" />
-                </svg>
-              </div>
             </div>
           </div>
 
-          {/* Partners Infinite Seamless Ticker */}
-          <div className="relative w-full overflow-hidden py-4">
-            <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#000000] via-[#000000]/80 to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#000000] via-[#000000]/80 to-transparent z-10 pointer-events-none" />
-
-            <div className="flex items-center gap-[115px] w-max animate-quantara-marquee">
-              {[...PARTNER_LOGOS, ...PARTNER_LOGOS, ...PARTNER_LOGOS, ...PARTNER_LOGOS].map((logo, idx) => (
-                <div key={idx} className="shrink-0 flex items-center justify-center py-2 transition-all duration-300">
+          {/* Static 4-Logos Grid */}
+          <div className="w-full py-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 items-center justify-items-center gap-8 sm:gap-12 lg:gap-16 w-full">
+              {PARTNER_LOGOS.map((logo) => (
+                <div 
+                  key={logo.id} 
+                  className="flex items-center justify-center p-4 w-full h-24 sm:h-28 md:h-32 transition-all duration-300 group cursor-pointer"
+                >
                   <img 
                     src={logo.src} 
                     alt={logo.alt} 
-                    className="h-10 sm:h-11 w-auto object-contain brightness-[0.45] hover:brightness-100 transition-all duration-300"
+                    className={`${logo.imgClass} w-auto object-contain transition-all duration-500 grayscale opacity-55 brightness-90 contrast-100 group-hover:grayscale-0 group-hover:opacity-100 group-hover:brightness-100 group-hover:contrast-100 group-hover:scale-105`}
                     loading="lazy"
                   />
                 </div>
@@ -603,7 +642,7 @@ export default function ModelsPage() {
           </div>
 
           {/* Bottom Dashed Divider Line */}
-          <div className="w-full mt-[60px] border-b border-dashed border-[#5d5d5d]" />
+          <div className="w-full mt-[50px] md:mt-[60px] border-b border-dashed border-[#5d5d5d]" />
         </div>
       </section>
 
@@ -615,14 +654,22 @@ export default function ModelsPage() {
         id="product" 
         className="relative w-full h-[450vh] bg-[#000000] z-10"
       >
-        <div className="sticky top-0 w-full h-screen min-h-[640px] flex flex-col justify-between px-6 md:px-12 pt-16 md:pt-20 pb-4 max-w-[1440px] mx-auto overflow-hidden">
+        <div className="sticky top-0 w-full h-screen min-h-[580px] overflow-hidden">
           
+          {/* Subtle & Classy Purple Ambient Corner Gradients on Full Viewport Width */}
+          <div className="absolute top-0 right-0 w-[550px] h-[550px] bg-[radial-gradient(circle_at_100%_0%,rgba(168,85,247,0.18)_0%,rgba(126,34,206,0.05)_45%,transparent_75%)] pointer-events-none z-0 blur-2xl" />
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[radial-gradient(circle_at_0%_100%,rgba(147,51,234,0.14)_0%,rgba(109,40,217,0.03)_40%,transparent_70%)] pointer-events-none z-0 blur-2xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[radial-gradient(ellipse_at_center,rgba(147,51,234,0.09)_0%,transparent_75%)] pointer-events-none z-0 blur-3xl" />
+
+          {/* Centered Content Container */}
+          <div className="relative w-full h-full flex flex-col justify-between px-4 sm:px-6 md:px-10 pt-8 sm:pt-10 md:pt-14 pb-4 max-w-[1300px] mx-auto z-10">
+
           {/* Top Title Row: EXACT Live Spacing & Indentation */}
-          <div className="flex items-start justify-between w-full z-30 pt-2">
-            <div className="flex items-start gap-8 sm:gap-16 md:gap-24">
+          <div className="flex items-start justify-between w-full z-30 pt-1 flex-wrap gap-3">
+            <div className="flex items-start gap-4 sm:gap-8 md:gap-16">
               
               {/* 4x4 Plus Grid with Animated Rhythmic Color Waves matching Spendly Purple Theme */}
-              <div className="flex items-start gap-4 select-none font-mono tracking-widest">
+              <div className="flex items-start gap-2 sm:gap-3 select-none font-mono tracking-widest">
                 {[0, 1, 2, 3].map((colIdx) => {
                   const PLUS_RHYTHM_PALETTES = [
                     ['#9575CD', '#7E57C2', '#673AB7', '#512DA8'],
@@ -635,7 +682,7 @@ export default function ModelsPage() {
                   const currentPalette = PLUS_RHYTHM_PALETTES[plusRhythm % PLUS_RHYTHM_PALETTES.length];
 
                   return (
-                    <div key={colIdx} className="flex flex-col gap-1.5">
+                    <div key={colIdx} className="flex flex-col gap-1">
                       {[0, 1, 2, 3].map((rowIdx) => {
                         let color = currentPalette[rowIdx];
                         if (rowIdx === 3) {
@@ -645,7 +692,7 @@ export default function ModelsPage() {
                         return (
                           <span 
                             key={rowIdx} 
-                            className="font-normal text-base leading-none select-none"
+                            className="font-normal text-xs sm:text-sm leading-none select-none"
                             style={{
                               color: color,
                               textShadow: `0 0 6px ${color}60`,
@@ -661,55 +708,48 @@ export default function ModelsPage() {
                 })}
               </div>
 
-              <div className="pt-2">
+              <div className="pt-1">
                 <span 
-                  className="text-xs uppercase tracking-[0.2em] text-[#9f9f9f] font-mono"
+                  className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-[#9f9f9f] font-mono"
                   style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                 >
-                  <ScrambleText text="ABOUT US" duration={1.2} speed={45} delay={100} />
+                  <ScrambleText text="HOW IT WORKS" duration={1.2} speed={45} delay={100} />
                 </span>
               </div>
             </div>
 
-            <div className="flex flex-col items-start min-w-[340px] md:min-w-[480px]">
-              {activeStep === -1 ? (
+            <div className="flex flex-col items-start min-w-[240px] sm:min-w-[300px] md:min-w-[420px]">
+              {activeStep === -1 && (
                 <div 
-                  className="flex flex-col text-left font-normal leading-[1.12] tracking-tight transition-all duration-500 text-3xl sm:text-4xl md:text-[56px]"
+                  className="flex flex-col text-left font-normal leading-[1.12] tracking-tight transition-all duration-500 text-xl sm:text-3xl md:text-[46px]"
                   style={{ fontFamily: "'Inter Tight', sans-serif" }}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-2.5">
                     <span style={{ color: '#B39DDB' }}>The</span>
                     <span style={{ color: 'rgb(253, 252, 253)' }}>Core</span>
                     <span style={{ color: '#ffffff' }}>Platform</span>
                   </div>
-                  <div className="flex items-center gap-3 ml-[6vw] sm:ml-[8vw] md:ml-[140px]">
+                  <div className="flex items-center gap-2 sm:gap-2.5 ml-[20px] sm:ml-[40px] md:ml-[110px]">
                     <span style={{ color: '#9575CD' }}>Powering</span>
                     <span style={{ color: '#ffffff' }}>Tools</span>
                   </div>
-                </div>
-              ) : (
-                <div 
-                  className="text-right w-full text-lg sm:text-xl md:text-2xl font-light text-white/80 leading-snug tracking-tight transition-all duration-500 whitespace-pre-line"
-                  style={{ fontFamily: "'Inter Tight', sans-serif" }}
-                >
-                  {currentStep.subtitle}
                 </div>
               )}
             </div>
           </div>
 
           {/* Center Interactive Layout: Step Nav + 3D Diamond Center + Big Title */}
-          <div className="relative w-full flex-1 flex items-center justify-between z-20 my-auto">
+          <div className="relative w-full flex-1 flex flex-col md:flex-row items-center justify-center md:justify-between z-20 my-auto gap-3 sm:gap-4 md:gap-8">
             
-            {/* Left Column: 01, 02, 03, 04 Vertical Step Selector with Solid Active Pill */}
-            <div className={`flex flex-col items-center gap-3 z-30 transition-opacity duration-500 ${activeStep === -1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+            {/* Step Selector: Horizontal on small mobile, Vertical on md+ */}
+            <div className={`flex flex-row md:flex-col items-center justify-center gap-2 sm:gap-3 z-30 transition-opacity duration-500 shrink-0 ${activeStep === -1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
               {PLATFORM_STEPS.map((step, idx) => {
                 const isActive = activeStep === idx;
                 return (
                   <React.Fragment key={step.id}>
                     <button
                       onClick={() => scrollToStep(idx)}
-                      className={`w-11 h-11 rounded-full flex items-center justify-center text-xs md:text-sm font-mono transition-all duration-500 cursor-pointer border ${
+                      className={`w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center text-[10px] sm:text-xs md:text-sm font-mono transition-all duration-500 cursor-pointer border ${
                         isActive
                           ? 'bg-[#512DA8] text-white font-bold border-[#7E57C2] shadow-[0_0_16px_rgba(103,58,183,0.7)] scale-105'
                           : 'bg-[#09090c] border-white/20 text-white/50 hover:text-white hover:border-white/50'
@@ -719,16 +759,19 @@ export default function ModelsPage() {
                       {step.id}
                     </button>
                     {idx < PLATFORM_STEPS.length - 1 && (
-                      <div className="w-[1px] h-4 bg-white/20" />
+                      <>
+                        <div className="hidden md:block w-[1px] h-3.5 bg-white/20" />
+                        <div className="block md:hidden w-3 h-[1px] bg-white/20" />
+                      </>
                     )}
                   </React.Fragment>
                 );
               })}
             </div>
 
-            {/* 3D Isometric Diamond Layout — Pixel-Perfect Symmetrical Grid Matching Reference */}
+            {/* 3D Isometric Diamond Layout — Symmetrical Grid Matching Reference */}
             <div 
-              className="relative mx-auto w-[min(760px,56vw)] max-w-[800px] aspect-[845/615]"
+              className="relative mx-auto w-[min(310px,76vw)] sm:w-[380px] md:w-[min(510px,36vw)] max-w-[530px] aspect-[845/615] shrink-0"
               style={{
                 backgroundImage: 'url("https://cdn.prod.website-files.com/694f372b123017b1e0a43316/6952a960f6d8b19db76f89a9_extrude-group-ground.png")',
                 backgroundPosition: 'center center',
@@ -736,7 +779,7 @@ export default function ModelsPage() {
                 backgroundSize: 'contain',
               }}
             >
-              {/* Block 01: Top Quadrant (Analytics) */}
+              {/* Block 01: Top Quadrant (Data) */}
               <div 
                 onClick={() => scrollToStep(0)}
                 onMouseEnter={() => setHoveredBlock(0)}
@@ -748,10 +791,10 @@ export default function ModelsPage() {
                   width: '37.0%',
                   aspectRatio: '276 / 184',
                   transform: (activeStep === 0 || hoveredBlock === 0)
-                    ? 'translate(-50%, calc(-50% - 15px)) scale(1.02)'
-                    : 'translate(-50%, -50%) scale(1)',
-                  zIndex: activeStep === 0 ? 35 : (hoveredBlock === 0 ? 25 : 10),
-                  filter: activeStep === 0 ? 'drop-shadow(0 8px 16px rgba(81, 45, 168, 0.25))' : 'none',
+                    ? 'translate(-50%, calc(-50% - 14px))'
+                    : 'translate(-50%, -50%)',
+                  zIndex: 10,
+                  filter: (activeStep === 0 || hoveredBlock === 0) ? 'drop-shadow(0 8px 16px rgba(81, 45, 168, 0.25))' : 'none',
                 }}
               >
                 <img 
@@ -776,7 +819,7 @@ export default function ModelsPage() {
                 />
               </div>
 
-              {/* Block 03: Left Quadrant (Auto) */}
+              {/* Block 03: Left Quadrant (Model) */}
               <div 
                 onClick={() => scrollToStep(2)}
                 onMouseEnter={() => setHoveredBlock(2)}
@@ -788,10 +831,10 @@ export default function ModelsPage() {
                   width: '37.0%',
                   aspectRatio: '276 / 184',
                   transform: (activeStep === 2 || hoveredBlock === 2)
-                    ? 'translate(-50%, calc(-50% - 15px)) scale(1.02)'
-                    : 'translate(-50%, -50%) scale(1)',
-                  zIndex: activeStep === 2 ? 35 : (hoveredBlock === 2 ? 25 : 15),
-                  filter: activeStep === 2 ? 'drop-shadow(0 8px 16px rgba(81, 45, 168, 0.25))' : 'none',
+                    ? 'translate(-50%, calc(-50% - 14px))'
+                    : 'translate(-50%, -50%)',
+                  zIndex: 20,
+                  filter: (activeStep === 2 || hoveredBlock === 2) ? 'drop-shadow(0 8px 16px rgba(81, 45, 168, 0.25))' : 'none',
                 }}
               >
                 <img 
@@ -816,7 +859,7 @@ export default function ModelsPage() {
                 />
               </div>
 
-              {/* Block 02: Right Quadrant (Data) */}
+              {/* Block 02: Right Quadrant (Requirement) */}
               <div 
                 onClick={() => scrollToStep(1)}
                 onMouseEnter={() => setHoveredBlock(1)}
@@ -828,10 +871,10 @@ export default function ModelsPage() {
                   width: '37.0%',
                   aspectRatio: '276 / 184',
                   transform: (activeStep === 1 || hoveredBlock === 1)
-                    ? 'translate(-50%, calc(-50% - 15px)) scale(1.02)'
-                    : 'translate(-50%, -50%) scale(1)',
-                  zIndex: activeStep === 1 ? 35 : (hoveredBlock === 1 ? 25 : 15),
-                  filter: activeStep === 1 ? 'drop-shadow(0 8px 16px rgba(81, 45, 168, 0.25))' : 'none',
+                    ? 'translate(-50%, calc(-50% - 14px))'
+                    : 'translate(-50%, -50%)',
+                  zIndex: 20,
+                  filter: (activeStep === 1 || hoveredBlock === 1) ? 'drop-shadow(0 8px 16px rgba(81, 45, 168, 0.25))' : 'none',
                 }}
               >
                 <img 
@@ -856,7 +899,7 @@ export default function ModelsPage() {
                 />
               </div>
 
-              {/* Block 04: Bottom Quadrant (Security) */}
+              {/* Block 04: Bottom Quadrant (Inference) */}
               <div 
                 onClick={() => scrollToStep(3)}
                 onMouseEnter={() => setHoveredBlock(3)}
@@ -868,10 +911,10 @@ export default function ModelsPage() {
                   width: '37.0%',
                   aspectRatio: '276 / 184',
                   transform: (activeStep === 3 || hoveredBlock === 3)
-                    ? 'translate(-50%, calc(-50% - 15px)) scale(1.02)'
-                    : 'translate(-50%, -50%) scale(1)',
-                  zIndex: activeStep === 3 ? 35 : (hoveredBlock === 3 ? 25 : 20),
-                  filter: activeStep === 3 ? 'drop-shadow(0 8px 16px rgba(81, 45, 168, 0.25))' : 'none',
+                    ? 'translate(-50%, calc(-50% - 14px))'
+                    : 'translate(-50%, -50%)',
+                  zIndex: 30,
+                  filter: (activeStep === 3 || hoveredBlock === 3) ? 'drop-shadow(0 8px 16px rgba(81, 45, 168, 0.25))' : 'none',
                 }}
               >
                 <img 
@@ -897,47 +940,47 @@ export default function ModelsPage() {
               </div>
             </div>
 
-            {/* Right: Huge Animated Title */}
-            <div className="w-[280px] text-right flex justify-end z-20">
-              {currentStep && (
-                <div 
-                  key={currentStep.id + '_big'}
-                  className="text-5xl sm:text-6xl md:text-7xl lg:text-[76px] font-normal text-white/90 tracking-tight transition-all duration-500 animate-fadeIn"
-                  style={{ 
-                    fontFamily: "'Inter Tight', sans-serif",
-                    backgroundImage: 'linear-gradient(325deg, #71717a, #ffffff)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent'
-                  }}
-                >
-                  {currentStep.title}
+            {/* Right: Dynamic YOUR {word} Heading + Paragraph Description */}
+            <div className="w-full md:w-[320px] lg:w-[410px] shrink-0 flex flex-col items-center md:items-start text-center md:text-left z-20 transition-all duration-500 px-2 md:px-0 md:pr-1">
+              {currentStep ? (
+                <div key={currentStep.id} className="flex flex-col items-center md:items-start animate-fadeIn w-full">
+                  {/* Fixed YOUR in Purple Gradient + Changing Word in White */}
+                  <h3 
+                    className="text-2xl sm:text-3xl md:text-[42px] lg:text-[48px] font-normal tracking-tight leading-[1.1] flex flex-wrap items-baseline justify-center md:justify-start gap-x-2 sm:gap-x-2.5 select-none"
+                    style={{ fontFamily: "'Inter Tight', sans-serif" }}
+                  >
+                    <span 
+                      className="font-bold tracking-tight"
+                      style={{
+                        backgroundImage: 'linear-gradient(135deg, #C084FC 0%, #A855F7 50%, #7E22CE 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                      }}
+                    >
+                      YOUR
+                    </span>
+                    <span className="text-white font-medium">
+                      {currentStep.word}
+                    </span>
+                  </h3>
+
+                  {/* Body description text directly below YOUR Data / Requirement / Model / Inference */}
+                  <p 
+                    className="mt-2 sm:mt-4 md:mt-5 text-xs sm:text-sm md:text-[16px] text-[#b0b0b8] font-light leading-relaxed max-w-[340px] sm:max-w-[360px] lg:max-w-[390px] text-center md:text-left"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    {currentStep.desc}
+                  </p>
                 </div>
-              )}
+              ) : null}
             </div>
           </div>
 
-          {/* Bottom Row Specs */}
-          <div className="flex items-end justify-between w-full z-30 pb-2">
-            <div />
-            {currentStep && (
-              <div className="flex items-start gap-12 font-mono">
-                <div className="flex flex-col items-end gap-1">
-                  <span className="text-[11px] uppercase tracking-[0.2em] text-[#888888]">SYSTEM</span>
-                  <span className="text-xs sm:text-sm uppercase tracking-[0.15em] text-white font-medium">
-                    <ScrambleText text={currentStep.system} duration={1.0} speed={40} key={currentStep.id + '_sys'} />
-                  </span>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  <span className="text-[11px] uppercase tracking-[0.2em] text-[#888888]">PERFOMANCE</span>
-                  <span className="text-xs sm:text-sm uppercase tracking-[0.15em] text-white font-medium">
-                    <ScrambleText text={currentStep.performance} duration={1.0} speed={40} key={currentStep.id + '_perf'} />
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Bottom Row Spacing */}
+          <div className="w-full z-30 pb-2" />
         </div>
-      </section>
+      </div>
+    </section>
 
       {/* ========================================================================= */}
       {/* SECTION 4: THE FEATURES / ORBIT / CIRCULAR DIAL                           */}
@@ -1285,10 +1328,10 @@ export default function ModelsPage() {
         id="workflow" 
         className="relative w-full h-[350vh] bg-[#000000] z-10"
       >
-        <div className="sticky top-0 w-full h-screen flex items-center justify-between px-6 md:px-14 max-w-[1440px] mx-auto overflow-hidden">
+        <div className="sticky top-0 w-full h-screen flex flex-col lg:flex-row items-center justify-between px-6 md:px-14 max-w-[1440px] mx-auto overflow-hidden">
           
           {/* Left Column: Vertical Ruler + Circular Radial Spotlight + Text Content */}
-          <div className="relative w-full lg:w-[48%] h-full flex flex-col justify-between pt-[110px] pb-12 z-20">
+          <div className="relative w-full lg:w-[48%] h-auto lg:h-full flex flex-col justify-between pt-8 sm:pt-12 lg:pt-[110px] pb-4 lg:pb-12 z-20">
             
             {/* Top Scramble Badge: PARTIAL >>> TASK [04] */}
             <div className="flex items-center gap-3">
@@ -1300,7 +1343,7 @@ export default function ModelsPage() {
             </div>
 
             {/* Center Area: Ruler Column + Radial Glow + Big Title & Description */}
-            <div className="relative my-auto flex items-start gap-8">
+            <div className="relative my-4 lg:my-auto flex items-start gap-4 sm:gap-8">
               
               {/* Vertical Tick Ruler Column */}
               <div className="flex flex-col items-center gap-2 font-mono text-[10px] text-white/30 select-none pt-2">
@@ -1319,9 +1362,9 @@ export default function ModelsPage() {
               />
 
               {/* Dynamic Title and Description */}
-              <div className="relative z-10 flex flex-col gap-4">
+              <div className="relative z-10 flex flex-col gap-2 sm:gap-4">
                 <h2 
-                  className="text-4xl sm:text-5xl md:text-[62px] font-normal leading-[1.08] tracking-tight text-white transition-all duration-500 animate-fadeIn"
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-[62px] font-normal leading-[1.08] tracking-tight text-white transition-all duration-500 animate-fadeIn"
                   style={{ 
                     fontFamily: "'Inter Tight', sans-serif",
                     backgroundImage: 'linear-gradient(325deg, rgb(160, 160, 160), rgb(255, 255, 255))',
@@ -1334,7 +1377,7 @@ export default function ModelsPage() {
                 </h2>
 
                 <p 
-                  className="text-sm sm:text-base text-white/70 max-w-md font-light leading-relaxed transition-all duration-500"
+                  className="text-xs sm:text-sm md:text-base text-white/70 max-w-md font-light leading-relaxed transition-all duration-500"
                   key={activeWorkflowStep + '_wfdesc'}
                 >
                   {WORKFLOW_STEPS[activeWorkflowStep].desc.replace(WORKFLOW_STEPS[activeWorkflowStep].highlight, '')}
@@ -1344,12 +1387,12 @@ export default function ModelsPage() {
             </div>
 
             {/* Bottom Step Pills Selector */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               {WORKFLOW_STEPS.map((s, idx) => (
                 <button
                   key={s.id}
                   onClick={() => scrollToWorkflowStep(idx)}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-mono transition-all cursor-pointer border ${
+                  className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-mono transition-all cursor-pointer border ${
                     activeWorkflowStep === idx
                       ? 'bg-[#512DA8] text-white font-bold border-[#7E57C2] shadow-[0_0_18px_rgba(103,58,183,0.8)] scale-110'
                       : 'bg-[#111116] border-white/20 text-white/50 hover:text-white hover:border-white/50'
@@ -1364,7 +1407,7 @@ export default function ModelsPage() {
 
           {/* Right Column: 3D Diagonal Isometric Cascade Cards */}
           <div 
-            className="relative w-full lg:w-[52%] h-full flex items-center justify-center z-10"
+            className="relative w-full lg:w-[52%] h-auto lg:h-full flex items-center justify-center z-10 scale-[0.62] sm:scale-[0.80] lg:scale-100 origin-center my-auto py-4 lg:py-0"
             style={{
               backgroundImage: 'url("https://cdn.prod.website-files.com/694f372b123017b1e0a43316/695784b8fedf0b3103908ec2_grid%20bg.png")',
               backgroundPosition: '30% 50%',
@@ -1582,7 +1625,7 @@ export default function ModelsPage() {
       {/* FOOTER — Shared Spendly Footer Component                                  */}
       {/* ========================================================================= */}
       <div className="bg-[#030305] border-t border-white/10">
-        <Footer />
+        <Footer minimal={true} />
       </div>
 
       {/* Scoped CSS for Infinite Continuous Ticker & Animations */}

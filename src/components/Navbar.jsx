@@ -123,7 +123,7 @@ const Navbar = ({ openContactModal }) => {
                       : 'hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.45)]'
                   }`}
                 >
-                  Models
+                  Institutions
                 </Link>
               </div>
             </div>
@@ -224,7 +224,7 @@ const Navbar = ({ openContactModal }) => {
                   }`} />
                 </Link>
 
-                {/* Nav Option 2.5: Models */}
+                {/* Nav Option 2.5: Institutions */}
                 <Link 
                   to="/models" 
                   onClick={(e) => handleNavClick(e, '/models')} 
@@ -240,7 +240,7 @@ const Navbar = ({ openContactModal }) => {
                         ? 'bg-[#a882ff] shadow-[0_0_8px_#a882ff]' 
                         : 'bg-white/20 group-hover:bg-white/50'
                     }`} />
-                    <span className="text-sm sm:text-base font-semibold tracking-tight whitespace-nowrap">Models</span>
+                    <span className="text-sm sm:text-base font-semibold tracking-tight whitespace-nowrap">Institutions</span>
                   </div>
                   <ArrowRight className={`w-4 h-4 shrink-0 ml-2 transition-all duration-200 ${
                     location.pathname === '/models'
