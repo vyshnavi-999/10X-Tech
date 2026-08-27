@@ -656,11 +656,6 @@ export default function ModelsPage() {
       >
         <div className="sticky top-0 w-full h-screen min-h-[580px] overflow-hidden">
           
-          {/* Subtle & Classy Purple Ambient Corner Gradients on Full Viewport Width */}
-          <div className="absolute top-0 right-0 w-[550px] h-[550px] bg-[radial-gradient(circle_at_100%_0%,rgba(168,85,247,0.18)_0%,rgba(126,34,206,0.05)_45%,transparent_75%)] pointer-events-none z-0 blur-2xl" />
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[radial-gradient(circle_at_0%_100%,rgba(147,51,234,0.14)_0%,rgba(109,40,217,0.03)_40%,transparent_70%)] pointer-events-none z-0 blur-2xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[radial-gradient(ellipse_at_center,rgba(147,51,234,0.09)_0%,transparent_75%)] pointer-events-none z-0 blur-3xl" />
-
           {/* Centered Content Container */}
           <div className="relative w-full h-full flex flex-col justify-between px-4 sm:px-6 md:px-10 pt-8 sm:pt-10 md:pt-14 pb-4 max-w-[1300px] mx-auto z-10">
 
