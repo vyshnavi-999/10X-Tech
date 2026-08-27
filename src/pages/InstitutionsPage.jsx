@@ -514,7 +514,7 @@ export default function InstitutionsPage() {
           <h1 
             className="text-4xl sm:text-5xl md:text-6xl lg:text-[68px] font-normal tracking-[-0.025em] leading-[1.08] text-white max-w-[700px] mx-auto text-center"
             style={{ 
-              fontFamily: "'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+              fontFamily: "'REM', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
               letterSpacing: '0.288px'
             }}
           >
@@ -606,7 +606,7 @@ export default function InstitutionsPage() {
             {/* Left Title */}
             <div 
               className="text-base sm:text-lg md:text-[20px] font-light text-white/90 leading-tight tracking-normal"
-              style={{ fontFamily: "'Inter Tight', sans-serif" }}
+              style={{ fontFamily: "'REM', sans-serif" }}
             >
               Building in partnership with
             </div>
@@ -717,7 +717,7 @@ export default function InstitutionsPage() {
               {activeStep === -1 && (
                 <div 
                   className="flex flex-col text-left font-normal leading-[1.12] tracking-tight transition-all duration-500 text-xl sm:text-3xl md:text-[46px]"
-                  style={{ fontFamily: "'Inter Tight', sans-serif" }}
+                  style={{ fontFamily: "'REM', sans-serif" }}
                 >
                   <div className="flex items-center gap-2 sm:gap-2.5">
                     <span style={{ color: '#B39DDB' }}>The</span>
@@ -936,13 +936,13 @@ export default function InstitutionsPage() {
             </div>
 
             {/* Right: Dynamic YOUR {word} Heading + Paragraph Description */}
-            <div className="w-full md:w-[320px] lg:w-[410px] shrink-0 flex flex-col items-center md:items-start text-center md:text-left z-20 transition-all duration-500 px-2 md:px-0 md:pr-1">
+            <div className="w-full md:w-[380px] lg:w-[460px] shrink-0 flex flex-col items-center md:items-start text-center md:text-left z-20 transition-all duration-500 px-2 md:px-0">
               {currentStep ? (
                 <div key={currentStep.id} className="flex flex-col items-center md:items-start animate-fadeIn w-full">
-                  {/* Fixed YOUR in Purple Gradient + Changing Word in White */}
+                  {/* Fixed YOUR in Purple Gradient + Changing Word in White — Single Line Always */}
                   <h3 
-                    className="text-2xl sm:text-3xl md:text-[42px] lg:text-[48px] font-normal tracking-tight leading-[1.1] flex flex-wrap items-baseline justify-center md:justify-start gap-x-2 sm:gap-x-2.5 select-none"
-                    style={{ fontFamily: "'Inter Tight', sans-serif" }}
+                    className="text-2xl sm:text-3xl md:text-[34px] lg:text-[42px] xl:text-[48px] font-normal tracking-tight leading-[1.1] flex flex-nowrap whitespace-nowrap items-baseline justify-center md:justify-start gap-x-2 sm:gap-x-2.5 select-none"
+                    style={{ fontFamily: "'REM', sans-serif" }}
                   >
                     <span 
                       className="font-bold tracking-tight"
@@ -961,8 +961,8 @@ export default function InstitutionsPage() {
 
                   {/* Body description text directly below YOUR Data / Requirement / Model / Inference */}
                   <p 
-                    className="mt-2 sm:mt-4 md:mt-5 text-xs sm:text-sm md:text-[16px] text-[#b0b0b8] font-light leading-relaxed max-w-[340px] sm:max-w-[360px] lg:max-w-[390px] text-center md:text-left"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
+                    className="mt-2 sm:mt-4 md:mt-5 text-xs sm:text-sm md:text-[15px] lg:text-[16px] text-[#b0b0b8] font-light leading-relaxed max-w-[340px] sm:max-w-[380px] lg:max-w-[420px] text-center md:text-left"
+                    style={{ fontFamily: "'REM', sans-serif" }}
                   >
                     {currentStep.desc}
                   </p>
@@ -994,7 +994,7 @@ export default function InstitutionsPage() {
               </div>
               <h2 
                 className="text-4xl sm:text-5xl md:text-[56px] font-normal text-white tracking-tight leading-none"
-                style={{ fontFamily: "'Inter Tight', sans-serif" }}
+                style={{ fontFamily: "'REM', sans-serif" }}
               >
                 <span className="text-violet-drift-b" style={{ animationDelay: '4s' }}>The Features</span>
               </h2>
@@ -1042,7 +1042,7 @@ export default function InstitutionsPage() {
               </div>
 
               <div className="flex flex-col gap-2 pt-4">
-                <div className="text-lg font-medium text-white" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+                <div className="text-lg font-medium text-white" style={{ fontFamily: "'REM', sans-serif" }}>
                   Autonomous Logic
                 </div>
                 <div className="text-xs sm:text-sm text-white/60 leading-relaxed font-light">
@@ -1062,7 +1062,7 @@ export default function InstitutionsPage() {
               </div>
 
               <div className="flex flex-col gap-2 pt-4">
-                <div className="text-lg font-medium text-white" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+                <div className="text-lg font-medium text-white" style={{ fontFamily: "'REM', sans-serif" }}>
                   Intelligent Automation
                 </div>
                 <div className="text-xs sm:text-sm text-white/60 leading-relaxed font-light">
@@ -1096,7 +1096,7 @@ export default function InstitutionsPage() {
 
               <div className="flex flex-col gap-2 pt-4">
                 <div className="flex items-center justify-between">
-                  <div className="text-lg font-medium text-white" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+                  <div className="text-lg font-medium text-white" style={{ fontFamily: "'REM', sans-serif" }}>
                     Continuous Evolution
                   </div>
                   <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#9575CD]">
@@ -1127,7 +1127,7 @@ export default function InstitutionsPage() {
           <div className="flex items-center justify-center flex-wrap gap-4 mb-6 z-30">
             <h2 
               className="text-4xl sm:text-5xl md:text-[56px] font-normal leading-none tracking-tight flex items-center flex-wrap justify-center gap-3 select-none"
-              style={{ fontFamily: "'Inter Tight', sans-serif" }}
+              style={{ fontFamily: "'REM', sans-serif" }}
             >
               <span className="text-[#888888] font-light">From</span>
               <span className={!isLabIntelegent ? "text-white font-normal transition-colors duration-300" : "text-[#888888] font-light transition-colors duration-300"}>
@@ -1161,7 +1161,7 @@ export default function InstitutionsPage() {
               {/* Card 1: Bottleneck Detected (4-Quadrant Donut Ring) */}
               <div className="bg-[#070709] border border-[#222226] rounded-lg p-0 flex flex-col justify-between overflow-hidden min-h-[380px] shadow-2xl transition-all duration-300">
                 {/* Header Bar */}
-                <div className="bg-[#0e0e12] px-6 py-4 border-b border-[#1c1c20] text-white/90 text-sm font-normal" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+                <div className="bg-[#0e0e12] px-6 py-4 border-b border-[#1c1c20] text-white/90 text-sm font-normal" style={{ fontFamily: "'REM', sans-serif" }}>
                   Bottleneck Detected
                 </div>
 
@@ -1209,7 +1209,7 @@ export default function InstitutionsPage() {
                 
                 {/* Card 2: Process Efficiency (Fast Smooth Animated 67% -> 99%) */}
                 <div className="bg-[#070709] border border-[#222226] rounded-lg p-6 flex flex-col justify-between shadow-2xl transition-all duration-300">
-                  <div className="text-white/80 text-sm font-normal mb-6" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+                  <div className="text-white/80 text-sm font-normal mb-6" style={{ fontFamily: "'REM', sans-serif" }}>
                     Process Efficiency
                   </div>
                   <div className="flex items-center gap-4">
@@ -1225,7 +1225,7 @@ export default function InstitutionsPage() {
                 {/* Card 3: Data Sync, Validation, and Report Rows */}
                 <div className="bg-[#070709] border border-[#222226] rounded-lg p-6 flex flex-col gap-4 shadow-2xl transition-all duration-300">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-normal text-white" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+                    <span className="text-sm font-normal text-white" style={{ fontFamily: "'REM', sans-serif" }}>
                       Data Sync
                     </span>
                     <span className="px-5 py-1 bg-[#2A1454] border border-[#673AB7] text-[#B39DDB] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(103,58,183,0.5)]">
@@ -1233,7 +1233,7 @@ export default function InstitutionsPage() {
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-normal text-white" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+                    <span className="text-sm font-normal text-white" style={{ fontFamily: "'REM', sans-serif" }}>
                       Validation
                     </span>
                     {isLabIntelegent ? (
@@ -1247,7 +1247,7 @@ export default function InstitutionsPage() {
                     )}
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-normal text-white" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+                    <span className="text-sm font-normal text-white" style={{ fontFamily: "'REM', sans-serif" }}>
                       Report
                     </span>
                     <span className="px-5 py-1 bg-[#2A1454] border border-[#673AB7] text-[#B39DDB] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(103,58,183,0.5)]">
@@ -1261,7 +1261,7 @@ export default function InstitutionsPage() {
               {/* Card 4: Data Scatter (Chaotic vs Linear Regression) */}
               <div className="bg-[#070709] border border-[#222226] rounded-lg p-0 flex flex-col justify-between overflow-hidden min-h-[260px] shadow-2xl transition-all duration-300">
                 {/* Header Bar */}
-                <div className="bg-[#0e0e12] px-6 py-4 border-b border-[#1c1c20] text-white/90 text-sm font-normal" style={{ fontFamily: "'Inter Tight', sans-serif" }}>
+                <div className="bg-[#0e0e12] px-6 py-4 border-b border-[#1c1c20] text-white/90 text-sm font-normal" style={{ fontFamily: "'REM', sans-serif" }}>
                   Data Scatter
                 </div>
 
@@ -1361,7 +1361,7 @@ export default function InstitutionsPage() {
                 <h2 
                   className="text-3xl sm:text-4xl md:text-5xl lg:text-[62px] font-normal leading-[1.08] tracking-tight text-white transition-all duration-500 animate-fadeIn"
                   style={{ 
-                    fontFamily: "'Inter Tight', sans-serif",
+                    fontFamily: "'REM', sans-serif",
                     backgroundImage: 'linear-gradient(325deg, rgb(160, 160, 160), rgb(255, 255, 255))',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent'
@@ -1604,7 +1604,7 @@ export default function InstitutionsPage() {
           >
             <h2 
               className="text-4xl sm:text-5xl md:text-[56px] font-normal leading-[1.1] text-white tracking-tight"
-              style={{ fontFamily: "'Inter Tight', sans-serif" }}
+              style={{ fontFamily: "'REM', sans-serif" }}
             >
               Connected Systems.<br />
               <span className="text-violet-drift-b" style={{ animationDelay: '2s' }}>
