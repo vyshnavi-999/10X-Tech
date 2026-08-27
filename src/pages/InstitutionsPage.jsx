@@ -599,13 +599,13 @@ export default function InstitutionsPage() {
       {/* ========================================================================= */}
       {/* SECTION 2: BACKED BY / PARTNERS                                           */}
       {/* ========================================================================= */}
-      <section className="relative w-full bg-[#000000] z-10 py-[120px] md:py-[140px] overflow-hidden">
+      <section className="relative w-full bg-[#000000] z-10 py-10 sm:py-12 md:py-16 overflow-hidden">
         <div className="w-full max-w-[1440px] mx-auto px-6 md:px-14 flex flex-col">
           {/* Title Row */}
-          <div className="flex items-start justify-between mb-[50px] md:mb-[60px] flex-wrap gap-6">
+          <div className="flex items-start justify-between mb-6 sm:mb-8 flex-wrap gap-4">
             {/* Left Title */}
             <div 
-              className="text-[21.6px] font-light text-white leading-[28.8px] max-w-md tracking-normal"
+              className="text-base sm:text-lg md:text-[20px] font-light text-white/90 leading-tight tracking-normal"
               style={{ fontFamily: "'Inter Tight', sans-serif" }}
             >
               Building in partnership with
@@ -614,7 +614,7 @@ export default function InstitutionsPage() {
             {/* Right Indicator: BACKED BY */}
             <div className="flex items-center gap-3">
               <span 
-                className="text-[14.4px] font-normal tracking-[0.2em] text-white uppercase"
+                className="text-xs sm:text-[13px] font-normal tracking-[0.2em] text-white/70 uppercase"
                 style={{ fontFamily: "'IBM Plex Mono', monospace" }}
               >
                 <ScrambleText text="BACKED BY" duration={1.6} speed={60} delay={600} />
@@ -622,18 +622,18 @@ export default function InstitutionsPage() {
             </div>
           </div>
 
-          {/* Static 4-Logos Grid */}
-          <div className="w-full py-8">
-            <div className="grid grid-cols-2 lg:grid-cols-4 items-center justify-items-center gap-8 sm:gap-12 lg:gap-16 w-full">
+          {/* Static 4-Logos Grid: Prominent Logos with Compact Tight Padding */}
+          <div className="w-full py-2 sm:py-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 items-center justify-items-center gap-6 sm:gap-8 lg:gap-12 w-full">
               {PARTNER_LOGOS.map((logo) => (
                 <div 
                   key={logo.id} 
-                  className="flex items-center justify-center p-4 w-full h-24 sm:h-28 md:h-32 transition-all duration-300 group cursor-pointer"
+                  className="flex items-center justify-center p-2 w-full h-16 sm:h-20 md:h-24 transition-all duration-300 group cursor-pointer"
                 >
                   <img 
                     src={logo.src} 
                     alt={logo.alt} 
-                    className={`${logo.imgClass} w-auto object-contain transition-all duration-500 grayscale opacity-55 brightness-90 contrast-100 group-hover:grayscale-0 group-hover:opacity-100 group-hover:brightness-100 group-hover:contrast-100 group-hover:scale-105`}
+                    className={`${logo.imgClass} w-auto object-contain transition-all duration-500 opacity-70 group-hover:opacity-100 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 group-hover:scale-105`}
                     loading="lazy"
                   />
                 </div>
@@ -641,8 +641,8 @@ export default function InstitutionsPage() {
             </div>
           </div>
 
-          {/* Bottom Dashed Divider Line */}
-          <div className="w-full mt-[50px] md:mt-[60px] border-b border-dashed border-[#5d5d5d]" />
+          {/* Bottom Subtle Divider Line */}
+          <div className="w-full mt-6 sm:mt-8 border-b border-dashed border-white/15" />
         </div>
       </section>
 
