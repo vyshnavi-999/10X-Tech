@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import ParticleImageMorph from './ParticleImageMorph';
 
@@ -71,11 +71,32 @@ const assetParts = [
 ];
 
 const AssetShowcase = () => {
+  const sectionRef = useRef(null);
+  const [isInView, setIsInView] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+        } else {
+          setIsInView(false);
+        }
+      },
+      { threshold: 0.25 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="relative w-full pt-6 sm:pt-8 md:pt-10 pb-6 sm:pb-8 md:pb-10 bg-[#000000] flex flex-col items-center z-10">
+    <section ref={sectionRef} className="relative w-full pt-6 sm:pt-8 md:pt-10 pb-6 sm:pb-8 md:pb-10 bg-[#000000] flex flex-col items-center z-10">
       <div className="w-full max-w-[1360px] mx-auto px-6 mb-6 lg:mb-8 flex flex-col items-center text-center">
         {/* Top Tag with Glitch Scramble matching 'BACKED BY' */}
         <span 
@@ -128,15 +149,15 @@ const AssetShowcase = () => {
                     className="absolute left-0 top-0 w-[2px] bg-[#7c3aed] origin-top z-20"
                     initial={{ height: "0%" }}
                     animate={{ 
-                      height: isActive ? "100%" : "0%" 
+                      height: (isActive && isInView) ? "100%" : "0%" 
                     }}
                     transition={{ 
-                      duration: isActive && !isPaused ? 6 : 0.3, 
-                      ease: isActive && !isPaused ? "linear" : "easeInOut" 
+                      duration: (isActive && isInView && !isPaused) ? 6 : 0.3, 
+                      ease: (isActive && isInView && !isPaused) ? "linear" : "easeInOut" 
                     }}
                     onAnimationComplete={() => {
-                      if (isActive && !isPaused) {
-                        setActiveIndex((activeIndex + 1) % assetParts.length);
+                      if (isActive && isInView && !isPaused) {
+                        setActiveIndex((prev) => (prev + 1) % assetParts.length);
                       }
                     }}
                   />

@@ -274,11 +274,18 @@ export default function InstitutionsPage() {
     };
   }, []);
 
-  // Section 3 Product Step Calculation — perfectly balanced 4 equal steps (0.25 each)
-  const calculatedStep = Math.min(3, Math.max(0, Math.floor(scrollProgress * 4)));
+  // Section 3 Product Step Calculation — 6 total states:
+  // State 0: Resting Initial (01-04 hidden, resting text visible, blocks resting)
+  // State 1: Interactive Mode (01-04 visible unselected, resting text fades out, blocks resting)
+  // State 2: Step 01 active (YOUR Data)
+  // State 3: Step 02 active (YOUR Requirement)
+  // State 4: Step 03 active (YOUR Model)
+  // State 5: Step 04 active (YOUR Inference)
+  const calculatedState = Math.min(5, Math.max(0, Math.floor(scrollProgress * 6)));
 
-  const activeStep = manualStep !== null ? manualStep : calculatedStep;
-  const currentStep = PLATFORM_STEPS[activeStep] || PLATFORM_STEPS[0];
+  const activeStep = manualStep !== null ? manualStep : (calculatedState >= 2 ? calculatedState - 2 : -1);
+  const showNav = manualStep !== null || calculatedState >= 1;
+  const currentStep = activeStep >= 0 ? (PLATFORM_STEPS[activeStep] || PLATFORM_STEPS[0]) : null;
 
   const scrollToStep = (idx) => {
     setManualStep(idx);
@@ -286,8 +293,8 @@ export default function InstitutionsPage() {
 
     if (trackRef.current) {
       const totalScrollable = trackRef.current.offsetHeight - window.innerHeight;
-      const stepCenters = [0.12, 0.37, 0.62, 0.87];
-      const stepTargetProgress = stepCenters[idx] ?? (0.12 + idx * 0.25);
+      const stepCenters = [0.40, 0.56, 0.72, 0.88];
+      const stepTargetProgress = stepCenters[idx] ?? (0.40 + idx * 0.16);
       const targetY = trackRef.current.offsetTop + totalScrollable * stepTargetProgress;
       window.scrollTo({ top: targetY, behavior: 'smooth' });
     }
@@ -595,7 +602,7 @@ export default function InstitutionsPage() {
       <section 
         ref={trackRef} 
         id="product" 
-        className="relative w-full h-[105vh] bg-[#000000] z-10"
+        className="relative w-full h-[480vh] bg-[#000000] z-10"
       >
         <div className="sticky top-0 w-full h-screen min-h-[580px] overflow-hidden">
           
@@ -656,31 +663,14 @@ export default function InstitutionsPage() {
               </div>
             </div>
 
-            <div className="flex flex-col items-start min-w-[240px] sm:min-w-[300px] md:min-w-[420px]">
-              {activeStep === -1 && (
-                <div 
-                  className="flex flex-col text-left font-normal leading-[1.12] tracking-tight transition-all duration-500 text-xl sm:text-3xl md:text-[46px]"
-                  style={{ fontFamily: "'REM', sans-serif" }}
-                >
-                  <div className="flex items-center gap-2 sm:gap-2.5">
-                    <span style={{ color: '#B39DDB' }}>The</span>
-                    <span style={{ color: 'rgb(253, 252, 253)' }}>Core</span>
-                    <span style={{ color: '#ffffff' }}>Platform</span>
-                  </div>
-                  <div className="flex items-center gap-2 sm:gap-2.5 ml-[20px] sm:ml-[40px] md:ml-[110px]">
-                    <span style={{ color: '#9575CD' }}>Powering</span>
-                    <span style={{ color: '#ffffff' }}>Tools</span>
-                  </div>
-                </div>
-              )}
-            </div>
+            <div className="flex flex-col items-start min-w-[240px] sm:min-w-[300px] md:min-w-[420px]" />
           </div>
 
           {/* Center Interactive Layout: Step Nav + 3D Diamond Center + Big Title */}
           <div className="relative w-full flex-1 flex flex-col md:flex-row items-center justify-center md:justify-between z-20 my-auto gap-3 sm:gap-4 md:gap-8">
             
             {/* Step Selector: Horizontal on small mobile, Vertical on md+ */}
-            <div className={`flex flex-row md:flex-col items-center justify-center gap-2 sm:gap-3 z-30 transition-opacity duration-500 shrink-0 ${activeStep === -1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+            <div className={`flex flex-row md:flex-col items-center justify-center gap-2 sm:gap-3 z-30 transition-all duration-500 shrink-0 ${showNav ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 pointer-events-none'}`}>
               {PLATFORM_STEPS.map((step, idx) => {
                 const isActive = activeStep === idx;
                 return (
@@ -878,9 +868,26 @@ export default function InstitutionsPage() {
               </div>
             </div>
 
-            {/* Right: Dynamic YOUR {word} Heading + Paragraph Description */}
-            <div className="w-full md:w-[380px] lg:w-[460px] shrink-0 flex flex-col items-center md:items-start text-center md:text-left z-20 transition-all duration-500 px-2 md:px-0">
-              {currentStep ? (
+            {/* Right: Dynamic YOUR {word} Heading + Paragraph Description OR Initial Resting Title */}
+            <div className="w-full md:w-[380px] lg:w-[460px] shrink-0 flex flex-col items-center md:items-start text-center md:text-left z-20 transition-all duration-500 px-2 md:px-0 min-h-[160px] justify-center">
+              {activeStep === -1 ? (
+                /* STATE 0: Initial resting heading — fades out when entering interactive mode (STATE 1) */
+                <div 
+                  className={`flex flex-col text-left font-normal leading-[1.12] tracking-tight transition-all duration-500 text-2xl sm:text-3xl md:text-[38px] lg:text-[46px] select-none ${showNav ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                  style={{ fontFamily: "'REM', sans-serif" }}
+                >
+                  <div className="flex items-center gap-2 sm:gap-2.5">
+                    <span style={{ color: '#B39DDB' }}>The</span>
+                    <span style={{ color: 'rgb(253, 252, 253)' }}>Core</span>
+                    <span style={{ color: '#ffffff' }}>Platform</span>
+                  </div>
+                  <div className="flex items-center gap-2 sm:gap-2.5 ml-[20px] sm:ml-[40px] md:ml-[60px]">
+                    <span style={{ color: '#9575CD' }}>Powering</span>
+                    <span style={{ color: '#ffffff' }}>Tools</span>
+                  </div>
+                </div>
+              ) : currentStep ? (
+                /* STATES 2-5: YOUR Data / Requirement / Model / Inference */
                 <div key={currentStep.id} className="flex flex-col items-center md:items-start animate-fadeIn w-full">
                   {/* Fixed YOUR in Purple Gradient + Changing Word in White — Single Line Always */}
                   <h3 
