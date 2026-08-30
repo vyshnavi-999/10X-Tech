@@ -14,6 +14,25 @@ const CAPS = [
   'No meter, no seat count',
 ];
 
+// Quintic smooth ease for organic, fluid morphing
+function easeInOutQuint(t) {
+  return t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
+}
+
+// Spatial sorting helper: organizes points by angle and radial distance so particles travel in smooth, coherent streams
+function sortPointsSpatially(points) {
+  return [...points].sort((a, b) => {
+    const angleA = Math.atan2(a.ny, a.nx);
+    const angleB = Math.atan2(b.ny, b.nx);
+    if (Math.abs(angleA - angleB) > 0.06) {
+      return angleA - angleB;
+    }
+    const distA = a.nx * a.nx + a.ny * a.ny;
+    const distB = b.nx * b.nx + b.ny * b.ny;
+    return distA - distB;
+  });
+}
+
 const ParticleImageMorph = ({ activeIndex = 0 }) => {
   const stageRef = useRef(null);
   const canvasRef = useRef(null);
@@ -24,26 +43,31 @@ const ParticleImageMorph = ({ activeIndex = 0 }) => {
 
   const curRef = useRef(activeIndex);
   const ptsRef = useRef([null, null, null, null]);
-  const latticeRef = useRef([]);
   const particlesRef = useRef([]);
-  const alphaRef = useRef(1);
-  const phaseRef = useRef('idle');
+  const latticeRef = useRef([]);
   const animFrameRef = useRef(null);
-  const timerRef = useRef(null);
+  const transitionRef = useRef({
+    isAnimating: false,
+    startTime: 0,
+    duration: 1000,
+    fromIndex: activeIndex,
+    toIndex: activeIndex,
+  });
+  const canvasAlphaRef = useRef(1);
   const sizeRef = useRef({ w: 0, h: 0, imgSize: 0, dpr: 1 });
 
-  // Sample image with precise dot centers and intensity
+  // High-density image sampling: extracts thousands of exact dot coordinates directly from the PNG luminance
   const sampleImg = useCallback((img, idx, cb) => {
-    const R = 220; // High resolution sampling
+    const R = 300; // Ultra high-resolution sampling grid
     const c = document.createElement('canvas');
     c.width = R;
     c.height = R;
     const x = c.getContext('2d');
     x.drawImage(img, 0, 0, R, R);
     const d = x.getImageData(0, 0, R, R).data;
-    const out = [];
+    const rawPoints = [];
 
-    // Scale multiplier: Point 1 gets a 1.24x boost so its artwork matches the visual size of the other icons
+    // Scale factor: Point 1 gets a 1.24x boost so its artwork matches the visual size of the other icons
     const scaleMult = idx === 0 ? 1.24 : 1.0;
 
     for (let j = 0; j < R; j += 2) {
@@ -55,28 +79,44 @@ const ParticleImageMorph = ({ activeIndex = 0 }) => {
         const a = d[p + 3];
         const brightness = (r * 0.299 + g * 0.587 + b * 0.114) * (a / 255);
 
-        if (brightness > 65) {
-          const radius = (0.9 + (brightness / 255) * 1.3) * (idx === 0 ? 1.12 : 1.0);
-          out.push({
+        if (brightness > 40) {
+          const dotRadius = (0.55 + (brightness / 255) * 0.85) * (idx === 0 ? 1.1 : 0.96);
+          const dotAlpha = Math.min(0.92, (brightness / 255) * 0.9);
+          rawPoints.push({
             nx: (i / R - 0.5) * scaleMult,
             ny: (j / R - 0.5) * scaleMult,
-            r: radius,
+            r: dotRadius,
+            alpha: dotAlpha,
           });
         }
       }
     }
 
-    // Shuffle points for natural dispersion/travel
-    for (let k = out.length - 1; k > 0; k--) {
-      const q = Math.floor(Math.random() * (k + 1));
-      const t = out[k];
-      out[k] = out[q];
-      out[q] = t;
+    // Sort spatially so neighboring pixels morph to neighboring target pixels without random chaotic crisscrossing
+    const sorted = sortPointsSpatially(rawPoints);
+
+    // Normalize to fixed pool of 3200 particles so every image has dense, rich definition
+    const TARGET_POOL = 3200;
+    const normalized = [];
+    if (sorted.length > 0) {
+      for (let k = 0; k < TARGET_POOL; k++) {
+        const srcPoint = sorted[k % sorted.length];
+        // For duplicates, add subtle sub-pixel spread to fill dense contour lines
+        const isDuplicate = k >= sorted.length;
+        const jitter = isDuplicate ? (Math.random() - 0.5) * 0.003 : 0;
+        normalized.push({
+          nx: srcPoint.nx + jitter,
+          ny: srcPoint.ny + jitter,
+          r: srcPoint.r,
+          alpha: srcPoint.alpha,
+        });
+      }
     }
-    cb(out);
+
+    cb(normalized);
   }, []);
 
-  // Preload and sample images
+  // Preload all 4 images
   useEffect(() => {
     let loadedCount = 0;
     SRC.forEach((src, idx) => {
@@ -106,7 +146,7 @@ const ParticleImageMorph = ({ activeIndex = 0 }) => {
     return Math.min(naturalFit, 380);
   }, []);
 
-  // Build grid/lattice and particle pool
+  // Build grid/lattice and initialize persistent particle system
   const build = useCallback(() => {
     const stage = stageRef.current;
     const cv = canvasRef.current;
@@ -119,7 +159,6 @@ const ParticleImageMorph = ({ activeIndex = 0 }) => {
     if (!W || !H) return;
 
     const imgSize = getRenderedImageSize(W, H);
-
     sizeRef.current = { w: W, h: H, imgSize, dpr };
     cv.width = W * dpr;
     cv.height = H * dpr;
@@ -127,6 +166,11 @@ const ParticleImageMorph = ({ activeIndex = 0 }) => {
     const ctx = cv.getContext('2d');
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+    const N = 3200;
+    const cx = W / 2;
+    const cy = H / 2;
+
+    // Ambient lattice background
     const gap = W < 520 ? 14 : 12;
     const cols = Math.floor(W / gap);
     const rows = Math.floor(H / gap);
@@ -136,112 +180,112 @@ const ParticleImageMorph = ({ activeIndex = 0 }) => {
     const lattice = [];
     for (let j = 0; j < rows; j++) {
       for (let i = 0; i < cols; i++) {
-        lattice.push({ x: ox + i * gap, y: oy + j * gap, r: 1.1 });
+        lattice.push({ x: ox + i * gap, y: oy + j * gap, r: 1.0, alpha: 0.1 });
       }
     }
     latticeRef.current = lattice;
 
-    const N = 1200;
-    if (!particlesRef.current.length && lattice.length) {
+    // Persistent particles array
+    if (!particlesRef.current.length) {
       const P = [];
+      const currentPts = ptsRef.current[curRef.current] || [];
+
       for (let k = 0; k < N; k++) {
-        const s = lattice[k % lattice.length];
+        let initX = cx;
+        let initY = cy;
+        let initR = 1.0;
+        let initAlpha = 0.8;
+
+        if (currentPts.length > k) {
+          const pt = currentPts[k];
+          initX = cx + pt.nx * imgSize;
+          initY = cy + pt.ny * imgSize;
+          initR = pt.r;
+          initAlpha = pt.alpha;
+        } else if (lattice.length) {
+          const s = lattice[k % lattice.length];
+          initX = s.x;
+          initY = s.y;
+        }
+
         P.push({
-          x: s.x,
-          y: s.y,
-          tx: s.x,
-          ty: s.y,
-          sp: 0.065 + Math.random() * 0.06,
-          r: 1.1,
-          tr: 1.1,
+          x: initX,
+          y: initY,
+          startX: initX,
+          startY: initY,
+          tx: initX,
+          ty: initY,
+          r: initR,
+          startR: initR,
+          tr: initR,
+          alpha: initAlpha,
+          startAlpha: initAlpha,
+          targetAlpha: initAlpha,
+          delay: 0,
+          curveFactor: (Math.random() - 0.5) * 28, // gentle organic curvature
+          shimmerOffset: Math.random() * Math.PI * 2,
         });
       }
       particlesRef.current = P;
     }
   }, [getRenderedImageSize]);
 
-  const place = (list, snap) => {
-    const { w: W, h: H, imgSize: S } = sizeRef.current;
-    const P = particlesRef.current;
-    const N = P.length;
-    if (!list || !list.length) return;
-
-    for (let i = 0; i < N; i++) {
-      const p = list[i % list.length];
-      P[i].tx = W / 2 + p.nx * S;
-      P[i].ty = H / 2 + p.ny * S;
-      P[i].tr = p.r || 1.1;
-      if (snap) {
-        P[i].x = P[i].tx;
-        P[i].y = P[i].ty;
-        P[i].r = P[i].tr;
-      }
-    }
-  };
-
-  const toLattice = (snap) => {
-    const P = particlesRef.current;
-    const lattice = latticeRef.current;
-    const N = P.length;
-    if (!lattice.length) return;
-
-    for (let i = 0; i < N; i++) {
-      const p = lattice[(i * 7) % lattice.length];
-      P[i].tx = p.x;
-      P[i].ty = p.y;
-      P[i].tr = 1.1;
-      if (snap) {
-        P[i].x = p.x;
-        P[i].y = p.y;
-        P[i].r = p.tr;
-      }
-    }
-  };
-
-  // Perform precise particle morph transition
+  // Trigger high-precision particle morph transition
   const transitionTo = useCallback((toIndex) => {
     const from = curRef.current;
     curRef.current = toIndex;
-    const pts = ptsRef.current;
 
-    // 1. Hide current crisp image
+    const { w: W, h: H, imgSize: S } = sizeRef.current;
+    if (!W || !H || !S) return;
+
+    const cx = W / 2;
+    const cy = H / 2;
+    const P = particlesRef.current;
+    const N = P.length;
+    const targetPts = ptsRef.current[toIndex] || [];
+    if (!targetPts.length || !N) return;
+
+    // 1. Immediately hide the active crisp PNG so the viewer sees the image dissolve directly into matching dots
     setActiveImgIndex(-1);
+    canvasAlphaRef.current = 1.0;
 
-    // 2. Dots stand exactly where the current image artwork was
-    if (from >= 0 && pts[from]) {
-      place(pts[from], true);
-    } else {
-      toLattice(true);
+    // 2. Set up smooth morph trajectories for each persistent particle
+    for (let i = 0; i < N; i++) {
+      const p = P[i];
+      const t = targetPts[i % targetPts.length];
+
+      p.startX = p.x;
+      p.startY = p.y;
+      p.startR = p.r;
+      p.startAlpha = p.alpha;
+
+      p.tx = cx + t.nx * S;
+      p.ty = cy + t.ny * S;
+      p.tr = t.r;
+      p.targetAlpha = t.alpha;
+
+      // Distance-based wave delay: particles dissolve in an outward radiating fluid wave
+      const dist = Math.hypot(p.startX - cx, p.startY - cy);
+      p.delay = Math.min(0.25, (dist / (S * 0.55)) * 0.22);
     }
 
-    alphaRef.current = 1;
-    phaseRef.current = 'fly';
-
-    // 3. Dots smoothly fly to where the next image will be
-    if (toIndex >= 0 && pts[toIndex]) {
-      place(pts[toIndex], false);
-    } else {
-      toLattice(false);
-    }
-
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      phaseRef.current = 'fade';
-      // 4. Fade in full-fidelity crisp image exactly on top of settled dots
-      if (toIndex >= 0) {
-        setActiveImgIndex(toIndex);
-      }
-    }, 580);
+    transitionRef.current = {
+      isAnimating: true,
+      startTime: performance.now(),
+      duration: 1050, // 1050ms continuous, visible morph
+      fromIndex: from,
+      toIndex: toIndex,
+    };
   }, []);
 
-  // Update when activeIndex changes
+  // Sync with activeIndex prop
   useEffect(() => {
     if (!isReady) return;
     build();
     transitionTo(activeIndex);
   }, [activeIndex, isReady, build, transitionTo]);
 
-  // Main canvas render loop
+  // Main canvas animation and render loop
   useEffect(() => {
     const cv = canvasRef.current;
     if (!cv) return;
@@ -249,44 +293,90 @@ const ParticleImageMorph = ({ activeIndex = 0 }) => {
 
     const handleResize = () => {
       build();
-      if (curRef.current >= 0 && ptsRef.current[curRef.current]) {
-        place(ptsRef.current[curRef.current], true);
-      } else {
-        toLattice(true);
+      const { w: W, h: H, imgSize: S } = sizeRef.current;
+      const cx = W / 2;
+      const cy = H / 2;
+      const P = particlesRef.current;
+      const targetPts = ptsRef.current[curRef.current] || [];
+      if (targetPts.length && P.length && S) {
+        for (let i = 0; i < P.length; i++) {
+          const t = targetPts[i % targetPts.length];
+          P[i].x = cx + t.nx * S;
+          P[i].y = cy + t.ny * S;
+          P[i].tx = P[i].x;
+          P[i].ty = P[i].y;
+          P[i].r = t.r;
+          P[i].tr = t.r;
+        }
       }
     };
 
     window.addEventListener('resize', handleResize);
 
-    const render = () => {
+    const render = (now) => {
       const { w: W, h: H } = sizeRef.current;
+
       if (W && H) {
         ctx.clearRect(0, 0, W, H);
 
-        if (phaseRef.current === 'fade') {
-          alphaRef.current += (0 - alphaRef.current) * 0.12;
-          if (alphaRef.current < 0.01) {
-            alphaRef.current = 0;
-            phaseRef.current = curRef.current < 0 ? 'idle' : 'off';
-          }
-        }
-        if (phaseRef.current === 'idle') {
-          alphaRef.current += (1 - alphaRef.current) * 0.10;
-        }
+        const trans = transitionRef.current;
+        const P = particlesRef.current;
+        const len = P.length;
 
-        if (!(alphaRef.current < 0.01 && phaseRef.current === 'off')) {
-          ctx.fillStyle = `rgba(255, 255, 255, ${(alphaRef.current * 0.94).toFixed(3)})`;
-          const P = particlesRef.current;
-          const len = P.length;
+        if (trans.isAnimating) {
+          const elapsed = (now - trans.startTime) / trans.duration;
+          const globalT = Math.max(0, Math.min(1, elapsed));
+
           for (let i = 0; i < len; i++) {
             const p = P[i];
-            p.x += (p.tx - p.x) * p.sp;
-            p.y += (p.ty - p.y) * p.sp;
-            p.r += (p.tr - p.r) * 0.12;
 
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, Math.max(0.6, p.r), 0, Math.PI * 2);
-            ctx.fill();
+            // Calculate progress for particle including its wave delay
+            const localProgress = Math.max(0, Math.min(1, (globalT - p.delay) / (1 - 0.25)));
+            const easeT = easeInOutQuint(localProgress);
+
+            // Interpolate straight path
+            const straightX = p.startX + (p.tx - p.startX) * easeT;
+            const straightY = p.startY + (p.ty - p.startY) * easeT;
+
+            // Organic curved arc during flight: peak displacement at progress = 0.5
+            const arc = Math.sin(localProgress * Math.PI) * p.curveFactor;
+            const dx = p.tx - p.startX;
+            const dy = p.ty - p.startY;
+            const dist = Math.hypot(dx, dy) || 1;
+            const perpX = -dy / dist;
+            const perpY = dx / dist;
+
+            p.x = straightX + perpX * arc;
+            p.y = straightY + perpY * arc;
+            p.r = p.startR + (p.tr - p.startR) * easeT;
+            p.alpha = p.startAlpha + (p.targetAlpha - p.startAlpha) * easeT;
+          }
+
+          // As particles reach their final positions (progress > 95%), fade in the crisp PNG image
+          if (globalT >= 0.96) {
+            trans.isAnimating = false;
+            setActiveImgIndex(trans.toIndex);
+          }
+        }
+
+        // Crossfade canvas particles: when image is visible, canvas alpha fades out gracefully
+        const isImageShown = activeImgIndex >= 0;
+        const targetCanvasAlpha = isImageShown ? 0.0 : 1.0;
+        canvasAlphaRef.current += (targetCanvasAlpha - canvasAlphaRef.current) * 0.12;
+
+        if (canvasAlphaRef.current > 0.01) {
+          const masterAlpha = canvasAlphaRef.current;
+
+          for (let i = 0; i < len; i++) {
+            const p = P[i];
+            const dotOpacity = Math.min(1.0, Math.max(0.0, p.alpha * masterAlpha));
+
+            if (dotOpacity > 0.02) {
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, Math.max(0.5, p.r), 0, Math.PI * 2);
+              ctx.fillStyle = `rgba(240, 240, 248, ${dotOpacity.toFixed(3)})`;
+              ctx.fill();
+            }
           }
         }
       }
@@ -294,14 +384,13 @@ const ParticleImageMorph = ({ activeIndex = 0 }) => {
       animFrameRef.current = requestAnimationFrame(render);
     };
 
-    render();
+    animFrameRef.current = requestAnimationFrame(render);
 
     return () => {
       window.removeEventListener('resize', handleResize);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-      if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [build]);
+  }, [build, activeImgIndex]);
 
   const { imgSize } = sizeRef.current;
 
@@ -310,7 +399,7 @@ const ParticleImageMorph = ({ activeIndex = 0 }) => {
       ref={stageRef}
       className="relative w-full h-full min-h-[340px] sm:min-h-[380px] lg:min-h-[400px] flex items-center justify-center overflow-hidden select-none bg-black"
     >
-      {/* 4 Real Full-Fidelity Crisp PNG Images (Positioned & Sized Exactly with Canvas Scale) */}
+      {/* 4 Real Full-Fidelity Crisp PNG Images (Brightness & Contrast Tuned for Seamless Matching with Particles) */}
       {SRC.map((src, i) => {
         const isPointOne = i === 0;
         const scaleFactor = isPointOne ? 1.24 : 1.0;
@@ -329,12 +418,13 @@ const ParticleImageMorph = ({ activeIndex = 0 }) => {
               maxWidth: isPointOne ? '430px' : '380px',
               maxHeight: isPointOne ? '430px' : '380px',
               opacity: activeImgIndex === i ? 1 : 0,
+              filter: 'brightness(1.18) contrast(1.06)',
             }}
           />
         );
       })}
 
-      {/* Particle Transition Canvas */}
+      {/* High-Density Persistent Particle Transition Canvas */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full pointer-events-none"
