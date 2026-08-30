@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import AssetShowcase from '../components/AssetShowcase';
 import ApiCostCalculator from '../components/ApiCostCalculator';
+import TechnicalFiller from '../components/TechnicalFiller';
 import lottie from 'lottie-web';
 import mouseScrollAnimationData from '../assets/mouse_scroll_animation.json';
 
@@ -536,17 +537,13 @@ export default function InstitutionsPage() {
           </span>
         </div>
 
-        {/* Bottom Scroll Pill Indicator (Exact Lottie Animation) */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center">
-          <LottieScrollIndicator />
-        </div>
       </section>
 
       {/* ========================================================================= */}
       {/* SECTION 2: BACKED BY / PARTNERS                                           */}
       {/* ========================================================================= */}
-      <section className="relative w-full bg-[#000000] z-10 py-10 sm:py-12 md:py-16 overflow-hidden">
-        <div className="w-full max-w-[1440px] mx-auto px-6 md:px-14 flex flex-col">
+      <section className="relative w-full bg-[#000000] z-10 pt-6 sm:pt-8 md:pt-10 pb-2 sm:pb-4 overflow-hidden">
+        <div className="w-full max-w-[1360px] mx-auto px-4 sm:px-6 flex flex-col">
           {/* Title Row */}
           <div className="flex items-start justify-between mb-6 sm:mb-8 flex-wrap gap-4">
             {/* Left Title */}
@@ -589,18 +586,21 @@ export default function InstitutionsPage() {
         </div>
       </section>
 
+      {/* Dotted Separator between Partners and The Core Platform */}
+      <TechnicalFiller />
+
       {/* ========================================================================= */}
       {/* SECTION 3: THE CORE PLATFORM — Exact Quantara Diamond Track Replica       */}
       {/* ========================================================================= */}
       <section 
         ref={trackRef} 
         id="product" 
-        className="relative w-full h-[220vh] bg-[#000000] z-10"
+        className="relative w-full h-[105vh] bg-[#000000] z-10"
       >
         <div className="sticky top-0 w-full h-screen min-h-[580px] overflow-hidden">
           
           {/* Centered Content Container */}
-          <div className="relative w-full h-full flex flex-col justify-between px-4 sm:px-6 md:px-10 pt-8 sm:pt-10 md:pt-14 pb-4 max-w-[1300px] mx-auto z-10">
+          <div className="relative w-full h-full flex flex-col justify-between px-4 sm:px-6 pt-4 sm:pt-6 md:pt-8 pb-0 max-w-[1360px] mx-auto z-10">
 
           {/* Top Title Row: EXACT Live Spacing & Indentation */}
           <div className="flex items-start justify-between w-full z-30 pt-1 flex-wrap gap-3">
@@ -915,15 +915,23 @@ export default function InstitutionsPage() {
           </div>
 
           {/* Bottom Row Spacing */}
-          <div className="w-full z-30 pb-2" />
+          <div className="w-full z-30 pb-2 flex justify-center items-center">
+            <LottieScrollIndicator />
+          </div>
         </div>
       </div>
     </section>
+
+      {/* Dotted Separator between The Core Platform and Asset Showcase */}
+      <TechnicalFiller />
 
       {/* ========================================================================= */}
       {/* SECTION 4: WHAT YOU GET / ASSET OWNERSHIP SHOWCASE                      */}
       {/* ========================================================================= */}
       <AssetShowcase />
+
+      {/* Dotted Separator between Asset Showcase and Lab Track */}
+      <TechnicalFiller />
 
       {/* ========================================================================= */}
       {/* SECTION 5: LAB TRACK — Fast, Snappy & Butter-Smooth Scan Transition       */}
@@ -931,11 +939,9 @@ export default function InstitutionsPage() {
       <section 
         ref={labRef} 
         id="lab" 
-        className="relative w-full h-[100vh] bg-[#000000] z-10"
+        className="relative w-full pt-6 sm:pt-8 md:pt-10 pb-6 sm:pb-8 md:pb-10 bg-[#000000] z-10 overflow-hidden"
       >
-        <div className="sticky top-0 w-full h-screen flex flex-col justify-center items-center px-6 md:px-14 pt-10 sm:pt-14 pb-10 max-w-[1440px] mx-auto overflow-hidden">
-          
-          <div className="w-full flex flex-col items-center justify-center gap-6 sm:gap-8 my-auto">
+        <div className="w-full max-w-[1360px] mx-auto px-4 sm:px-6 flex flex-col items-center justify-center gap-6 sm:gap-8">
 
             {/* Header with Dual-State Indicator: From Manual [O] Intelligent */}
             <div className="flex items-center justify-center flex-wrap gap-4 z-30">
@@ -1125,25 +1131,29 @@ export default function InstitutionsPage() {
 
             </div>
 
-          </div>
-
         </div>
       </section>
 
+      {/* Dotted Separator between Lab Track and Cost Calculator */}
+      <TechnicalFiller />
+
       {/* ========================================================================= */}
-      {/* SECTION 5: COST CALCULATOR — Renting vs Owning Live Interactive Calculator */}
+      {/* SECTION 6: COST CALCULATOR — Renting vs Owning Live Interactive Calculator */}
       {/* ========================================================================= */}
       <ApiCostCalculator />
 
+      {/* Dotted Separator between Cost Calculator and Integration Track */}
+      <TechnicalFiller />
+
       {/* ========================================================================= */}
-      {/* SECTION 6: INTEGRATION TRACK — Exact 7-Node Parabolic Arc Fan Track       */}
+      {/* SECTION 7: INTEGRATION TRACK — Exact 7-Node Parabolic Arc Fan Track       */}
       {/* ========================================================================= */}
       <section 
         ref={integrationRef} 
         id="integration" 
         className="relative w-full h-[220vh] bg-[#000000] z-10"
       >
-        <div className="sticky top-0 w-full h-screen flex flex-col justify-between items-center px-6 md:px-14 pt-[110px] pb-14 max-w-[1440px] mx-auto overflow-hidden">
+        <div className="sticky top-0 w-full h-screen flex flex-col justify-between items-center px-4 sm:px-6 pt-6 sm:pt-8 md:pt-10 pb-14 max-w-[1360px] mx-auto overflow-hidden">
           
           {/* Top Badge: INTEGRATION --- ACTIVE MODULES */}
           <div className="flex items-center gap-3 z-30">

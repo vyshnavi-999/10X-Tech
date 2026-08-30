@@ -123,9 +123,9 @@ const ApiCostCalculator = () => {
   return (
     <section 
       id="cost-calculator" 
-      className="relative w-full pt-4 sm:pt-6 pb-8 sm:pb-10 bg-[#000000] text-white z-10 overflow-hidden flex flex-col justify-center scroll-mt-20"
+      className="relative w-full pt-6 sm:pt-8 md:pt-10 pb-3 sm:pb-4 md:pb-5 bg-[#000000] text-white z-10 overflow-hidden flex flex-col justify-center scroll-mt-20"
     >
-      <div className="w-full max-w-[1080px] mx-auto px-4 sm:px-6">
+      <div className="w-full max-w-[1360px] mx-auto px-4 sm:px-6">
         
         {/* Section Header */}
         <div className="mb-4 sm:mb-5 text-left">

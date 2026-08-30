@@ -75,7 +75,7 @@ const AssetShowcase = () => {
   const [isPaused, setIsPaused] = useState(false);
 
   return (
-    <section className="relative w-full pt-4 sm:pt-6 pb-2 sm:pb-4 bg-[#000000] flex flex-col items-center z-10">
+    <section className="relative w-full pt-6 sm:pt-8 md:pt-10 pb-6 sm:pb-8 md:pb-10 bg-[#000000] flex flex-col items-center z-10">
       <div className="w-full max-w-[1360px] mx-auto px-6 mb-6 lg:mb-8 flex flex-col items-center text-center">
         {/* Top Tag with Glitch Scramble matching 'BACKED BY' */}
         <span 
@@ -99,7 +99,7 @@ const AssetShowcase = () => {
         </p>
       </div>
 
-      <div className="w-full max-w-[1140px] mx-auto px-4 sm:px-6">
+      <div className="w-full max-w-[1360px] mx-auto px-4 sm:px-6">
         {/* Architectural Grid Container */}
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-0 border border-white/[0.08] rounded-[24px] overflow-hidden bg-black">
           
