@@ -63,12 +63,33 @@ const ParticleImageMorph = ({ activeIndex = 0 }) => {
     c.width = R;
     c.height = R;
     const x = c.getContext('2d');
-    x.drawImage(img, 0, 0, R, R);
+    x.fillStyle = '#000000';
+    x.fillRect(0, 0, R, R);
+
+    // Maintain exact object-contain aspect ratio
+    const nw = img.naturalWidth || img.width || 1;
+    const nh = img.naturalHeight || img.height || 1;
+    const aspect = nw / nh;
+
+    let dw = R;
+    let dh = R;
+    let dx = 0;
+    let dy = 0;
+
+    if (aspect > 1) {
+      dh = R / aspect;
+      dy = (R - dh) / 2;
+    } else if (aspect < 1) {
+      dw = R * aspect;
+      dx = (R - dw) / 2;
+    }
+
+    x.drawImage(img, dx, dy, dw, dh);
     const d = x.getImageData(0, 0, R, R).data;
     const rawPoints = [];
 
-    // Scale factor: Point 1 gets a 1.24x boost so its artwork matches the visual size of the other icons
-    const scaleMult = idx === 0 ? 1.24 : 1.0;
+    // 1:1 exact scale across all images so particle formations match the image dimensions exactly
+    const scaleMult = 1.0;
 
     for (let j = 0; j < R; j += 2) {
       for (let i = 0; i < R; i += 2) {
@@ -80,7 +101,7 @@ const ParticleImageMorph = ({ activeIndex = 0 }) => {
         const brightness = (r * 0.299 + g * 0.587 + b * 0.114) * (a / 255);
 
         if (brightness > 40) {
-          const dotRadius = (0.55 + (brightness / 255) * 0.85) * (idx === 0 ? 1.1 : 0.96);
+          const dotRadius = (0.55 + (brightness / 255) * 0.85) * 0.96;
           const dotAlpha = Math.min(0.92, (brightness / 255) * 0.9);
           rawPoints.push({
             nx: (i / R - 0.5) * scaleMult,
@@ -399,30 +420,24 @@ const ParticleImageMorph = ({ activeIndex = 0 }) => {
       ref={stageRef}
       className="relative w-full h-full min-h-[340px] sm:min-h-[380px] lg:min-h-[400px] flex items-center justify-center overflow-hidden select-none bg-black"
     >
-      {/* 4 Real Full-Fidelity Crisp PNG Images (Brightness & Contrast Tuned for Seamless Matching with Particles) */}
-      {SRC.map((src, i) => {
-        const isPointOne = i === 0;
-        const scaleFactor = isPointOne ? 1.24 : 1.0;
-        const renderPx = imgSize ? Math.min(Math.round(imgSize * scaleFactor), 430) : null;
-
-        return (
-          <img
-            key={src}
-            ref={(el) => (imgRefs.current[i] = el)}
-            src={src}
-            alt={`Point ${i + 1}`}
-            className="absolute aspect-square object-contain pointer-events-none transition-opacity duration-300 ease-out"
-            style={{
-              width: renderPx ? `${renderPx}px` : (isPointOne ? '92%' : '76%'),
-              height: renderPx ? `${renderPx}px` : (isPointOne ? '92%' : '76%'),
-              maxWidth: isPointOne ? '430px' : '380px',
-              maxHeight: isPointOne ? '430px' : '380px',
-              opacity: activeImgIndex === i ? 1 : 0,
-              filter: 'brightness(1.18) contrast(1.06)',
-            }}
-          />
-        );
-      })}
+      {/* 4 Real Full-Fidelity Crisp PNG Images (Positioned & Sized Exactly with Canvas Scale) */}
+      {SRC.map((src, i) => (
+        <img
+          key={src}
+          ref={(el) => (imgRefs.current[i] = el)}
+          src={src}
+          alt={`Point ${i + 1}`}
+          className="absolute aspect-square object-contain pointer-events-none transition-opacity duration-300 ease-out"
+          style={{
+            width: imgSize ? `${imgSize}px` : '76%',
+            height: imgSize ? `${imgSize}px` : '76%',
+            maxWidth: '380px',
+            maxHeight: '380px',
+            opacity: activeImgIndex === i ? 1 : 0,
+            filter: 'brightness(1.18) contrast(1.06)',
+          }}
+        />
+      ))}
 
       {/* High-Density Persistent Particle Transition Canvas */}
       <canvas
