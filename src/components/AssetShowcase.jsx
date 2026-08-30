@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import ParticleImageMorph from './ParticleImageMorph';
 
 const SCRAMBLE_CHARS = '+?84564XERS';
 
@@ -64,8 +65,8 @@ const assetParts = [
   },
   {
     number: "04",
-    title: "Someone to call",
-    text: "Retraining as your data changes, and support for the deployment itself.",
+    title: "Unlimited use across your organization",
+    text: "Every team, every system, every query. Once the model is on your hardware you never pay us again, unless you want it improved.",
   }
 ];
 
@@ -98,12 +99,12 @@ const AssetShowcase = () => {
         </p>
       </div>
 
-      <div className="w-full max-w-[1360px] mx-auto px-4 sm:px-6">
+      <div className="w-full max-w-[1140px] mx-auto px-4 sm:px-6">
         {/* Architectural Grid Container */}
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-0 border border-white/[0.08] rounded-[24px] overflow-hidden bg-[#050505]">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-0 border border-white/[0.08] rounded-[24px] overflow-hidden bg-black">
           
-          {/* Left Side: 4 Parts Column (45%) */}
-          <div className="lg:col-span-5 flex flex-col border-b lg:border-b-0 lg:border-r border-white/[0.08] bg-[#050505]">
+          {/* Left Side: 4 Parts Column (50%) */}
+          <div className="lg:col-span-6 flex flex-col border-b lg:border-b-0 lg:border-r border-white/[0.08] bg-black">
             {assetParts.map((part, idx) => {
               const isActive = activeIndex === idx;
               const isLast = idx === assetParts.length - 1;
@@ -172,11 +173,11 @@ const AssetShowcase = () => {
             })}
           </div>
 
-          {/* Right Side: Blank Container (ready for upcoming instruction) */}
-          <div className="lg:col-span-7 relative bg-[#050505] p-4 sm:p-6 lg:p-8 flex items-center justify-center min-h-[280px] sm:min-h-[340px] lg:min-h-[380px]">
+          {/* Right Side: Balanced Dynamic Particle Image Morph Container (50%) */}
+          <div className="lg:col-span-6 relative bg-black p-3 sm:p-4 lg:p-5 flex items-center justify-center min-h-[320px] sm:min-h-[380px] lg:min-h-[400px]">
             {/* Inner Frame */}
-            <div className="relative w-full h-full min-h-[240px] sm:min-h-[300px] lg:min-h-[340px] rounded-[18px] overflow-hidden border border-white/[0.08] bg-[#0a0a0f] flex items-center justify-center">
-              {/* Left blank as requested */}
+            <div className="relative w-full h-full min-h-[280px] sm:min-h-[340px] lg:min-h-[380px] rounded-[18px] overflow-hidden border border-white/[0.08] bg-black flex items-center justify-center">
+              <ParticleImageMorph activeIndex={activeIndex} />
             </div>
           </div>
 
