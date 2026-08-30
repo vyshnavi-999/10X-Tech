@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import AssetShowcase from '../components/AssetShowcase';
@@ -161,11 +162,10 @@ export default function InstitutionsPage() {
   // Section 3 4x4 Plus Grid Rhythm State
   const [plusRhythm, setPlusRhythm] = useState(0);
 
-  // Section 5 Lab animated state
-  const [labMode, setLabMode] = useState('manual'); // 'manual' | 'intelegent'
-  const labModeRef = useRef('manual');
+  // Section 5 Toggle Deployment state: 'cloud' (Cloud API) | 'local' (Local deployment)
+  const [deploymentMode, setDeploymentMode] = useState('cloud'); // 'cloud' | 'local'
+  const deploymentModeRef = useRef('cloud');
   const [isScanning, setIsScanning] = useState(false);
-  const [efficiencyDisplay, setEfficiencyDisplay] = useState(67);
   const [laserPos, setLaserPos] = useState(0); // 0 to 100%
 
   // Section 8 Integration scroll expansion progress (0 to 1)
@@ -220,21 +220,6 @@ export default function InstitutionsPage() {
             const currentScroll = -rect.top;
             const progress = Math.max(0, Math.min(1, currentScroll / totalScrollable));
             setScrollProgress(progress);
-          }
-        }
-
-        // Lab Track progress (Fast Snappy Trigger)
-        if (labRef.current && !labManualOverrideRef.current) {
-          const rect = labRef.current.getBoundingClientRect();
-          const totalScrollable = rect.height - window.innerHeight;
-          if (totalScrollable > 0) {
-            const currentScroll = -rect.top;
-            const progress = currentScroll / totalScrollable;
-            if (progress >= 0.35 && labModeRef.current !== 'intelegent') {
-              triggerLabMode('intelegent');
-            } else if (progress < 0.15 && labModeRef.current !== 'manual') {
-              triggerLabMode('manual');
-            }
           }
         }
 
@@ -305,62 +290,29 @@ export default function InstitutionsPage() {
     }, 700);
   };
 
-  // Snappy Butter-Smooth Lab Trigger Function
-  const triggerLabMode = (targetMode) => {
-    labModeRef.current = targetMode;
-    setLabMode(targetMode);
+  // Snappy Butter-Smooth Deployment Toggle Trigger Function
+  const triggerDeploymentMode = (targetMode) => {
+    deploymentModeRef.current = targetMode;
+    setDeploymentMode(targetMode);
     setIsScanning(true);
     
-    // Fast laser sweep animation (0 -> 100% in 380ms)
-    setLaserPos(targetMode === 'intelegent' ? 0 : 100);
+    // Fast laser sweep animation (0 -> 100% in 350ms)
+    setLaserPos(targetMode === 'local' ? 0 : 100);
     setTimeout(() => {
-      setLaserPos(targetMode === 'intelegent' ? 100 : 0);
+      setLaserPos(targetMode === 'local' ? 100 : 0);
     }, 20);
 
-    // Smooth numerical countup/countdown
-    const startVal = targetMode === 'intelegent' ? 67 : 99;
-    const endVal = targetMode === 'intelegent' ? 99 : 67;
-    const duration = 380;
-    const startTime = performance.now();
-
-    const animateCount = (now) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(1, elapsed / duration);
-      const ease = 1 - Math.pow(1 - progress, 3); // cubic ease out
-      const current = Math.round(startVal + (endVal - startVal) * ease);
-      setEfficiencyDisplay(current);
-
-      if (progress < 1) {
-        requestAnimationFrame(animateCount);
-      } else {
-        setEfficiencyDisplay(endVal);
-        setTimeout(() => setIsScanning(false), 80);
-      }
-    };
-    requestAnimationFrame(animateCount);
+    setTimeout(() => {
+      setIsScanning(false);
+    }, 380);
   };
 
-  const toggleLabMode = () => {
-    const nextMode = labModeRef.current === 'intelegent' ? 'manual' : 'intelegent';
-    triggerLabMode(nextMode);
-    
-    if (labManualTimeoutRef.current) clearTimeout(labManualTimeoutRef.current);
-    labManualOverrideRef.current = true;
-    labManualTimeoutRef.current = setTimeout(() => {
-      labManualOverrideRef.current = false;
-    }, 1000);
-
-    if (labRef.current) {
-      const totalScrollable = labRef.current.offsetHeight - window.innerHeight;
-      if (totalScrollable > 0) {
-        const targetProgress = nextMode === 'intelegent' ? 0.65 : 0.05;
-        const targetY = labRef.current.offsetTop + totalScrollable * targetProgress;
-        window.scrollTo({ top: targetY, behavior: 'smooth' });
-      }
-    }
+  const toggleDeploymentMode = () => {
+    const nextMode = deploymentModeRef.current === 'local' ? 'cloud' : 'local';
+    triggerDeploymentMode(nextMode);
   };
 
-  const isLabIntelegent = labMode === 'intelegent';
+  const isLocalDeployment = deploymentMode === 'local';
 
 
 
@@ -941,200 +893,462 @@ export default function InstitutionsPage() {
       <TechnicalFiller />
 
       {/* ========================================================================= */}
-      {/* SECTION 5: LAB TRACK — Fast, Snappy & Butter-Smooth Scan Transition       */}
+      {/* SECTION 5: CLOUD API / LOCAL DEPLOYMENT TOGGLE SHOWCASE                   */}
       {/* ========================================================================= */}
       <section 
         ref={labRef} 
         id="lab" 
-        className="relative w-full pt-6 sm:pt-8 md:pt-10 pb-6 sm:pb-8 md:pb-10 bg-[#000000] z-10 overflow-hidden"
+        className="relative w-full pt-8 sm:pt-12 md:pt-14 pb-8 sm:pb-12 md:pb-14 bg-[#000000] z-10 overflow-hidden"
       >
-        <div className="w-full max-w-[1360px] mx-auto px-4 sm:px-6 flex flex-col items-center justify-center gap-6 sm:gap-8">
+        <div className="w-full max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col items-center justify-center gap-7 sm:gap-9">
 
-            {/* Header with Dual-State Indicator: From Manual [O] Intelligent */}
-            <div className="flex items-center justify-center flex-wrap gap-4 z-30">
+            {/* Top Header: From Cloud API [ TOGGLE ] Local deployment */}
+            <div className="flex flex-col items-center justify-center gap-3 z-30 text-center select-none">
               <h2 
-                className="text-3xl sm:text-4xl md:text-[46px] font-normal leading-none tracking-tight flex items-center flex-wrap justify-center gap-3 select-none"
+                className="text-2xl sm:text-3xl md:text-[42px] font-normal leading-none tracking-tight flex items-center flex-wrap justify-center gap-3"
                 style={{ fontFamily: "'REM', sans-serif" }}
               >
                 <span className="text-[#888888] font-light">From</span>
-                <span className={!isLabIntelegent ? "text-white font-normal transition-colors duration-300" : "text-[#888888] font-light transition-colors duration-300"}>
-                  Manual
+                <span className={!isLocalDeployment ? "text-white font-normal transition-colors duration-300" : "text-[#888888] font-light transition-colors duration-300"}>
+                  Cloud API
                 </span>
                 
                 {/* Interactive Pill Toggle Switch */}
                 <div 
-                  onClick={toggleLabMode}
-                  className="w-14 h-7 sm:w-16 sm:h-8 rounded-full border border-white/30 bg-[#070709] flex items-center p-1 cursor-pointer mx-2 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all duration-300 hover:border-white"
+                  onClick={toggleDeploymentMode}
+                  className="w-14 h-7 sm:w-16 sm:h-8 rounded-full border border-white/30 bg-[#070709] flex items-center p-1 cursor-pointer mx-1 sm:mx-2 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all duration-300 hover:border-white"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleDeploymentMode(); } }}
+                  aria-label="Toggle between Cloud API and Local Deployment"
                 >
                   <div 
-                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] transition-transform duration-300 ease-out ${
-                      isLabIntelegent ? 'translate-x-7 sm:translate-x-8' : 'translate-x-0'
+                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full transition-all duration-300 ease-out ${
+                      isLocalDeployment 
+                        ? 'translate-x-7 sm:translate-x-8 bg-[#9575CD] shadow-[0_0_12px_rgba(149,117,205,0.9)]' 
+                        : 'translate-x-0 bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)]'
                     }`}
                   />
                 </div>
 
-                <span className={isLabIntelegent ? "text-[#9575CD] font-normal transition-colors duration-300" : "text-[#888888] font-light transition-colors duration-300"}>
-                  Intelligent
+                <span className={isLocalDeployment ? "text-[#9575CD] font-normal transition-colors duration-300" : "text-[#888888] font-light transition-colors duration-300"}>
+                  Local deployment
                 </span>
               </h2>
+
+              {/* Subheader */}
+              <p 
+                className="text-xs sm:text-sm md:text-[15px] text-[#888888] font-light max-w-[680px] leading-relaxed transition-colors duration-300 px-4"
+                style={{ fontFamily: "'REM', sans-serif" }}
+              >
+                The difference is not technical. It is what your institution can offer that it cannot offer today.
+              </p>
             </div>
 
-            {/* 4 Floating Metric Cards Arrangement with Laser Scan Curtain */}
+            {/* EXACT 3-TILE LOCKED LAYOUT: ONE LARGE LEFT + TWO EQUAL STACKED RIGHT */}
             <div className="relative w-full z-20">
               
-              {/* The 4 Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 w-full items-stretch">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 w-full items-stretch">
                 
-                {/* Card 1: Bottleneck Detected (4-Quadrant Donut Ring) */}
-                <div className="bg-[#070709] border border-[#222226] rounded-lg p-0 flex flex-col justify-between overflow-hidden min-h-[300px] shadow-2xl transition-all duration-300">
-                  {/* Header Bar */}
-                  <div className="bg-[#0e0e12] px-5 py-3 border-b border-[#1c1c20] text-white/90 text-sm font-normal" style={{ fontFamily: "'REM', sans-serif" }}>
-                    Bottleneck Detected
-                  </div>
-
-                  {/* 4-Quadrant Segmented Donut Ring SVG */}
-                  <div className="relative w-full h-[200px] flex items-center justify-center p-4 my-auto">
-                    <svg viewBox="0 0 200 200" className="w-[150px] h-[150px] drop-shadow-[0_0_15px_rgba(103,58,183,0.4)]">
-                      {/* Top-Right Quadrant Arc */}
-                      <path 
-                        d="M 108 20 A 76 76 0 0 1 180 92 L 148 92 A 44 44 0 0 0 108 52 Z" 
-                        fill={isLabIntelegent ? "#2A1454" : "none"} 
-                        stroke={isLabIntelegent ? "#7E57C2" : "#333333"} 
-                        strokeWidth={isLabIntelegent ? "1.5" : "1"}
-                        className="transition-all duration-300"
-                      />
-                      {/* Bottom-Right Quadrant Arc */}
-                      <path 
-                        d="M 180 108 A 76 76 0 0 1 108 180 L 108 148 A 44 44 0 0 0 148 108 Z" 
-                        fill={isLabIntelegent ? "#2A1454" : "none"} 
-                        stroke={isLabIntelegent ? "#7E57C2" : "#222222"} 
-                        strokeWidth={isLabIntelegent ? "1.5" : "1"}
-                        className="transition-all duration-300"
-                      />
-                      {/* Bottom-Left Quadrant Arc */}
-                      <path 
-                        d="M 92 180 A 76 76 0 0 1 20 108 L 52 108 A 44 44 0 0 0 92 148 Z" 
-                        fill={isLabIntelegent ? "#2A1454" : "none"} 
-                        stroke={isLabIntelegent ? "#7E57C2" : "#222222"} 
-                        strokeWidth={isLabIntelegent ? "1.5" : "1"}
-                        className="transition-all duration-300"
-                      />
-                      {/* Top-Left Quadrant Arc */}
-                      <path 
-                        d="M 20 92 A 76 76 0 0 1 92 20 L 92 52 A 44 44 0 0 0 52 92 Z" 
-                        fill={isLabIntelegent ? "#2A1454" : "none"} 
-                        stroke={isLabIntelegent ? "#7E57C2" : "#222222"} 
-                        strokeWidth={isLabIntelegent ? "1.5" : "1"}
-                        className="transition-all duration-300"
-                      />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Middle Column: Stacked Cards 2 & 3 */}
-                <div className="lg:col-span-2 flex flex-col gap-5 w-full">
+                {/* ============================================================== */}
+                {/* TILE 1: LARGE FEATURE TILE (LEFT)                              */}
+                {/* ============================================================== */}
+                <div className="lg:col-span-7 bg-[#070709] border border-[#222226] hover:border-white/20 rounded-2xl p-7 sm:p-9 flex flex-col justify-between relative overflow-hidden min-h-[460px] sm:min-h-[500px] shadow-2xl transition-all duration-300">
                   
-                  {/* Card 2: Process Efficiency (Fast Smooth Animated 67% -> 99%) */}
-                  <div className="bg-[#070709] border border-[#222226] rounded-lg p-5 flex flex-col justify-between shadow-2xl transition-all duration-300">
-                    <div className="text-white/80 text-sm font-normal mb-4" style={{ fontFamily: "'REM', sans-serif" }}>
-                      Process Efficiency
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className="text-4xl sm:text-5xl font-normal text-white font-mono tracking-tight transition-all duration-75">
-                        {efficiencyDisplay}%
-                      </span>
-                      <span className="px-3 py-1 bg-[#111116] border border-white/10 rounded text-xs font-mono text-white/60">
-                        {isLabIntelegent ? "Autonomous / AI" : "Partially / Manual"}
-                      </span>
-                    </div>
+                  {/* Background Visual Layer */}
+                  <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                    {/* Dark subtle grid texture */}
+                    <div 
+                      className="absolute inset-0 opacity-10"
+                      style={{
+                        backgroundImage: 'radial-gradient(circle at 1px 1px, #9575CD 1px, transparent 0)',
+                        backgroundSize: '24px 24px'
+                      }}
+                    />
+
+                    <AnimatePresence mode="wait">
+                      {isLocalDeployment ? (
+                        /* STATE 2: LOCAL DEPLOYMENT BACKGROUND VISUAL (100% Reach / Edge Mesh) */
+                        <motion.div 
+                          key="bg-tile1-local"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="absolute inset-0 flex items-center justify-center p-6"
+                        >
+                          <svg viewBox="0 0 540 320" className="w-full h-full max-w-[500px] opacity-75">
+                            {/* Glowing radial waves */}
+                            <circle cx="270" cy="110" r="100" fill="none" stroke="#7E57C2" strokeWidth="1" strokeOpacity="0.2" strokeDasharray="4 4" />
+                            <circle cx="270" cy="110" r="65" fill="none" stroke="#9575CD" strokeWidth="1" strokeOpacity="0.35" />
+                            <circle cx="270" cy="110" r="35" fill="rgba(42, 20, 84, 0.5)" stroke="#B39DDB" strokeWidth="1.5" />
+
+                            {/* Solid connection lines */}
+                            <line x1="270" y1="110" x2="70" y2="55" stroke="#9575CD" strokeWidth="1.5" strokeOpacity="0.75" />
+                            <line x1="270" y1="110" x2="80" y2="185" stroke="#9575CD" strokeWidth="1.5" strokeOpacity="0.75" />
+                            <line x1="270" y1="110" x2="470" y2="55" stroke="#9575CD" strokeWidth="1.5" strokeOpacity="0.75" />
+                            <line x1="270" y1="110" x2="460" y2="185" stroke="#9575CD" strokeWidth="1.5" strokeOpacity="0.75" />
+                            <line x1="270" y1="110" x2="270" y2="25" stroke="#9575CD" strokeWidth="1.5" strokeOpacity="0.75" />
+
+                            {/* Center: On-Device / Local SLM Core */}
+                            <circle cx="270" cy="110" r="20" fill="#7E57C2" filter="drop-shadow(0 0 14px #9575CD)" />
+                            <text x="270" y="114" fill="#ffffff" fontSize="9" fontWeight="bold" textAnchor="middle" fontFamily="'IBM Plex Mono', monospace">10X</text>
+                            
+                            {/* Device Nodes */}
+                            <circle cx="70" cy="55" r="14" fill="#140a24" stroke="#9575CD" strokeWidth="1.5" />
+                            <text x="70" y="58.5" fill="#B39DDB" fontSize="10" textAnchor="middle">✓</text>
+                            
+                            <circle cx="80" cy="185" r="14" fill="#140a24" stroke="#9575CD" strokeWidth="1.5" />
+                            <text x="80" y="188.5" fill="#B39DDB" fontSize="10" textAnchor="middle">✓</text>
+                            
+                            <circle cx="470" cy="55" r="14" fill="#140a24" stroke="#9575CD" strokeWidth="1.5" />
+                            <text x="470" y="58.5" fill="#B39DDB" fontSize="10" textAnchor="middle">✓</text>
+                            
+                            <circle cx="460" cy="185" r="14" fill="#140a24" stroke="#9575CD" strokeWidth="1.5" />
+                            <text x="460" y="188.5" fill="#B39DDB" fontSize="10" textAnchor="middle">✓</text>
+
+                            <circle cx="270" cy="25" r="12" fill="#140a24" stroke="#9575CD" strokeWidth="1.5" />
+                            <text x="270" y="28" fill="#B39DDB" fontSize="9" textAnchor="middle">✓</text>
+                          </svg>
+                        </motion.div>
+                      ) : (
+                        /* STATE 1: CLOUD API BACKGROUND VISUAL (Remote Datacenter Bottleneck / Disconnected) */
+                        <motion.div 
+                          key="bg-tile1-cloud"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="absolute inset-0 flex items-center justify-center p-6"
+                        >
+                          <svg viewBox="0 0 540 320" className="w-full h-full max-w-[500px] opacity-75">
+                            {/* Latency ripples */}
+                            <circle cx="270" cy="110" r="105" fill="none" stroke="#450a0a" strokeWidth="1" strokeOpacity="0.3" strokeDasharray="4 4" />
+                            <circle cx="270" cy="110" r="65" fill="none" stroke="#71717a" strokeWidth="1" strokeOpacity="0.25" />
+                            <circle cx="270" cy="110" r="32" fill="#18181b" stroke="#3f3f46" strokeWidth="1.5" />
+
+                            {/* Center: Remote Cloud */}
+                            <circle cx="270" cy="110" r="18" fill="#27272a" stroke="#52525b" strokeWidth="1" />
+                            <text x="270" y="113.5" fill="#a1a1aa" fontSize="8" fontWeight="bold" textAnchor="middle" fontFamily="'IBM Plex Mono', monospace">CLOUD</text>
+                            
+                            {/* Connected node */}
+                            <line x1="270" y1="110" x2="470" y2="55" stroke="#71717a" strokeWidth="1" strokeDasharray="3 3" strokeOpacity="0.6" />
+                            <circle cx="470" cy="55" r="12" fill="#18181b" stroke="#52525b" strokeWidth="1" />
+
+                            {/* Disconnected Unserved Nodes */}
+                            <line x1="270" y1="110" x2="70" y2="55" stroke="#dc2626" strokeWidth="1.5" strokeDasharray="4 4" strokeOpacity="0.65" />
+                            <circle cx="70" cy="55" r="14" fill="#200a0a" stroke="#dc2626" strokeWidth="1.5" />
+                            <text x="70" y="59" fill="#ef4444" fontSize="12" fontWeight="bold" textAnchor="middle">×</text>
+
+                            <line x1="270" y1="110" x2="80" y2="185" stroke="#dc2626" strokeWidth="1.5" strokeDasharray="4 4" strokeOpacity="0.65" />
+                            <circle cx="80" cy="185" r="14" fill="#200a0a" stroke="#dc2626" strokeWidth="1.5" />
+                            <text x="80" y="189" fill="#ef4444" fontSize="12" fontWeight="bold" textAnchor="middle">×</text>
+
+                            <line x1="270" y1="110" x2="460" y2="185" stroke="#dc2626" strokeWidth="1.5" strokeDasharray="4 4" strokeOpacity="0.65" />
+                            <circle cx="460" cy="185" r="14" fill="#200a0a" stroke="#dc2626" strokeWidth="1.5" />
+                            <text x="460" y="189" fill="#ef4444" fontSize="12" fontWeight="bold" textAnchor="middle">×</text>
+                          </svg>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Gradient wash ensuring bottom text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#070709] via-[#070709]/80 to-transparent z-10" />
                   </div>
 
-                  {/* Card 3: Data Sync, Validation, and Report Rows */}
-                  <div className="bg-[#070709] border border-[#222226] rounded-lg p-5 flex flex-col gap-3.5 shadow-2xl transition-all duration-300">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-normal text-white" style={{ fontFamily: "'REM', sans-serif" }}>
-                        Data Sync
-                      </span>
-                      <span className="px-4 py-0.5 bg-[#2A1454] border border-[#673AB7] text-[#B39DDB] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(103,58,183,0.5)]">
-                        Success
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-normal text-white" style={{ fontFamily: "'REM', sans-serif" }}>
-                        Validation
-                      </span>
-                      {isLabIntelegent ? (
-                        <span className="px-4 py-0.5 bg-[#2A1454] border border-[#673AB7] text-[#B39DDB] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(103,58,183,0.5)] transition-all duration-300">
-                          Success
-                        </span>
+                  {/* Foreground Content */}
+                  <div className="relative z-20 mt-auto flex flex-col justify-end">
+                    <AnimatePresence mode="wait">
+                      {isLocalDeployment ? (
+                        <motion.div 
+                          key="tile1-local"
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.25 }}
+                        >
+                          <span 
+                            className="text-xs sm:text-sm font-mono tracking-widest text-[#9575CD] font-medium block mb-2"
+                            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                          >
+                            01
+                          </span>
+                          <h3 
+                            className="text-2xl sm:text-3xl md:text-[34px] font-normal text-white tracking-tight leading-[1.15] mb-3"
+                            style={{ fontFamily: "'REM', sans-serif" }}
+                          >
+                            Reach the people you cannot reach today
+                          </h3>
+                          <p 
+                            className="text-sm sm:text-base text-[#a0a0ab] font-light leading-relaxed max-w-[560px]"
+                            style={{ fontFamily: "'REM', sans-serif" }}
+                          >
+                            The model runs on your own hardware, or on a device in their hand. No connection required. The people your service never reached become people it does.
+                          </p>
+                        </motion.div>
                       ) : (
-                        <span className="px-4 py-0.5 bg-[#450a0a] border border-[#dc2626]/80 text-[#f87171] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(220,38,38,0.5)] transition-all duration-300">
-                          Failed
-                        </span>
+                        <motion.div 
+                          key="tile1-cloud"
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.25 }}
+                        >
+                          <span 
+                            className="text-xs sm:text-sm font-mono tracking-widest text-[#71717a] font-medium block mb-2"
+                            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                          >
+                            01
+                          </span>
+                          <h3 
+                            className="text-2xl sm:text-3xl md:text-[34px] font-normal text-white tracking-tight leading-[1.15] mb-3"
+                            style={{ fontFamily: "'REM', sans-serif" }}
+                          >
+                            Only the connected get served
+                          </h3>
+                          <p 
+                            className="text-sm sm:text-base text-[#a0a0ab] font-light leading-relaxed max-w-[560px]"
+                            style={{ fontFamily: "'REM', sans-serif" }}
+                          >
+                            Every answer needs a live connection to a datacentre. The users on a weak network, or no network at all, are the ones you already struggle to serve. They stay unserved.
+                          </p>
+                        </motion.div>
                       )}
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-normal text-white" style={{ fontFamily: "'REM', sans-serif" }}>
-                        Report
-                      </span>
-                      <span className="px-4 py-0.5 bg-[#2A1454] border border-[#673AB7] text-[#B39DDB] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(103,58,183,0.5)]">
-                        Success
-                      </span>
-                    </div>
+                    </AnimatePresence>
                   </div>
 
                 </div>
 
-                {/* Card 4: Data Scatter (Chaotic vs Linear Regression) */}
-                <div className="bg-[#070709] border border-[#222226] rounded-lg p-0 flex flex-col justify-between overflow-hidden min-h-[300px] shadow-2xl transition-all duration-300">
-                  {/* Header Bar */}
-                  <div className="bg-[#0e0e12] px-5 py-3 border-b border-[#1c1c20] text-white/90 text-sm font-normal" style={{ fontFamily: "'REM', sans-serif" }}>
-                    Data Scatter
+                {/* ============================================================== */}
+                {/* RIGHT COLUMN: TWO EQUAL STACKED TILES                          */}
+                {/* ============================================================== */}
+                <div className="lg:col-span-5 flex flex-col gap-5 w-full">
+                  
+                  {/* ============================================================ */}
+                  {/* TILE 2: TOP RIGHT TILE (Brand & Identity)                     */}
+                  {/* ============================================================ */}
+                  <div className="flex-1 bg-[#070709] border border-[#222226] hover:border-white/20 rounded-2xl p-6 sm:p-7 flex flex-col justify-end relative overflow-hidden min-h-[220px] sm:min-h-[240px] shadow-2xl transition-all duration-300">
+                    
+                    {/* Background Visual Layer */}
+                    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                      <AnimatePresence mode="wait">
+                        {isLocalDeployment ? (
+                          /* Local State: Sovereign Brand Crest Graphic */
+                          <motion.div 
+                            key="bg-tile2-local"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="absolute right-3 top-3 w-40 h-40 opacity-20"
+                          >
+                            <svg viewBox="0 0 160 160" className="w-full h-full">
+                              <polygon points="80,10 145,45 145,115 80,150 15,115 15,45" fill="none" stroke="#9575CD" strokeWidth="1.5" />
+                              <polygon points="80,28 130,55 130,105 80,132 30,105 30,55" fill="none" stroke="#7E57C2" strokeWidth="1" strokeDasharray="3 3" />
+                              <circle cx="80" cy="80" r="24" fill="rgba(149,117,205,0.15)" stroke="#B39DDB" strokeWidth="1" />
+                            </svg>
+                          </motion.div>
+                        ) : (
+                          /* Cloud State: Generic Rented Lock / 3rd Party Badge Graphic */
+                          <motion.div 
+                            key="bg-tile2-cloud"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="absolute right-3 top-3 w-40 h-40 opacity-15"
+                          >
+                            <svg viewBox="0 0 160 160" className="w-full h-full">
+                              <rect x="35" y="60" width="90" height="70" rx="8" fill="none" stroke="#71717a" strokeWidth="1.5" />
+                              <path d="M55,60 V42 C55,28 105,28 105,42 V60" fill="none" stroke="#71717a" strokeWidth="1.5" strokeDasharray="3 3" />
+                              <circle cx="80" cy="95" r="8" fill="#71717a" />
+                            </svg>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      {/* Gradient wash */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#070709] via-[#070709]/75 to-transparent z-10" />
+                    </div>
+
+                    {/* Foreground Content */}
+                    <div className="relative z-20 flex flex-col justify-end">
+                      <AnimatePresence mode="wait">
+                        {isLocalDeployment ? (
+                          <motion.div 
+                            key="tile2-local"
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            transition={{ duration: 0.22 }}
+                          >
+                            <span 
+                              className="text-xs font-mono tracking-widest text-[#9575CD] font-medium block mb-1.5"
+                              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                            >
+                              02
+                            </span>
+                            <h3 
+                              className="text-xl sm:text-2xl font-normal text-white tracking-tight leading-snug mb-2"
+                              style={{ fontFamily: "'REM', sans-serif" }}
+                            >
+                              It carries your name, not ours
+                            </h3>
+                            <p 
+                              className="text-xs sm:text-sm text-[#a0a0ab] font-light leading-relaxed"
+                              style={{ fontFamily: "'REM', sans-serif" }}
+                            >
+                              Deployed under your own brand. Ours appears nowhere your users can see.
+                            </p>
+                          </motion.div>
+                        ) : (
+                          <motion.div 
+                            key="tile2-cloud"
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            transition={{ duration: 0.22 }}
+                          >
+                            <span 
+                              className="text-xs font-mono tracking-widest text-[#71717a] font-medium block mb-1.5"
+                              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                            >
+                              02
+                            </span>
+                            <h3 
+                              className="text-xl sm:text-2xl font-normal text-white tracking-tight leading-snug mb-2"
+                              style={{ fontFamily: "'REM', sans-serif" }}
+                            >
+                              Someone else's product, inside yours
+                            </h3>
+                            <p 
+                              className="text-xs sm:text-sm text-[#a0a0ab] font-light leading-relaxed"
+                              style={{ fontFamily: "'REM', sans-serif" }}
+                            >
+                              The intelligence is rented, and the name attached to it is not yours.
+                            </p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
                   </div>
 
-                  {/* Scatter Plot Chart Image Crossfade */}
-                  <div className="p-4 flex items-center justify-center my-auto relative w-full h-[200px]">
-                    <img 
-                      src="https://cdn.prod.website-files.com/694f372b123017b1e0a43316/69568fff2c8b026b2c4ca369_Chart%26Axis.png" 
-                      alt="Chaotic Data Scatter" 
-                      className={`absolute inset-0 m-auto w-full h-auto object-contain transition-all duration-300 ${
-                        !isLabIntelegent ? 'opacity-100 filter grayscale' : 'opacity-0 pointer-events-none'
-                      }`}
-                    />
-                    <img 
-                      src="https://cdn.prod.website-files.com/694f372b123017b1e0a43316/6957360e9a68d374e7cf6424_Chart%26AxisFinal.png" 
-                      alt="Linear Regression Data Scatter" 
-                      className={`absolute inset-0 m-auto w-full h-auto object-contain transition-all duration-300 ${
-                        isLabIntelegent ? 'opacity-100 filter hue-rotate-[58deg] saturate-[1.4]' : 'opacity-0 pointer-events-none'
-                      }`}
-                    />
+                  {/* ============================================================ */}
+                  {/* TILE 3: BOTTOM RIGHT TILE (Moat & Exclusivity)                */}
+                  {/* ============================================================ */}
+                  <div className="flex-1 bg-[#070709] border border-[#222226] hover:border-white/20 rounded-2xl p-6 sm:p-7 flex flex-col justify-end relative overflow-hidden min-h-[220px] sm:min-h-[240px] shadow-2xl transition-all duration-300">
+                    
+                    {/* Background Visual Layer */}
+                    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                      <AnimatePresence mode="wait">
+                        {isLocalDeployment ? (
+                          /* Local State: Proprietary Weight Matrix Vault Graphic */
+                          <motion.div 
+                            key="bg-tile3-local"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="absolute right-3 top-3 w-40 h-40 opacity-20"
+                          >
+                            <svg viewBox="0 0 160 160" className="w-full h-full">
+                              <rect x="25" y="25" width="110" height="110" rx="10" fill="none" stroke="#9575CD" strokeWidth="1.5" />
+                              <circle cx="80" cy="80" r="32" fill="rgba(149,117,205,0.15)" stroke="#7E57C2" strokeWidth="1" strokeDasharray="4 4" />
+                              <path d="M40,80 H120 M80,40 V120" stroke="#B39DDB" strokeWidth="1" strokeOpacity="0.5" />
+                              <circle cx="80" cy="80" r="10" fill="#9575CD" />
+                            </svg>
+                          </motion.div>
+                        ) : (
+                          /* Cloud State: Open Replicated Public Key Wireframe */
+                          <motion.div 
+                            key="bg-tile3-cloud"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="absolute right-3 top-3 w-40 h-40 opacity-15"
+                          >
+                            <svg viewBox="0 0 160 160" className="w-full h-full">
+                              <circle cx="55" cy="80" r="28" fill="none" stroke="#71717a" strokeWidth="1.5" />
+                              <circle cx="105" cy="80" r="28" fill="none" stroke="#71717a" strokeWidth="1.5" strokeDasharray="3 3" />
+                              <line x1="83" y1="80" x2="140" y2="80" stroke="#71717a" strokeWidth="1.5" />
+                              <line x1="125" y1="80" x2="125" y2="92" stroke="#71717a" strokeWidth="1.5" />
+                            </svg>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      {/* Gradient wash */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#070709] via-[#070709]/75 to-transparent z-10" />
+                    </div>
+
+                    {/* Foreground Content */}
+                    <div className="relative z-20 flex flex-col justify-end">
+                      <AnimatePresence mode="wait">
+                        {isLocalDeployment ? (
+                          <motion.div 
+                            key="tile3-local"
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            transition={{ duration: 0.22 }}
+                          >
+                            <span 
+                              className="text-xs font-mono tracking-widest text-[#9575CD] font-medium block mb-1.5"
+                              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                            >
+                              03
+                            </span>
+                            <h3 
+                              className="text-xl sm:text-2xl font-normal text-white tracking-tight leading-snug mb-2"
+                              style={{ fontFamily: "'REM', sans-serif" }}
+                            >
+                              Your competitors cannot buy this
+                            </h3>
+                            <p 
+                              className="text-xs sm:text-sm text-[#a0a0ab] font-light leading-relaxed"
+                              style={{ fontFamily: "'REM', sans-serif" }}
+                            >
+                              Trained on your material, licensed only to you. Only you have this one.
+                            </p>
+                          </motion.div>
+                        ) : (
+                          <motion.div 
+                            key="tile3-cloud"
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            transition={{ duration: 0.22 }}
+                          >
+                            <span 
+                              className="text-xs font-mono tracking-widest text-[#71717a] font-medium block mb-1.5"
+                              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                            >
+                              03
+                            </span>
+                            <h3 
+                              className="text-xl sm:text-2xl font-normal text-white tracking-tight leading-snug mb-2"
+                              style={{ fontFamily: "'REM', sans-serif" }}
+                            >
+                              Your competitor has the same access
+                            </h3>
+                            <p 
+                              className="text-xs sm:text-sm text-[#a0a0ab] font-light leading-relaxed"
+                              style={{ fontFamily: "'REM', sans-serif" }}
+                            >
+                              Anything you build on a public API, they can build tomorrow with the same key.
+                            </p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
                   </div>
+
                 </div>
 
               </div>
-
-              {/* Fast Butter-Smooth Laser Scan Curtain Wipe Line */}
-              {isScanning && (
-                <div 
-                  className="absolute inset-y-0 pointer-events-none z-40 flex items-stretch transition-all duration-300 ease-out"
-                  style={{ 
-                    left: `${laserPos}%`,
-                    width: `${100 - laserPos}%`
-                  }}
-                >
-                  {/* Laser Line */}
-                  <div 
-                    className="w-[3px] bg-[#9575CD] shadow-[0_0_20px_#7E57C2,0_0_40px_#512DA8] shrink-0" 
-                  />
-                  {/* Purple Overlay Curtain Body */}
-                  <div 
-                    className="w-full h-full opacity-60"
-                    style={{
-                      background: 'linear-gradient(90deg, rgba(42, 20, 84, 0.7) 0%, rgba(20, 10, 40, 0.45) 60%, transparent 100%)'
-                    }}
-                  />
-                </div>
-              )}
 
             </div>
 

@@ -123,12 +123,12 @@ const ApiCostCalculator = () => {
   return (
     <section 
       id="cost-calculator" 
-      className="relative w-full pt-6 sm:pt-8 md:pt-10 pb-3 sm:pb-4 md:pb-5 bg-[#000000] text-white z-10 overflow-hidden flex flex-col justify-center scroll-mt-20"
+      className="relative w-full pt-14 sm:pt-16 md:pt-20 pb-6 sm:pb-8 md:pb-10 bg-[#000000] text-white z-10 overflow-hidden flex flex-col justify-center scroll-mt-28"
     >
       <div className="w-full max-w-[1360px] mx-auto px-4 sm:px-6">
         
         {/* Section Header */}
-        <div className="mb-4 sm:mb-5 text-left">
+        <div className="mb-5 sm:mb-6 text-center flex flex-col items-center justify-center">
           <span 
             className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-white/50 font-normal mb-1.5 block"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
@@ -162,27 +162,40 @@ const ApiCostCalculator = () => {
           {/* ========================================================================= */}
           <div className="lg:col-span-5 bg-[#09090b] border border-white/10 hover:border-white/20 rounded-[20px] p-4.5 sm:p-5 flex flex-col justify-between shadow-2xl transition-all duration-300 min-h-[160px]">
             <div>
-              <div className="text-white/70 text-xs sm:text-[13px] font-normal mb-2.5 sm:mb-3">
+              {/* Title: People in your organisation / Million tokens a month */}
+              <div 
+                className="text-white text-sm sm:text-base md:text-[17px] font-normal mb-2.5 sm:mb-3"
+                style={{ fontFamily: "'REM', sans-serif" }}
+              >
                 {mode === 'u' ? 'People in your organisation' : 'Million tokens a month'}
               </div>
 
-              <div className="relative flex flex-col gap-1.5">
-                <div className="relative flex items-center border-b border-white/20 focus-within:border-[#A855F7] transition-all pb-1">
+              {/* Sub-label: Enter the input: */}
+              <div 
+                className="text-white/60 text-xs sm:text-[13px] font-normal mb-2"
+                style={{ fontFamily: "'REM', sans-serif" }}
+              >
+                Enter the input:
+              </div>
+
+              <div className="relative flex flex-col gap-3">
+                {/* Purple Bordered Rectangle Input Box */}
+                <div className="relative flex items-center w-full bg-black/40 border border-[#9575CD]/80 focus-within:border-[#B39DDB] focus-within:shadow-[0_0_15px_rgba(149,117,205,0.25)] rounded-xl px-3.5 py-2 sm:py-2.5 transition-all">
                   <input
                     type="text"
                     value={rawInputValue}
                     onChange={handleUserInputChange}
                     placeholder="0"
-                    className="w-full bg-transparent text-2xl sm:text-3xl md:text-[34px] font-bold text-white tracking-tight focus:outline-none placeholder:text-white/20"
+                    className="w-full bg-transparent text-xl sm:text-2xl md:text-[26px] font-normal text-white tracking-tight focus:outline-none placeholder:text-white/20"
                     style={{ fontFamily: "'REM', sans-serif" }}
                   />
                   {mode === 't' && (
-                    <span className="text-white/40 text-xs sm:text-sm ml-2" style={{ fontFamily: "'REM', sans-serif" }}>M Tokens</span>
+                    <span className="text-white/40 text-xs sm:text-sm ml-2 font-mono" style={{ fontFamily: "'REM', sans-serif" }}>M Tokens</span>
                   )}
                 </div>
 
                 {/* Preset quick selection pills for easy live interaction */}
-                <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                <div className="flex items-center gap-2 flex-wrap">
                   {mode === 'u' ? (
                     [5000, 10000, 20000, 50000, 100000].map((count) => (
                       <button
@@ -192,10 +205,10 @@ const ApiCostCalculator = () => {
                           setUserCount(count);
                           setRawInputValue(count.toLocaleString('en-IN'));
                         }}
-                        className={`text-[10px] px-2 py-0.5 rounded border transition-all cursor-pointer ${
+                        className={`text-xs sm:text-[13px] px-3.5 py-1.5 rounded-lg border transition-all cursor-pointer ${
                           userCount === count 
-                            ? 'bg-[#A855F7]/20 border-[#A855F7] text-[#C084FC]' 
-                            : 'bg-white/5 border-white/10 text-white/50 hover:text-white hover:border-white/20'
+                            ? 'bg-[#512DA8] border-[#7E57C2] text-white shadow-[0_0_12px_rgba(103,58,183,0.45)]' 
+                            : 'bg-[#121216] border-white/10 text-white/60 hover:text-white hover:border-white/20'
                         }`}
                         style={{ fontFamily: "'REM', sans-serif" }}
                       >
@@ -211,10 +224,10 @@ const ApiCostCalculator = () => {
                           setTokenCount(mTok);
                           setRawInputValue(mTok.toLocaleString('en-IN'));
                         }}
-                        className={`text-[10px] px-2 py-0.5 rounded border transition-all cursor-pointer ${
+                        className={`text-xs sm:text-[13px] px-3.5 py-1.5 rounded-lg border transition-all cursor-pointer ${
                           tokenCount === mTok 
-                            ? 'bg-[#A855F7]/20 border-[#A855F7] text-[#C084FC]' 
-                            : 'bg-white/5 border-white/10 text-white/50 hover:text-white hover:border-white/20'
+                            ? 'bg-[#512DA8] border-[#7E57C2] text-white shadow-[0_0_12px_rgba(103,58,183,0.45)]' 
+                            : 'bg-[#121216] border-white/10 text-white/60 hover:text-white hover:border-white/20'
                         }`}
                         style={{ fontFamily: "'REM', sans-serif" }}
                       >
@@ -227,13 +240,15 @@ const ApiCostCalculator = () => {
             </div>
 
             {/* Bottom link toggle */}
-            <div className="mt-3 pt-0.5">
+            <div className="mt-4 pt-0.5">
               <button
                 type="button"
                 onClick={handleModeSwap}
-                className="text-xs font-medium text-[#A855F7] hover:text-[#C084FC] hover:underline transition-all cursor-pointer text-left"
+                className="text-xs sm:text-[13px] font-medium text-[#9575CD] hover:text-[#B39DDB] transition-colors cursor-pointer text-left inline-flex items-center gap-1.5 group"
+                style={{ fontFamily: "'REM', sans-serif" }}
               >
-                {mode === 'u' ? 'Enter tokens instead' : 'Enter headcount instead'}
+                <span>{mode === 'u' ? 'Enter tokens instead' : 'Enter headcount instead'}</span>
+                <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
               </button>
             </div>
           </div>
