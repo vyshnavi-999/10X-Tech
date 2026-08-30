@@ -223,6 +223,27 @@ export default function InstitutionsPage() {
           }
         }
 
+        // Section 5 Cloud API -> Local Deployment Auto-Switch on Scroll Track
+        if (labRef.current && !labManualOverrideRef.current) {
+          const rect = labRef.current.getBoundingClientRect();
+          const totalScrollable = rect.height - window.innerHeight;
+          if (totalScrollable > 0) {
+            const currentScroll = -rect.top;
+            const progress = Math.max(0, Math.min(1, currentScroll / totalScrollable));
+            
+            // Switch to 'local' after ~35% scroll inside the section (approx 2 scrolls after entering)
+            if (progress >= 0.35) {
+              if (deploymentModeRef.current !== 'local') {
+                triggerDeploymentMode('local');
+              }
+            } else {
+              if (deploymentModeRef.current !== 'cloud') {
+                triggerDeploymentMode('cloud');
+              }
+            }
+          }
+        }
+
         // Integration Track progress
         if (integrationRef.current) {
           const rect = integrationRef.current.getBoundingClientRect();
@@ -290,24 +311,35 @@ export default function InstitutionsPage() {
     }, 700);
   };
 
-  // Snappy Butter-Smooth Deployment Toggle Trigger Function
+  // Butter-Smooth Deployment Toggle Trigger Function with Laser Sweep
   const triggerDeploymentMode = (targetMode) => {
+    if (deploymentModeRef.current === targetMode) return;
     deploymentModeRef.current = targetMode;
     setDeploymentMode(targetMode);
     setIsScanning(true);
     
-    // Fast laser sweep animation (0 -> 100% in 350ms)
+    // Set initial position
     setLaserPos(targetMode === 'local' ? 0 : 100);
-    setTimeout(() => {
-      setLaserPos(targetMode === 'local' ? 100 : 0);
-    }, 20);
+    
+    // Smooth laser wipe
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        setLaserPos(targetMode === 'local' ? 100 : 0);
+      }, 20);
+    });
 
     setTimeout(() => {
       setIsScanning(false);
-    }, 380);
+    }, 580);
   };
 
   const toggleDeploymentMode = () => {
+    labManualOverrideRef.current = true;
+    if (labManualTimeoutRef.current) clearTimeout(labManualTimeoutRef.current);
+    labManualTimeoutRef.current = setTimeout(() => {
+      labManualOverrideRef.current = false;
+    }, 4500);
+
     const nextMode = deploymentModeRef.current === 'local' ? 'cloud' : 'local';
     triggerDeploymentMode(nextMode);
   };
@@ -898,14 +930,15 @@ export default function InstitutionsPage() {
       <section 
         ref={labRef} 
         id="lab" 
-        className="relative w-full pt-8 sm:pt-12 md:pt-14 pb-8 sm:pb-12 md:pb-14 bg-[#000000] z-10 overflow-hidden"
+        className="relative w-full h-[180vh] bg-[#000000] z-10"
       >
-        <div className="w-full max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col items-center justify-center gap-7 sm:gap-9">
+        <div className="sticky top-0 w-full h-screen flex flex-col items-center justify-center pt-20 sm:pt-24 md:pt-28 pb-4 sm:pb-6 overflow-hidden">
+          <div className="w-full max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col items-center justify-center gap-3.5 sm:gap-4.5 my-auto">
 
             {/* Top Header: From Cloud API [ TOGGLE ] Local deployment */}
-            <div className="flex flex-col items-center justify-center gap-3 z-30 text-center select-none">
+            <div className="flex flex-col items-center justify-center gap-1.5 sm:gap-2 z-30 text-center select-none">
               <h2 
-                className="text-2xl sm:text-3xl md:text-[42px] font-normal leading-none tracking-tight flex items-center flex-wrap justify-center gap-3"
+                className="text-xl sm:text-2xl md:text-[34px] font-normal leading-none tracking-tight flex items-center flex-wrap justify-center gap-2.5 sm:gap-3"
                 style={{ fontFamily: "'REM', sans-serif" }}
               >
                 <span className="text-[#888888] font-light">From</span>
@@ -916,29 +949,29 @@ export default function InstitutionsPage() {
                 {/* Interactive Pill Toggle Switch */}
                 <div 
                   onClick={toggleDeploymentMode}
-                  className="w-14 h-7 sm:w-16 sm:h-8 rounded-full border border-white/30 bg-[#070709] flex items-center p-1 cursor-pointer mx-1 sm:mx-2 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all duration-300 hover:border-white"
+                  className="w-13 h-6.5 sm:w-15 sm:h-7.5 rounded-full border border-white/30 bg-[#070709] flex items-center p-1 cursor-pointer mx-1 sm:mx-1.5 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all duration-300 hover:border-white"
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleDeploymentMode(); } }}
                   aria-label="Toggle between Cloud API and Local Deployment"
                 >
                   <div 
-                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full transition-all duration-300 ease-out ${
+                    className={`w-4.5 h-4.5 sm:w-5.5 sm:h-5.5 rounded-full transition-all duration-300 ease-out ${
                       isLocalDeployment 
-                        ? 'translate-x-7 sm:translate-x-8 bg-[#9575CD] shadow-[0_0_12px_rgba(149,117,205,0.9)]' 
+                        ? 'translate-x-6 sm:translate-x-7 bg-gradient-to-r from-[#7c3aed] to-[#a855f7] shadow-[0_0_16px_rgba(124,58,237,0.9)]' 
                         : 'translate-x-0 bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)]'
                     }`}
                   />
                 </div>
 
-                <span className={isLocalDeployment ? "text-[#9575CD] font-normal transition-colors duration-300" : "text-[#888888] font-light transition-colors duration-300"}>
+                <span className={isLocalDeployment ? "text-[#c084fc] font-normal transition-colors duration-300 drop-shadow-[0_0_12px_rgba(168,85,247,0.5)]" : "text-[#888888] font-light transition-colors duration-300"}>
                   Local deployment
                 </span>
               </h2>
 
               {/* Subheader */}
               <p 
-                className="text-xs sm:text-sm md:text-[15px] text-[#888888] font-light max-w-[680px] leading-relaxed transition-colors duration-300 px-4"
+                className="text-xs sm:text-[13px] text-[#888888] font-light max-w-[620px] leading-relaxed transition-colors duration-300 px-4"
                 style={{ fontFamily: "'REM', sans-serif" }}
               >
                 The difference is not technical. It is what your institution can offer that it cannot offer today.
@@ -948,12 +981,12 @@ export default function InstitutionsPage() {
             {/* EXACT 3-TILE LOCKED LAYOUT: ONE LARGE LEFT + TWO EQUAL STACKED RIGHT */}
             <div className="relative w-full z-20">
               
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 w-full items-stretch">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 w-full items-stretch">
                 
                 {/* ============================================================== */}
                 {/* TILE 1: LARGE FEATURE TILE (LEFT)                              */}
                 {/* ============================================================== */}
-                <div className="lg:col-span-7 bg-[#070709] border border-[#222226] hover:border-white/20 rounded-2xl p-7 sm:p-9 flex flex-col justify-between relative overflow-hidden min-h-[460px] sm:min-h-[500px] shadow-2xl transition-all duration-300">
+                <div className="lg:col-span-7 bg-[#070709] border border-[#222226] hover:border-purple-500/30 rounded-2xl p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden min-h-[380px] sm:min-h-[410px] shadow-2xl transition-all duration-300">
                   
                   {/* Background Visual Layer */}
                   <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -961,8 +994,8 @@ export default function InstitutionsPage() {
                     <div 
                       className="absolute inset-0 opacity-10"
                       style={{
-                        backgroundImage: 'radial-gradient(circle at 1px 1px, #9575CD 1px, transparent 0)',
-                        backgroundSize: '24px 24px'
+                        backgroundImage: 'radial-gradient(circle at 1px 1px, #7c3aed 1px, transparent 0)',
+                        backgroundSize: '20px 20px'
                       }}
                     />
 
@@ -975,40 +1008,46 @@ export default function InstitutionsPage() {
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.3 }}
-                          className="absolute inset-0 flex items-center justify-center p-6"
+                          className="absolute inset-0 flex items-center justify-center p-4"
                         >
-                          <svg viewBox="0 0 540 320" className="w-full h-full max-w-[500px] opacity-75">
+                          <svg viewBox="0 0 540 280" className="w-full h-full max-w-[460px] opacity-85">
+                            <defs>
+                              <linearGradient id="brandPurpleCore" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="#a855f7" />
+                                <stop offset="100%" stopColor="#512da8" />
+                              </linearGradient>
+                            </defs>
                             {/* Glowing radial waves */}
-                            <circle cx="270" cy="110" r="100" fill="none" stroke="#7E57C2" strokeWidth="1" strokeOpacity="0.2" strokeDasharray="4 4" />
-                            <circle cx="270" cy="110" r="65" fill="none" stroke="#9575CD" strokeWidth="1" strokeOpacity="0.35" />
-                            <circle cx="270" cy="110" r="35" fill="rgba(42, 20, 84, 0.5)" stroke="#B39DDB" strokeWidth="1.5" />
+                            <circle cx="270" cy="100" r="90" fill="none" stroke="#7c3aed" strokeWidth="1" strokeOpacity="0.25" strokeDasharray="4 4" />
+                            <circle cx="270" cy="100" r="60" fill="none" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.4" />
+                            <circle cx="270" cy="100" r="32" fill="rgba(81, 45, 168, 0.45)" stroke="#c084fc" strokeWidth="1.5" />
 
                             {/* Solid connection lines */}
-                            <line x1="270" y1="110" x2="70" y2="55" stroke="#9575CD" strokeWidth="1.5" strokeOpacity="0.75" />
-                            <line x1="270" y1="110" x2="80" y2="185" stroke="#9575CD" strokeWidth="1.5" strokeOpacity="0.75" />
-                            <line x1="270" y1="110" x2="470" y2="55" stroke="#9575CD" strokeWidth="1.5" strokeOpacity="0.75" />
-                            <line x1="270" y1="110" x2="460" y2="185" stroke="#9575CD" strokeWidth="1.5" strokeOpacity="0.75" />
-                            <line x1="270" y1="110" x2="270" y2="25" stroke="#9575CD" strokeWidth="1.5" strokeOpacity="0.75" />
+                            <line x1="270" y1="100" x2="70" y2="50" stroke="#9333ea" strokeWidth="1.5" strokeOpacity="0.85" />
+                            <line x1="270" y1="100" x2="80" y2="170" stroke="#9333ea" strokeWidth="1.5" strokeOpacity="0.85" />
+                            <line x1="270" y1="100" x2="470" y2="50" stroke="#9333ea" strokeWidth="1.5" strokeOpacity="0.85" />
+                            <line x1="270" y1="100" x2="460" y2="170" stroke="#9333ea" strokeWidth="1.5" strokeOpacity="0.85" />
+                            <line x1="270" y1="100" x2="270" y2="20" stroke="#9333ea" strokeWidth="1.5" strokeOpacity="0.85" />
 
                             {/* Center: On-Device / Local SLM Core */}
-                            <circle cx="270" cy="110" r="20" fill="#7E57C2" filter="drop-shadow(0 0 14px #9575CD)" />
-                            <text x="270" y="114" fill="#ffffff" fontSize="9" fontWeight="bold" textAnchor="middle" fontFamily="'IBM Plex Mono', monospace">10X</text>
+                            <circle cx="270" cy="100" r="18" fill="url(#brandPurpleCore)" filter="drop-shadow(0 0 16px rgba(124,58,237,0.9))" />
+                            <text x="270" y="103.5" fill="#ffffff" fontSize="8.5" fontWeight="bold" textAnchor="middle" fontFamily="'IBM Plex Mono', monospace">10X</text>
                             
                             {/* Device Nodes */}
-                            <circle cx="70" cy="55" r="14" fill="#140a24" stroke="#9575CD" strokeWidth="1.5" />
-                            <text x="70" y="58.5" fill="#B39DDB" fontSize="10" textAnchor="middle">✓</text>
+                            <circle cx="70" cy="50" r="13" fill="#140a24" stroke="#a855f7" strokeWidth="1.5" />
+                            <text x="70" y="53.5" fill="#c084fc" fontSize="9.5" textAnchor="middle">✓</text>
                             
-                            <circle cx="80" cy="185" r="14" fill="#140a24" stroke="#9575CD" strokeWidth="1.5" />
-                            <text x="80" y="188.5" fill="#B39DDB" fontSize="10" textAnchor="middle">✓</text>
+                            <circle cx="80" cy="170" r="13" fill="#140a24" stroke="#a855f7" strokeWidth="1.5" />
+                            <text x="80" y="173.5" fill="#c084fc" fontSize="9.5" textAnchor="middle">✓</text>
                             
-                            <circle cx="470" cy="55" r="14" fill="#140a24" stroke="#9575CD" strokeWidth="1.5" />
-                            <text x="470" y="58.5" fill="#B39DDB" fontSize="10" textAnchor="middle">✓</text>
+                            <circle cx="470" cy="50" r="13" fill="#140a24" stroke="#a855f7" strokeWidth="1.5" />
+                            <text x="470" y="53.5" fill="#c084fc" fontSize="9.5" textAnchor="middle">✓</text>
                             
-                            <circle cx="460" cy="185" r="14" fill="#140a24" stroke="#9575CD" strokeWidth="1.5" />
-                            <text x="460" y="188.5" fill="#B39DDB" fontSize="10" textAnchor="middle">✓</text>
+                            <circle cx="460" cy="170" r="13" fill="#140a24" stroke="#a855f7" strokeWidth="1.5" />
+                            <text x="460" y="173.5" fill="#c084fc" fontSize="9.5" textAnchor="middle">✓</text>
 
-                            <circle cx="270" cy="25" r="12" fill="#140a24" stroke="#9575CD" strokeWidth="1.5" />
-                            <text x="270" y="28" fill="#B39DDB" fontSize="9" textAnchor="middle">✓</text>
+                            <circle cx="270" cy="20" r="11" fill="#140a24" stroke="#a855f7" strokeWidth="1.5" />
+                            <text x="270" y="23" fill="#c084fc" fontSize="8.5" textAnchor="middle">✓</text>
                           </svg>
                         </motion.div>
                       ) : (
@@ -1019,34 +1058,34 @@ export default function InstitutionsPage() {
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.3 }}
-                          className="absolute inset-0 flex items-center justify-center p-6"
+                          className="absolute inset-0 flex items-center justify-center p-4"
                         >
-                          <svg viewBox="0 0 540 320" className="w-full h-full max-w-[500px] opacity-75">
+                          <svg viewBox="0 0 540 280" className="w-full h-full max-w-[460px] opacity-75">
                             {/* Latency ripples */}
-                            <circle cx="270" cy="110" r="105" fill="none" stroke="#450a0a" strokeWidth="1" strokeOpacity="0.3" strokeDasharray="4 4" />
-                            <circle cx="270" cy="110" r="65" fill="none" stroke="#71717a" strokeWidth="1" strokeOpacity="0.25" />
-                            <circle cx="270" cy="110" r="32" fill="#18181b" stroke="#3f3f46" strokeWidth="1.5" />
+                            <circle cx="270" cy="100" r="95" fill="none" stroke="#450a0a" strokeWidth="1" strokeOpacity="0.3" strokeDasharray="4 4" />
+                            <circle cx="270" cy="100" r="60" fill="none" stroke="#71717a" strokeWidth="1" strokeOpacity="0.25" />
+                            <circle cx="270" cy="100" r="28" fill="#18181b" stroke="#3f3f46" strokeWidth="1.5" />
 
                             {/* Center: Remote Cloud */}
-                            <circle cx="270" cy="110" r="18" fill="#27272a" stroke="#52525b" strokeWidth="1" />
-                            <text x="270" y="113.5" fill="#a1a1aa" fontSize="8" fontWeight="bold" textAnchor="middle" fontFamily="'IBM Plex Mono', monospace">CLOUD</text>
+                            <circle cx="270" cy="100" r="16" fill="#27272a" stroke="#52525b" strokeWidth="1" />
+                            <text x="270" y="103" fill="#a1a1aa" fontSize="7.5" fontWeight="bold" textAnchor="middle" fontFamily="'IBM Plex Mono', monospace">CLOUD</text>
                             
                             {/* Connected node */}
-                            <line x1="270" y1="110" x2="470" y2="55" stroke="#71717a" strokeWidth="1" strokeDasharray="3 3" strokeOpacity="0.6" />
-                            <circle cx="470" cy="55" r="12" fill="#18181b" stroke="#52525b" strokeWidth="1" />
+                            <line x1="270" y1="100" x2="470" y2="50" stroke="#71717a" strokeWidth="1" strokeDasharray="3 3" strokeOpacity="0.6" />
+                            <circle cx="470" cy="50" r="11" fill="#18181b" stroke="#52525b" strokeWidth="1" />
 
                             {/* Disconnected Unserved Nodes */}
-                            <line x1="270" y1="110" x2="70" y2="55" stroke="#dc2626" strokeWidth="1.5" strokeDasharray="4 4" strokeOpacity="0.65" />
-                            <circle cx="70" cy="55" r="14" fill="#200a0a" stroke="#dc2626" strokeWidth="1.5" />
-                            <text x="70" y="59" fill="#ef4444" fontSize="12" fontWeight="bold" textAnchor="middle">×</text>
+                            <line x1="270" y1="100" x2="70" y2="50" stroke="#dc2626" strokeWidth="1.5" strokeDasharray="4 4" strokeOpacity="0.65" />
+                            <circle cx="70" cy="50" r="13" fill="#200a0a" stroke="#dc2626" strokeWidth="1.5" />
+                            <text x="70" y="54" fill="#ef4444" fontSize="11" fontWeight="bold" textAnchor="middle">×</text>
 
-                            <line x1="270" y1="110" x2="80" y2="185" stroke="#dc2626" strokeWidth="1.5" strokeDasharray="4 4" strokeOpacity="0.65" />
-                            <circle cx="80" cy="185" r="14" fill="#200a0a" stroke="#dc2626" strokeWidth="1.5" />
-                            <text x="80" y="189" fill="#ef4444" fontSize="12" fontWeight="bold" textAnchor="middle">×</text>
+                            <line x1="270" y1="100" x2="80" y2="170" stroke="#dc2626" strokeWidth="1.5" strokeDasharray="4 4" strokeOpacity="0.65" />
+                            <circle cx="80" cy="170" r="13" fill="#200a0a" stroke="#dc2626" strokeWidth="1.5" />
+                            <text x="80" y="174" fill="#ef4444" fontSize="11" fontWeight="bold" textAnchor="middle">×</text>
 
-                            <line x1="270" y1="110" x2="460" y2="185" stroke="#dc2626" strokeWidth="1.5" strokeDasharray="4 4" strokeOpacity="0.65" />
-                            <circle cx="460" cy="185" r="14" fill="#200a0a" stroke="#dc2626" strokeWidth="1.5" />
-                            <text x="460" y="189" fill="#ef4444" fontSize="12" fontWeight="bold" textAnchor="middle">×</text>
+                            <line x1="270" y1="100" x2="460" y2="170" stroke="#dc2626" strokeWidth="1.5" strokeDasharray="4 4" strokeOpacity="0.65" />
+                            <circle cx="460" cy="170" r="13" fill="#200a0a" stroke="#dc2626" strokeWidth="1.5" />
+                            <text x="460" y="174" fill="#ef4444" fontSize="11" fontWeight="bold" textAnchor="middle">×</text>
                           </svg>
                         </motion.div>
                       )}
@@ -1062,25 +1101,25 @@ export default function InstitutionsPage() {
                       {isLocalDeployment ? (
                         <motion.div 
                           key="tile1-local"
-                          initial={{ opacity: 0, y: 6 }}
+                          initial={{ opacity: 0, y: 5 }}
                           animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -6 }}
-                          transition={{ duration: 0.25 }}
+                          exit={{ opacity: 0, y: -5 }}
+                          transition={{ duration: 0.22 }}
                         >
                           <span 
-                            className="text-xs sm:text-sm font-mono tracking-widest text-[#9575CD] font-medium block mb-2"
+                            className="text-xs font-mono tracking-widest text-[#c084fc] font-medium block mb-1"
                             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                           >
                             01
                           </span>
                           <h3 
-                            className="text-2xl sm:text-3xl md:text-[34px] font-normal text-white tracking-tight leading-[1.15] mb-3"
+                            className="text-xl sm:text-2xl md:text-[27px] font-normal text-white tracking-tight leading-snug mb-1.5"
                             style={{ fontFamily: "'REM', sans-serif" }}
                           >
                             Reach the people you cannot reach today
                           </h3>
                           <p 
-                            className="text-sm sm:text-base text-[#a0a0ab] font-light leading-relaxed max-w-[560px]"
+                            className="text-xs sm:text-[13px] text-[#a0a0ab] font-light leading-relaxed max-w-[540px]"
                             style={{ fontFamily: "'REM', sans-serif" }}
                           >
                             The model runs on your own hardware, or on a device in their hand. No connection required. The people your service never reached become people it does.
@@ -1089,25 +1128,25 @@ export default function InstitutionsPage() {
                       ) : (
                         <motion.div 
                           key="tile1-cloud"
-                          initial={{ opacity: 0, y: 6 }}
+                          initial={{ opacity: 0, y: 5 }}
                           animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -6 }}
-                          transition={{ duration: 0.25 }}
+                          exit={{ opacity: 0, y: -5 }}
+                          transition={{ duration: 0.22 }}
                         >
                           <span 
-                            className="text-xs sm:text-sm font-mono tracking-widest text-[#71717a] font-medium block mb-2"
+                            className="text-xs font-mono tracking-widest text-[#71717a] font-medium block mb-1"
                             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                           >
                             01
                           </span>
                           <h3 
-                            className="text-2xl sm:text-3xl md:text-[34px] font-normal text-white tracking-tight leading-[1.15] mb-3"
+                            className="text-xl sm:text-2xl md:text-[27px] font-normal text-white tracking-tight leading-snug mb-1.5"
                             style={{ fontFamily: "'REM', sans-serif" }}
                           >
                             Only the connected get served
                           </h3>
                           <p 
-                            className="text-sm sm:text-base text-[#a0a0ab] font-light leading-relaxed max-w-[560px]"
+                            className="text-xs sm:text-[13px] text-[#a0a0ab] font-light leading-relaxed max-w-[540px]"
                             style={{ fontFamily: "'REM', sans-serif" }}
                           >
                             Every answer needs a live connection to a datacentre. The users on a weak network, or no network at all, are the ones you already struggle to serve. They stay unserved.
@@ -1122,12 +1161,12 @@ export default function InstitutionsPage() {
                 {/* ============================================================== */}
                 {/* RIGHT COLUMN: TWO EQUAL STACKED TILES                          */}
                 {/* ============================================================== */}
-                <div className="lg:col-span-5 flex flex-col gap-5 w-full">
+                <div className="lg:col-span-5 flex flex-col gap-3.5 sm:gap-4 w-full">
                   
                   {/* ============================================================ */}
                   {/* TILE 2: TOP RIGHT TILE (Brand & Identity)                     */}
                   {/* ============================================================ */}
-                  <div className="flex-1 bg-[#070709] border border-[#222226] hover:border-white/20 rounded-2xl p-6 sm:p-7 flex flex-col justify-end relative overflow-hidden min-h-[220px] sm:min-h-[240px] shadow-2xl transition-all duration-300">
+                  <div className="flex-1 bg-[#070709] border border-[#222226] hover:border-purple-500/30 rounded-2xl p-4 sm:p-5 flex flex-col justify-end relative overflow-hidden min-h-[180px] sm:min-h-[195px] shadow-2xl transition-all duration-300">
                     
                     {/* Background Visual Layer */}
                     <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -1140,12 +1179,12 @@ export default function InstitutionsPage() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.3 }}
-                            className="absolute right-3 top-3 w-40 h-40 opacity-20"
+                            className="absolute right-3 top-2 w-32 h-32 opacity-25"
                           >
                             <svg viewBox="0 0 160 160" className="w-full h-full">
-                              <polygon points="80,10 145,45 145,115 80,150 15,115 15,45" fill="none" stroke="#9575CD" strokeWidth="1.5" />
-                              <polygon points="80,28 130,55 130,105 80,132 30,105 30,55" fill="none" stroke="#7E57C2" strokeWidth="1" strokeDasharray="3 3" />
-                              <circle cx="80" cy="80" r="24" fill="rgba(149,117,205,0.15)" stroke="#B39DDB" strokeWidth="1" />
+                              <polygon points="80,10 145,45 145,115 80,150 15,115 15,45" fill="none" stroke="#a855f7" strokeWidth="1.5" />
+                              <polygon points="80,28 130,55 130,105 80,132 30,105 30,55" fill="none" stroke="#7c3aed" strokeWidth="1" strokeDasharray="3 3" />
+                              <circle cx="80" cy="80" r="24" fill="rgba(124,58,237,0.2)" stroke="#c084fc" strokeWidth="1" />
                             </svg>
                           </motion.div>
                         ) : (
@@ -1156,7 +1195,7 @@ export default function InstitutionsPage() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.3 }}
-                            className="absolute right-3 top-3 w-40 h-40 opacity-15"
+                            className="absolute right-3 top-2 w-32 h-32 opacity-15"
                           >
                             <svg viewBox="0 0 160 160" className="w-full h-full">
                               <rect x="35" y="60" width="90" height="70" rx="8" fill="none" stroke="#71717a" strokeWidth="1.5" />
@@ -1183,19 +1222,19 @@ export default function InstitutionsPage() {
                             transition={{ duration: 0.22 }}
                           >
                             <span 
-                              className="text-xs font-mono tracking-widest text-[#9575CD] font-medium block mb-1.5"
+                              className="text-xs font-mono tracking-widest text-[#c084fc] font-medium block mb-1"
                               style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                             >
                               02
                             </span>
                             <h3 
-                              className="text-xl sm:text-2xl font-normal text-white tracking-tight leading-snug mb-2"
+                              className="text-base sm:text-lg md:text-xl font-normal text-white tracking-tight leading-snug mb-1"
                               style={{ fontFamily: "'REM', sans-serif" }}
                             >
                               It carries your name, not ours
                             </h3>
                             <p 
-                              className="text-xs sm:text-sm text-[#a0a0ab] font-light leading-relaxed"
+                              className="text-xs sm:text-[13px] text-[#a0a0ab] font-light leading-relaxed"
                               style={{ fontFamily: "'REM', sans-serif" }}
                             >
                               Deployed under your own brand. Ours appears nowhere your users can see.
@@ -1210,19 +1249,19 @@ export default function InstitutionsPage() {
                             transition={{ duration: 0.22 }}
                           >
                             <span 
-                              className="text-xs font-mono tracking-widest text-[#71717a] font-medium block mb-1.5"
+                              className="text-xs font-mono tracking-widest text-[#71717a] font-medium block mb-1"
                               style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                             >
                               02
                             </span>
                             <h3 
-                              className="text-xl sm:text-2xl font-normal text-white tracking-tight leading-snug mb-2"
+                              className="text-base sm:text-lg md:text-xl font-normal text-white tracking-tight leading-snug mb-1"
                               style={{ fontFamily: "'REM', sans-serif" }}
                             >
                               Someone else's product, inside yours
                             </h3>
                             <p 
-                              className="text-xs sm:text-sm text-[#a0a0ab] font-light leading-relaxed"
+                              className="text-xs sm:text-[13px] text-[#a0a0ab] font-light leading-relaxed"
                               style={{ fontFamily: "'REM', sans-serif" }}
                             >
                               The intelligence is rented, and the name attached to it is not yours.
@@ -1237,7 +1276,7 @@ export default function InstitutionsPage() {
                   {/* ============================================================ */}
                   {/* TILE 3: BOTTOM RIGHT TILE (Moat & Exclusivity)                */}
                   {/* ============================================================ */}
-                  <div className="flex-1 bg-[#070709] border border-[#222226] hover:border-white/20 rounded-2xl p-6 sm:p-7 flex flex-col justify-end relative overflow-hidden min-h-[220px] sm:min-h-[240px] shadow-2xl transition-all duration-300">
+                  <div className="flex-1 bg-[#070709] border border-[#222226] hover:border-purple-500/30 rounded-2xl p-4 sm:p-5 flex flex-col justify-end relative overflow-hidden min-h-[180px] sm:min-h-[195px] shadow-2xl transition-all duration-300">
                     
                     {/* Background Visual Layer */}
                     <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -1250,13 +1289,13 @@ export default function InstitutionsPage() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.3 }}
-                            className="absolute right-3 top-3 w-40 h-40 opacity-20"
+                            className="absolute right-3 top-2 w-32 h-32 opacity-25"
                           >
                             <svg viewBox="0 0 160 160" className="w-full h-full">
-                              <rect x="25" y="25" width="110" height="110" rx="10" fill="none" stroke="#9575CD" strokeWidth="1.5" />
-                              <circle cx="80" cy="80" r="32" fill="rgba(149,117,205,0.15)" stroke="#7E57C2" strokeWidth="1" strokeDasharray="4 4" />
-                              <path d="M40,80 H120 M80,40 V120" stroke="#B39DDB" strokeWidth="1" strokeOpacity="0.5" />
-                              <circle cx="80" cy="80" r="10" fill="#9575CD" />
+                              <rect x="25" y="25" width="110" height="110" rx="10" fill="none" stroke="#a855f7" strokeWidth="1.5" />
+                              <circle cx="80" cy="80" r="32" fill="rgba(124,58,237,0.2)" stroke="#7c3aed" strokeWidth="1" strokeDasharray="4 4" />
+                              <path d="M40,80 H120 M80,40 V120" stroke="#c084fc" strokeWidth="1" strokeOpacity="0.6" />
+                              <circle cx="80" cy="80" r="10" fill="#a855f7" />
                             </svg>
                           </motion.div>
                         ) : (
@@ -1267,7 +1306,7 @@ export default function InstitutionsPage() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.3 }}
-                            className="absolute right-3 top-3 w-40 h-40 opacity-15"
+                            className="absolute right-3 top-2 w-32 h-32 opacity-15"
                           >
                             <svg viewBox="0 0 160 160" className="w-full h-full">
                               <circle cx="55" cy="80" r="28" fill="none" stroke="#71717a" strokeWidth="1.5" />
@@ -1295,19 +1334,19 @@ export default function InstitutionsPage() {
                             transition={{ duration: 0.22 }}
                           >
                             <span 
-                              className="text-xs font-mono tracking-widest text-[#9575CD] font-medium block mb-1.5"
+                              className="text-xs font-mono tracking-widest text-[#c084fc] font-medium block mb-1"
                               style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                             >
                               03
                             </span>
                             <h3 
-                              className="text-xl sm:text-2xl font-normal text-white tracking-tight leading-snug mb-2"
+                              className="text-base sm:text-lg md:text-xl font-normal text-white tracking-tight leading-snug mb-1"
                               style={{ fontFamily: "'REM', sans-serif" }}
                             >
                               Your competitors cannot buy this
                             </h3>
                             <p 
-                              className="text-xs sm:text-sm text-[#a0a0ab] font-light leading-relaxed"
+                              className="text-xs sm:text-[13px] text-[#a0a0ab] font-light leading-relaxed"
                               style={{ fontFamily: "'REM', sans-serif" }}
                             >
                               Trained on your material, licensed only to you. Only you have this one.
@@ -1322,19 +1361,19 @@ export default function InstitutionsPage() {
                             transition={{ duration: 0.22 }}
                           >
                             <span 
-                              className="text-xs font-mono tracking-widest text-[#71717a] font-medium block mb-1.5"
+                              className="text-xs font-mono tracking-widest text-[#71717a] font-medium block mb-1"
                               style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                             >
                               03
                             </span>
                             <h3 
-                              className="text-xl sm:text-2xl font-normal text-white tracking-tight leading-snug mb-2"
+                              className="text-base sm:text-lg md:text-xl font-normal text-white tracking-tight leading-snug mb-1"
                               style={{ fontFamily: "'REM', sans-serif" }}
                             >
                               Your competitor has the same access
                             </h3>
                             <p 
-                              className="text-xs sm:text-sm text-[#a0a0ab] font-light leading-relaxed"
+                              className="text-xs sm:text-[13px] text-[#a0a0ab] font-light leading-relaxed"
                               style={{ fontFamily: "'REM', sans-serif" }}
                             >
                               Anything you build on a public API, they can build tomorrow with the same key.
@@ -1350,8 +1389,33 @@ export default function InstitutionsPage() {
 
               </div>
 
+              {/* Butter-Smooth Laser Scan Curtain Sweep Overlay */}
+              {isScanning && (
+                <div 
+                  className="absolute inset-0 pointer-events-none z-40 overflow-hidden rounded-2xl"
+                >
+                  {/* Glowing Vertical Laser Line */}
+                  <div 
+                    className="absolute inset-y-0 w-[3px] bg-white shadow-[0_0_20px_#7c3aed,0_0_40px_#512da8,0_0_60px_#4c1d95] transition-all duration-500 ease-out"
+                    style={{ 
+                      left: `${laserPos}%`,
+                    }}
+                  />
+                  {/* Radiant Energy Curtain Sweep */}
+                  <div 
+                    className="absolute inset-y-0 transition-all duration-500 ease-out"
+                    style={{ 
+                      left: 0,
+                      width: `${laserPos}%`,
+                      background: 'linear-gradient(90deg, transparent 0%, rgba(81, 45, 168, 0.15) 70%, rgba(124, 58, 237, 0.3) 100%)'
+                    }}
+                  />
+                </div>
+              )}
+
             </div>
 
+          </div>
         </div>
       </section>
 
