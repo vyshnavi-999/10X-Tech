@@ -131,7 +131,7 @@ const AssetShowcase = () => {
                       height: isActive ? "100%" : "0%" 
                     }}
                     transition={{ 
-                      duration: isActive && !isPaused ? 4 : 0.3, 
+                      duration: isActive && !isPaused ? 6 : 0.3, 
                       ease: isActive && !isPaused ? "linear" : "easeInOut" 
                     }}
                     onAnimationComplete={() => {
