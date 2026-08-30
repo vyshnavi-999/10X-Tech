@@ -931,7 +931,7 @@ export default function InstitutionsPage() {
       <section 
         ref={labRef} 
         id="lab" 
-        className="relative w-full h-[120vh] bg-[#000000] z-10"
+        className="relative w-full h-[100vh] bg-[#000000] z-10"
       >
         <div className="sticky top-0 w-full h-screen flex flex-col justify-center items-center px-6 md:px-14 pt-10 sm:pt-14 pb-10 max-w-[1440px] mx-auto overflow-hidden">
           
