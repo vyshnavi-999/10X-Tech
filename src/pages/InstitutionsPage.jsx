@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import AssetShowcase from '../components/AssetShowcase';
+import ApiCostCalculator from '../components/ApiCostCalculator';
 import lottie from 'lottie-web';
 import mouseScrollAnimationData from '../assets/mouse_scroll_animation.json';
 
@@ -589,217 +590,7 @@ export default function InstitutionsPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 2.5: WHAT YOU GET / ASSET OWNERSHIP SHOWCASE                      */}
-      {/* ========================================================================= */}
-      <AssetShowcase />
-
-      {/* ========================================================================= */}
-      {/* SECTION 3: LAB TRACK — Fast, Snappy & Butter-Smooth Scan Transition       */}
-      {/* ========================================================================= */}
-      <section 
-        ref={labRef}
-        id="lab" 
-        className="relative w-full h-[150vh] bg-[#000000] z-10"
-      >
-        <div className="sticky top-0 w-full h-screen flex flex-col justify-center items-center px-6 md:px-14 pt-10 sm:pt-14 pb-10 max-w-[1440px] mx-auto overflow-hidden">
-          
-          <div className="w-full flex flex-col items-center justify-center gap-6 sm:gap-8 my-auto">
-
-            {/* Header with Dual-State Indicator: From Manual [O] Intelligent */}
-            <div className="flex items-center justify-center flex-wrap gap-4 z-30">
-              <h2 
-                className="text-3xl sm:text-4xl md:text-[46px] font-normal leading-none tracking-tight flex items-center flex-wrap justify-center gap-3 select-none"
-                style={{ fontFamily: "'REM', sans-serif" }}
-              >
-                <span className="text-[#888888] font-light">From</span>
-                <span className={!isLabIntelegent ? "text-white font-normal transition-colors duration-300" : "text-[#888888] font-light transition-colors duration-300"}>
-                  Manual
-                </span>
-                
-                {/* Interactive Pill Toggle Switch */}
-                <div 
-                  onClick={toggleLabMode}
-                  className="w-14 h-7 sm:w-16 sm:h-8 rounded-full border border-white/30 bg-[#070709] flex items-center p-1 cursor-pointer mx-2 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all duration-300 hover:border-white"
-                >
-                  <div 
-                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] transition-transform duration-300 ease-out ${
-                      isLabIntelegent ? 'translate-x-7 sm:translate-x-8' : 'translate-x-0'
-                    }`}
-                  />
-                </div>
-
-                <span className={isLabIntelegent ? "text-[#9575CD] font-normal transition-colors duration-300" : "text-[#888888] font-light transition-colors duration-300"}>
-                  Intelligent
-                </span>
-              </h2>
-            </div>
-
-            {/* 4 Floating Metric Cards Arrangement with Laser Scan Curtain */}
-            <div className="relative w-full z-20">
-              
-              {/* The 4 Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 w-full items-stretch">
-                
-                {/* Card 1: Bottleneck Detected (4-Quadrant Donut Ring) */}
-                <div className="bg-[#070709] border border-[#222226] rounded-lg p-0 flex flex-col justify-between overflow-hidden min-h-[300px] shadow-2xl transition-all duration-300">
-                  {/* Header Bar */}
-                  <div className="bg-[#0e0e12] px-5 py-3 border-b border-[#1c1c20] text-white/90 text-sm font-normal" style={{ fontFamily: "'REM', sans-serif" }}>
-                    Bottleneck Detected
-                  </div>
-
-                  {/* 4-Quadrant Segmented Donut Ring SVG */}
-                  <div className="relative w-full h-[200px] flex items-center justify-center p-4 my-auto">
-                    <svg viewBox="0 0 200 200" className="w-[150px] h-[150px] drop-shadow-[0_0_15px_rgba(103,58,183,0.4)]">
-                      {/* Top-Right Quadrant Arc */}
-                      <path 
-                        d="M 108 20 A 76 76 0 0 1 180 92 L 148 92 A 44 44 0 0 0 108 52 Z" 
-                        fill={isLabIntelegent ? "#2A1454" : "none"} 
-                        stroke={isLabIntelegent ? "#7E57C2" : "#333333"} 
-                        strokeWidth={isLabIntelegent ? "1.5" : "1"}
-                        className="transition-all duration-300"
-                      />
-                      {/* Bottom-Right Quadrant Arc */}
-                      <path 
-                        d="M 180 108 A 76 76 0 0 1 108 180 L 108 148 A 44 44 0 0 0 148 108 Z" 
-                        fill={isLabIntelegent ? "#2A1454" : "none"} 
-                        stroke={isLabIntelegent ? "#7E57C2" : "#222222"} 
-                        strokeWidth={isLabIntelegent ? "1.5" : "1"}
-                        className="transition-all duration-300"
-                      />
-                      {/* Bottom-Left Quadrant Arc */}
-                      <path 
-                        d="M 92 180 A 76 76 0 0 1 20 108 L 52 108 A 44 44 0 0 0 92 148 Z" 
-                        fill={isLabIntelegent ? "#2A1454" : "none"} 
-                        stroke={isLabIntelegent ? "#7E57C2" : "#222222"} 
-                        strokeWidth={isLabIntelegent ? "1.5" : "1"}
-                        className="transition-all duration-300"
-                      />
-                      {/* Top-Left Quadrant Arc */}
-                      <path 
-                        d="M 20 92 A 76 76 0 0 1 92 20 L 92 52 A 44 44 0 0 0 52 92 Z" 
-                        fill={isLabIntelegent ? "#2A1454" : "none"} 
-                        stroke={isLabIntelegent ? "#7E57C2" : "#222222"} 
-                        strokeWidth={isLabIntelegent ? "1.5" : "1"}
-                        className="transition-all duration-300"
-                      />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Middle Column: Stacked Cards 2 & 3 */}
-                <div className="lg:col-span-2 flex flex-col gap-5 w-full">
-                  
-                  {/* Card 2: Process Efficiency (Fast Smooth Animated 67% -> 99%) */}
-                  <div className="bg-[#070709] border border-[#222226] rounded-lg p-5 flex flex-col justify-between shadow-2xl transition-all duration-300">
-                    <div className="text-white/80 text-sm font-normal mb-4" style={{ fontFamily: "'REM', sans-serif" }}>
-                      Process Efficiency
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className="text-4xl sm:text-5xl font-normal text-white font-mono tracking-tight transition-all duration-75">
-                        {efficiencyDisplay}%
-                      </span>
-                      <span className="px-3 py-1 bg-[#111116] border border-white/10 rounded text-xs font-mono text-white/60">
-                        {isLabIntelegent ? "Autonomous / AI" : "Partially / Manual"}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Card 3: Data Sync, Validation, and Report Rows */}
-                  <div className="bg-[#070709] border border-[#222226] rounded-lg p-5 flex flex-col gap-3.5 shadow-2xl transition-all duration-300">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-normal text-white" style={{ fontFamily: "'REM', sans-serif" }}>
-                        Data Sync
-                      </span>
-                      <span className="px-4 py-0.5 bg-[#2A1454] border border-[#673AB7] text-[#B39DDB] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(103,58,183,0.5)]">
-                        Success
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-normal text-white" style={{ fontFamily: "'REM', sans-serif" }}>
-                        Validation
-                      </span>
-                      {isLabIntelegent ? (
-                        <span className="px-4 py-0.5 bg-[#2A1454] border border-[#673AB7] text-[#B39DDB] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(103,58,183,0.5)] transition-all duration-300">
-                          Success
-                        </span>
-                      ) : (
-                        <span className="px-4 py-0.5 bg-[#450a0a] border border-[#dc2626]/80 text-[#f87171] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(220,38,38,0.5)] transition-all duration-300">
-                          Failed
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-normal text-white" style={{ fontFamily: "'REM', sans-serif" }}>
-                        Report
-                      </span>
-                      <span className="px-4 py-0.5 bg-[#2A1454] border border-[#673AB7] text-[#B39DDB] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(103,58,183,0.5)]">
-                        Success
-                      </span>
-                    </div>
-                  </div>
-
-                </div>
-
-                {/* Card 4: Data Scatter (Chaotic vs Linear Regression) */}
-                <div className="bg-[#070709] border border-[#222226] rounded-lg p-0 flex flex-col justify-between overflow-hidden min-h-[300px] shadow-2xl transition-all duration-300">
-                  {/* Header Bar */}
-                  <div className="bg-[#0e0e12] px-5 py-3 border-b border-[#1c1c20] text-white/90 text-sm font-normal" style={{ fontFamily: "'REM', sans-serif" }}>
-                    Data Scatter
-                  </div>
-
-                  {/* Scatter Plot Chart Image Crossfade */}
-                  <div className="p-4 flex items-center justify-center my-auto relative w-full h-[200px]">
-                    <img 
-                      src="https://cdn.prod.website-files.com/694f372b123017b1e0a43316/69568fff2c8b026b2c4ca369_Chart%26Axis.png" 
-                      alt="Chaotic Data Scatter" 
-                      className={`absolute inset-0 m-auto w-full h-auto object-contain transition-all duration-300 ${
-                        !isLabIntelegent ? 'opacity-100 filter grayscale' : 'opacity-0 pointer-events-none'
-                      }`}
-                    />
-                    <img 
-                      src="https://cdn.prod.website-files.com/694f372b123017b1e0a43316/6957360e9a68d374e7cf6424_Chart%26AxisFinal.png" 
-                      alt="Linear Regression Data Scatter" 
-                      className={`absolute inset-0 m-auto w-full h-auto object-contain transition-all duration-300 ${
-                        isLabIntelegent ? 'opacity-100 filter hue-rotate-[58deg] saturate-[1.4]' : 'opacity-0 pointer-events-none'
-                      }`}
-                    />
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Fast Butter-Smooth Laser Scan Curtain Wipe Line */}
-              {isScanning && (
-                <div 
-                  className="absolute inset-y-0 pointer-events-none z-40 flex items-stretch transition-all duration-300 ease-out"
-                  style={{ 
-                    left: `${laserPos}%`,
-                    width: `${100 - laserPos}%`
-                  }}
-                >
-                  {/* Laser Line */}
-                  <div 
-                    className="w-[3px] bg-[#9575CD] shadow-[0_0_20px_#7E57C2,0_0_40px_#512DA8] shrink-0" 
-                  />
-                  {/* Purple Overlay Curtain Body */}
-                  <div 
-                    className="w-full h-full opacity-60"
-                    style={{
-                      background: 'linear-gradient(90deg, rgba(42, 20, 84, 0.7) 0%, rgba(20, 10, 40, 0.45) 60%, transparent 100%)'
-                    }}
-                  />
-                </div>
-              )}
-
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* SECTION 4: THE CORE PLATFORM — Exact Quantara Diamond Track Replica       */}
+      {/* SECTION 3: THE CORE PLATFORM — Exact Quantara Diamond Track Replica       */}
       {/* ========================================================================= */}
       <section 
         ref={trackRef} 
@@ -1129,12 +920,223 @@ export default function InstitutionsPage() {
       </div>
     </section>
 
-
-
-
+      {/* ========================================================================= */}
+      {/* SECTION 4: WHAT YOU GET / ASSET OWNERSHIP SHOWCASE                      */}
+      {/* ========================================================================= */}
+      <AssetShowcase />
 
       {/* ========================================================================= */}
-      {/* SECTION 8: INTEGRATION TRACK — Exact 7-Node Parabolic Arc Fan Track       */}
+      {/* SECTION 5: LAB TRACK — Fast, Snappy & Butter-Smooth Scan Transition       */}
+      {/* ========================================================================= */}
+      <section 
+        ref={labRef} 
+        id="lab" 
+        className="relative w-full h-[120vh] bg-[#000000] z-10"
+      >
+        <div className="sticky top-0 w-full h-screen flex flex-col justify-center items-center px-6 md:px-14 pt-10 sm:pt-14 pb-10 max-w-[1440px] mx-auto overflow-hidden">
+          
+          <div className="w-full flex flex-col items-center justify-center gap-6 sm:gap-8 my-auto">
+
+            {/* Header with Dual-State Indicator: From Manual [O] Intelligent */}
+            <div className="flex items-center justify-center flex-wrap gap-4 z-30">
+              <h2 
+                className="text-3xl sm:text-4xl md:text-[46px] font-normal leading-none tracking-tight flex items-center flex-wrap justify-center gap-3 select-none"
+                style={{ fontFamily: "'REM', sans-serif" }}
+              >
+                <span className="text-[#888888] font-light">From</span>
+                <span className={!isLabIntelegent ? "text-white font-normal transition-colors duration-300" : "text-[#888888] font-light transition-colors duration-300"}>
+                  Manual
+                </span>
+                
+                {/* Interactive Pill Toggle Switch */}
+                <div 
+                  onClick={toggleLabMode}
+                  className="w-14 h-7 sm:w-16 sm:h-8 rounded-full border border-white/30 bg-[#070709] flex items-center p-1 cursor-pointer mx-2 shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all duration-300 hover:border-white"
+                >
+                  <div 
+                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] transition-transform duration-300 ease-out ${
+                      isLabIntelegent ? 'translate-x-7 sm:translate-x-8' : 'translate-x-0'
+                    }`}
+                  />
+                </div>
+
+                <span className={isLabIntelegent ? "text-[#9575CD] font-normal transition-colors duration-300" : "text-[#888888] font-light transition-colors duration-300"}>
+                  Intelligent
+                </span>
+              </h2>
+            </div>
+
+            {/* 4 Floating Metric Cards Arrangement with Laser Scan Curtain */}
+            <div className="relative w-full z-20">
+              
+              {/* The 4 Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 w-full items-stretch">
+                
+                {/* Card 1: Bottleneck Detected (4-Quadrant Donut Ring) */}
+                <div className="bg-[#070709] border border-[#222226] rounded-lg p-0 flex flex-col justify-between overflow-hidden min-h-[300px] shadow-2xl transition-all duration-300">
+                  {/* Header Bar */}
+                  <div className="bg-[#0e0e12] px-5 py-3 border-b border-[#1c1c20] text-white/90 text-sm font-normal" style={{ fontFamily: "'REM', sans-serif" }}>
+                    Bottleneck Detected
+                  </div>
+
+                  {/* 4-Quadrant Segmented Donut Ring SVG */}
+                  <div className="relative w-full h-[200px] flex items-center justify-center p-4 my-auto">
+                    <svg viewBox="0 0 200 200" className="w-[150px] h-[150px] drop-shadow-[0_0_15px_rgba(103,58,183,0.4)]">
+                      {/* Top-Right Quadrant Arc */}
+                      <path 
+                        d="M 108 20 A 76 76 0 0 1 180 92 L 148 92 A 44 44 0 0 0 108 52 Z" 
+                        fill={isLabIntelegent ? "#2A1454" : "none"} 
+                        stroke={isLabIntelegent ? "#7E57C2" : "#333333"} 
+                        strokeWidth={isLabIntelegent ? "1.5" : "1"}
+                        className="transition-all duration-300"
+                      />
+                      {/* Bottom-Right Quadrant Arc */}
+                      <path 
+                        d="M 180 108 A 76 76 0 0 1 108 180 L 108 148 A 44 44 0 0 0 148 108 Z" 
+                        fill={isLabIntelegent ? "#2A1454" : "none"} 
+                        stroke={isLabIntelegent ? "#7E57C2" : "#222222"} 
+                        strokeWidth={isLabIntelegent ? "1.5" : "1"}
+                        className="transition-all duration-300"
+                      />
+                      {/* Bottom-Left Quadrant Arc */}
+                      <path 
+                        d="M 92 180 A 76 76 0 0 1 20 108 L 52 108 A 44 44 0 0 0 92 148 Z" 
+                        fill={isLabIntelegent ? "#2A1454" : "none"} 
+                        stroke={isLabIntelegent ? "#7E57C2" : "#222222"} 
+                        strokeWidth={isLabIntelegent ? "1.5" : "1"}
+                        className="transition-all duration-300"
+                      />
+                      {/* Top-Left Quadrant Arc */}
+                      <path 
+                        d="M 20 92 A 76 76 0 0 1 92 20 L 92 52 A 44 44 0 0 0 52 92 Z" 
+                        fill={isLabIntelegent ? "#2A1454" : "none"} 
+                        stroke={isLabIntelegent ? "#7E57C2" : "#222222"} 
+                        strokeWidth={isLabIntelegent ? "1.5" : "1"}
+                        className="transition-all duration-300"
+                      />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Middle Column: Stacked Cards 2 & 3 */}
+                <div className="lg:col-span-2 flex flex-col gap-5 w-full">
+                  
+                  {/* Card 2: Process Efficiency (Fast Smooth Animated 67% -> 99%) */}
+                  <div className="bg-[#070709] border border-[#222226] rounded-lg p-5 flex flex-col justify-between shadow-2xl transition-all duration-300">
+                    <div className="text-white/80 text-sm font-normal mb-4" style={{ fontFamily: "'REM', sans-serif" }}>
+                      Process Efficiency
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="text-4xl sm:text-5xl font-normal text-white font-mono tracking-tight transition-all duration-75">
+                        {efficiencyDisplay}%
+                      </span>
+                      <span className="px-3 py-1 bg-[#111116] border border-white/10 rounded text-xs font-mono text-white/60">
+                        {isLabIntelegent ? "Autonomous / AI" : "Partially / Manual"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Card 3: Data Sync, Validation, and Report Rows */}
+                  <div className="bg-[#070709] border border-[#222226] rounded-lg p-5 flex flex-col gap-3.5 shadow-2xl transition-all duration-300">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-normal text-white" style={{ fontFamily: "'REM', sans-serif" }}>
+                        Data Sync
+                      </span>
+                      <span className="px-4 py-0.5 bg-[#2A1454] border border-[#673AB7] text-[#B39DDB] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(103,58,183,0.5)]">
+                        Success
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-normal text-white" style={{ fontFamily: "'REM', sans-serif" }}>
+                        Validation
+                      </span>
+                      {isLabIntelegent ? (
+                        <span className="px-4 py-0.5 bg-[#2A1454] border border-[#673AB7] text-[#B39DDB] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(103,58,183,0.5)] transition-all duration-300">
+                          Success
+                        </span>
+                      ) : (
+                        <span className="px-4 py-0.5 bg-[#450a0a] border border-[#dc2626]/80 text-[#f87171] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(220,38,38,0.5)] transition-all duration-300">
+                          Failed
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-normal text-white" style={{ fontFamily: "'REM', sans-serif" }}>
+                        Report
+                      </span>
+                      <span className="px-4 py-0.5 bg-[#2A1454] border border-[#673AB7] text-[#B39DDB] text-xs font-mono rounded font-medium shadow-[0_0_12px_rgba(103,58,183,0.5)]">
+                        Success
+                      </span>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Card 4: Data Scatter (Chaotic vs Linear Regression) */}
+                <div className="bg-[#070709] border border-[#222226] rounded-lg p-0 flex flex-col justify-between overflow-hidden min-h-[300px] shadow-2xl transition-all duration-300">
+                  {/* Header Bar */}
+                  <div className="bg-[#0e0e12] px-5 py-3 border-b border-[#1c1c20] text-white/90 text-sm font-normal" style={{ fontFamily: "'REM', sans-serif" }}>
+                    Data Scatter
+                  </div>
+
+                  {/* Scatter Plot Chart Image Crossfade */}
+                  <div className="p-4 flex items-center justify-center my-auto relative w-full h-[200px]">
+                    <img 
+                      src="https://cdn.prod.website-files.com/694f372b123017b1e0a43316/69568fff2c8b026b2c4ca369_Chart%26Axis.png" 
+                      alt="Chaotic Data Scatter" 
+                      className={`absolute inset-0 m-auto w-full h-auto object-contain transition-all duration-300 ${
+                        !isLabIntelegent ? 'opacity-100 filter grayscale' : 'opacity-0 pointer-events-none'
+                      }`}
+                    />
+                    <img 
+                      src="https://cdn.prod.website-files.com/694f372b123017b1e0a43316/6957360e9a68d374e7cf6424_Chart%26AxisFinal.png" 
+                      alt="Linear Regression Data Scatter" 
+                      className={`absolute inset-0 m-auto w-full h-auto object-contain transition-all duration-300 ${
+                        isLabIntelegent ? 'opacity-100 filter hue-rotate-[58deg] saturate-[1.4]' : 'opacity-0 pointer-events-none'
+                      }`}
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Fast Butter-Smooth Laser Scan Curtain Wipe Line */}
+              {isScanning && (
+                <div 
+                  className="absolute inset-y-0 pointer-events-none z-40 flex items-stretch transition-all duration-300 ease-out"
+                  style={{ 
+                    left: `${laserPos}%`,
+                    width: `${100 - laserPos}%`
+                  }}
+                >
+                  {/* Laser Line */}
+                  <div 
+                    className="w-[3px] bg-[#9575CD] shadow-[0_0_20px_#7E57C2,0_0_40px_#512DA8] shrink-0" 
+                  />
+                  {/* Purple Overlay Curtain Body */}
+                  <div 
+                    className="w-full h-full opacity-60"
+                    style={{
+                      background: 'linear-gradient(90deg, rgba(42, 20, 84, 0.7) 0%, rgba(20, 10, 40, 0.45) 60%, transparent 100%)'
+                    }}
+                  />
+                </div>
+              )}
+
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* SECTION 5: COST CALCULATOR — Renting vs Owning Live Interactive Calculator */}
+      {/* ========================================================================= */}
+      <ApiCostCalculator />
+
+      {/* ========================================================================= */}
+      {/* SECTION 6: INTEGRATION TRACK — Exact 7-Node Parabolic Arc Fan Track       */}
       {/* ========================================================================= */}
       <section 
         ref={integrationRef} 
