@@ -11,6 +11,7 @@ import BlogDetails from './pages/BlogDetails';
 import ScrollToTopButton from './components/ScrollToTopButton';
 
 import TokenizerPrototype from './pages/TokenizerPrototype';
+import QwenWebGPUTest from './components/QwenWebGPUTest';
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:id" element={<BlogDetails />} />
         <Route path="/tokenizer-prototype" element={<TokenizerPrototype />} />
+        <Route path="/qwen-webgpu-test" element={<QwenWebGPUTest />} />
       </Routes>
       <ScrollToTopButton />
     </>
