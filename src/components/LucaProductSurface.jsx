@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mic, ArrowRight, Sparkles } from 'lucide-react';
+import { prewarmQwen } from '../services/qwenService.js';
 
 const LucaProductSurface = () => {
   const navigate = useNavigate();
@@ -64,6 +65,8 @@ const LucaProductSurface = () => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
+              onFocus={prewarmQwen}
+              onPointerEnter={prewarmQwen}
               placeholder="Ask Luca a question or describe a task..."
               className="w-full bg-transparent border-none outline-none text-white placeholder-white/35 px-3 py-2 text-sm sm:text-base font-sans"
             />
@@ -81,6 +84,8 @@ const LucaProductSurface = () => {
               <button
                 type="button"
                 onClick={handleSubmit}
+                onPointerEnter={prewarmQwen}
+                onFocus={prewarmQwen}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#512da8] to-[#4c1d95] text-white text-xs font-bold uppercase tracking-wider hover:from-[#6d28d9] hover:to-[#512da8] transition-all shadow-[0_0_20px_rgba(81,45,168,0.3)]"
               >
                 <span>Launch Demo</span>

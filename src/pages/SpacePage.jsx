@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, Mic, Sparkles, MessageSquare, Plus, Trash2, Bot, User } from 'lucide-react';
 import Starfield from '../components/Starfield';
 import { retrieveKnowledge, formatKnowledgeContext } from '../knowledge/index.js';
-import { getQwenGenerator, generateQwenResponse, isWebGPUSupported } from '../services/qwenService.js';
+import { getQwenGenerator, generateQwenResponse, isWebGPUSupported, isModelReady } from '../services/qwenService.js';
 
 const SpacePage = () => {
   const { state } = useLocation();
@@ -19,7 +19,11 @@ const SpacePage = () => {
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [modelStatus, setModelStatus] = useState('checking'); // 'checking' | 'loading' | 'ready' | 'error'
+  const [modelStatus, setModelStatus] = useState(() => {
+    if (isModelReady()) return 'ready';
+    if (!isWebGPUSupported()) return 'error';
+    return 'loading';
+  });
   const [modelProgress, setModelProgress] = useState('');
   const messagesEndRef = useRef(null);
 
@@ -28,12 +32,17 @@ const SpacePage = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
-  // Pre-load Qwen3-0.6B WebGPU model singleton on component mount
+  // Pre-load or connect to singleton Qwen3-0.6B WebGPU model on component mount
   useEffect(() => {
     let mounted = true;
 
     if (!isWebGPUSupported()) {
       setModelStatus('error');
+      return;
+    }
+
+    if (isModelReady()) {
+      setModelStatus('ready');
       return;
     }
 
