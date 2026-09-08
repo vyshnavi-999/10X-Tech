@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { pipeline, TextStreamer } from '@huggingface/transformers';
+import { TextStreamer } from '@huggingface/transformers';
 import { retrieveKnowledge, formatKnowledgeContext } from '../knowledge/index.js';
-
-const MODEL_ID = 'onnx-community/Qwen3-0.6B-ONNX';
+import { getQwenGenerator, isWebGPUSupported, isModelReady } from '../services/qwenService.js';
 
 const SYSTEM_PROMPT = `
 You are LUCA, the AI assistant for 10X Technologies.
@@ -20,14 +19,14 @@ Rules:
 const QwenWebGPUTest = () => {
     const generatorRef = useRef(null);
 
-    const [status, setStatus] = useState('Checking WebGPU...');
+    const [status, setStatus] = useState(() => isModelReady() ? 'Qwen3-0.6B is ready (shared singleton).' : 'Checking WebGPU...');
     const [isLoading, setIsLoading] = useState(false);
-    const [isReady, setIsReady] = useState(false);
+    const [isReady, setIsReady] = useState(() => isModelReady());
 
     const [input, setInput] = useState('');
     const [answer, setAnswer] = useState('');
 
-    const [loadTime, setLoadTime] = useState(null);
+    const [loadTime, setLoadTime] = useState(() => isModelReady() ? 0 : null);
     const [generationTime, setGenerationTime] = useState(null);
 
     const [error, setError] = useState('');
@@ -38,7 +37,7 @@ const QwenWebGPUTest = () => {
         const loadModel = async () => {
             setError('');
 
-            if (!('gpu' in navigator)) {
+            if (!isWebGPUSupported()) {
                 setStatus('WebGPU is not available.');
                 setError(
                     'WebGPU is not available in this browser. Please use a recent Chrome or Edge browser.'
@@ -46,20 +45,36 @@ const QwenWebGPUTest = () => {
                 return;
             }
 
+            if (isModelReady()) {
+                try {
+                    const generator = await getQwenGenerator();
+                    if (!cancelled) {
+                        generatorRef.current = generator;
+                        setIsReady(true);
+                        setStatus('Qwen3-0.6B is ready (shared singleton).');
+                        setLoadTime(0);
+                    }
+                    return;
+                } catch (e) {
+                    // Fallthrough to reload if stale
+                }
+            }
+
             try {
                 setIsLoading(true);
-                setStatus('Loading Qwen3-0.6B...');
+                setStatus('Loading Qwen3-0.6B (shared singleton)...');
 
                 const start = performance.now();
 
-                const generator = await pipeline(
-                    'text-generation',
-                    MODEL_ID,
-                    {
-                        device: 'webgpu',
-                        dtype: 'q4f16',
+                const generator = await getQwenGenerator((progress) => {
+                    if (cancelled) return;
+                    if (progress.status === 'progress' && progress.total) {
+                        const pct = Math.round((progress.loaded / progress.total) * 100);
+                        setStatus(`Loading Qwen3-0.6B (${pct}%)...`);
+                    } else if (progress.status === 'done') {
+                        setStatus('Compiling shaders...');
                     }
-                );
+                });
 
                 if (cancelled) return;
 
@@ -69,7 +84,7 @@ const QwenWebGPUTest = () => {
 
                 setLoadTime(elapsed);
                 setIsReady(true);
-                setStatus('Qwen3-0.6B is ready.');
+                setStatus('Qwen3-0.6B is ready (shared singleton).');
             } catch (err) {
                 console.error('Model loading error:', err);
 

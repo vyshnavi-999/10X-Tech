@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import { prewarmQwen } from '../services/qwenService.js';
 
 const Hero = ({ openContactModal }) => {
   const navigate = useNavigate();
@@ -200,6 +201,8 @@ const Hero = ({ openContactModal }) => {
             <button
               type="button"
               onClick={handleSeeItWork}
+              onPointerEnter={prewarmQwen}
+              onFocus={prewarmQwen}
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#6d28d9] hover:bg-[#7c3aed] text-white text-xs sm:text-[13px] font-medium transition-all duration-200 cursor-pointer shadow-[0_0_20px_rgba(109,40,217,0.35)] active:scale-95 group"
             >
               <span>See it work</span>
