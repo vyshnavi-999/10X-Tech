@@ -13,6 +13,7 @@
 
 import { KNOWLEDGE_CHUNKS } from './knowledgeChunks.js';
 import { VERIFICATION_GUARDS, analyzeVerification, normalizeQuery } from './verificationGuards.js';
+import { buildSystemPrompt, formatAssistantResponseStyle, isIdentityQuery } from './systemPrompt.js';
 
 // Common English stopwords that add noise to scoring
 const STOP_WORDS = new Set([
@@ -199,7 +200,7 @@ class KnowledgeIndex {
       }
     });
 
-    const scores = [];
+    let scores = [];
     const k1 = 1.2;
     const b = 0.75;
 
@@ -280,6 +281,17 @@ class KnowledgeIndex {
     // Sort by descending score
     scores.sort((a, b) => b.score - a.score);
 
+    // Deduplication & context optimization:
+    // If specific high-confidence chunks exist, suppress the redundant 1,386-character 'qa-quick-direct-facts'
+    // chunk unless the user explicitly searched for quick facts.
+    const isExplicitQuickFacts = /\b(quick\s*facts|direct\s*facts|all\s*facts|faq|summary\s*facts)\b/i.test(query);
+    if (!isExplicitQuickFacts && scores.length > 1) {
+      const hasSpecificHighChunk = scores.some(s => s.chunk.id !== 'qa-quick-direct-facts' && s.score >= 4.0);
+      if (hasSpecificHighChunk) {
+        scores = scores.filter(s => s.chunk.id !== 'qa-quick-direct-facts');
+      }
+    }
+
     const topResults = scores.slice(0, topK);
     const topScore = topResults.length > 0 ? topResults[0].score : 0;
     const hasMatch = topResults.length > 0 && topScore >= minScore;
@@ -334,14 +346,7 @@ export function formatKnowledgeContext(chunks, options = {}) {
 
   if (!chunks || chunks.length === 0) {
     if (verificationAnalysis?.isInsufficient && verificationAnalysis?.suggestedAnswer) {
-      return `
-[VERIFICATION SAFETY DIRECTIVE]
-The user query inquires about: ${verificationAnalysis.activeGuard?.unresolvedFact || 'an unverified company detail'}.
-Status in verified 10X corpus: UNVERIFIED.
-Required response: "${verificationAnalysis.suggestedAnswer}"
-Never invent values or state unconfirmed facts.
-[END VERIFICATION SAFETY DIRECTIVE]
-`.trim();
+      return `[VERIFICATION DIRECTIVE]\nTopic: ${verificationAnalysis.activeGuard?.topic || 'Unverified company detail'}\nStatus in verified 10X corpus: UNVERIFIED.\nRequired response: "${verificationAnalysis.suggestedAnswer}"\nNever invent values or state unconfirmed facts.`;
     }
     return '';
   }
@@ -349,41 +354,18 @@ Never invent values or state unconfirmed facts.
   let guardDirectives = '';
   if (verificationAnalysis?.isVerificationSensitive) {
     if (verificationAnalysis.isInsufficient) {
-      guardDirectives = `
-[CRITICAL SAFETY DIRECTIVE: UNVERIFIED CURRENT STATUS]
-Topic: ${verificationAnalysis.activeGuard?.topic}
-Unresolved Fact: ${verificationAnalysis.activeGuard?.unresolvedFact}
-Instruction: The user is asking about current status or exact details that are marked as UNVERIFIED in the 10X corpus.
-You must state clearly that the available verified information is insufficient (e.g. "${verificationAnalysis.suggestedAnswer}").
-Do NOT use historical figures (such as prior awards, past amounts, or roadmap plans) as current status.
-${verificationAnalysis.activeGuard?.historicalAllowedSummary ? `Allowed historical context (if appropriate): "${verificationAnalysis.activeGuard.historicalAllowedSummary}"` : ''}
-[END CRITICAL SAFETY DIRECTIVE]
-`;
+      guardDirectives = `[CRITICAL SAFETY DIRECTIVE: UNVERIFIED CURRENT STATUS]\nTopic: ${verificationAnalysis.activeGuard?.topic}\nUnresolved Fact: ${verificationAnalysis.activeGuard?.unresolvedFact}\nRequired response: "${verificationAnalysis.suggestedAnswer}"\nDo NOT use historical figures as current status.\n${verificationAnalysis.activeGuard?.historicalAllowedSummary ? `Allowed historical context: "${verificationAnalysis.activeGuard.historicalAllowedSummary}"` : ''}`;
     } else if (verificationAnalysis.temporalClassification === 'historical') {
-      guardDirectives = `
-[HISTORICAL CONTEXT NOTICE]
-Topic: ${verificationAnalysis.activeGuard?.topic}
-The user is asking a historical question. You may answer using documented historical facts from the context below.
-Do NOT present historical achievements or past awards as the active current status.
-[END HISTORICAL CONTEXT NOTICE]
-`;
+      guardDirectives = `[HISTORICAL CONTEXT NOTICE]\nTopic: ${verificationAnalysis.activeGuard?.topic}\nAnswer using documented historical facts. Do NOT present past awards or milestones as active current status.`;
     }
   }
 
   const sections = chunks.map((chunk, index) => {
-    const statusNote = chunk.temporalStatus ? ` (TEMPORAL STATUS: ${chunk.temporalStatus.toUpperCase()})` : '';
+    const statusNote = chunk.temporalStatus ? ` [${chunk.temporalStatus.toUpperCase()}]` : '';
     return `[FACT ${index + 1}: ${chunk.title.toUpperCase()}${statusNote}]\n${chunk.content.trim()}`;
   });
 
-  return `
-[VERIFIED 10X TECHNOLOGIES KNOWLEDGE BASE]
-Use the following verified company facts to answer the question.
-Never invent facts, dates, names, or performance metrics outside this verified context.
-If this context does not contain enough information to answer, state clearly that you do not have verified information.
-${guardDirectives ? '\n' + guardDirectives.trim() + '\n' : ''}
-${sections.join('\n\n')}
-[END OF VERIFIED KNOWLEDGE]
-`.trim();
+  return `[VERIFIED 10X TECHNOLOGIES KNOWLEDGE BASE]\n${guardDirectives ? guardDirectives.trim() + '\n\n' : ''}${sections.join('\n\n')}\n[END VERIFIED KNOWLEDGE]`;
 }
 
 /**
@@ -410,6 +392,8 @@ export function getAllCategories() {
 /**
  * Export default object for convenience
  */
+export { buildSystemPrompt, formatAssistantResponseStyle, isIdentityQuery };
+
 export default {
   KNOWLEDGE_CHUNKS,
   VERIFICATION_GUARDS,
@@ -418,5 +402,8 @@ export default {
   analyzeVerification,
   getChunkById,
   getChunksByCategory,
-  getAllCategories
+  getAllCategories,
+  buildSystemPrompt,
+  formatAssistantResponseStyle,
+  isIdentityQuery
 };

@@ -8,7 +8,8 @@
  * 1. Historical facts are NEVER presented as current status.
  * 2. Unresolved claims trigger honest "insufficient verified information" answers.
  * 3. Legitimate historical queries receive their verified historical facts.
- * 4. Qwen is strictly constrained with explicit negative rules and factual boundaries.
+ * 4. Legitimate verified facts on guarded topics are accurately answered without false refusals.
+ * 5. Qwen is strictly constrained with explicit negative rules and factual boundaries.
  */
 
 export const VERIFICATION_GUARDS = [
@@ -26,17 +27,20 @@ export const VERIFICATION_GUARDS = [
       /\bactivate\b.*\b(tier|status|credits?|aws|amazon)\b/i,
       /\b(aws\s*activate)\b/i
     ],
+    unresolvedPatterns: [
+      /\b(current|currently|now|latest|present|today|status|tier|active|balance|approved\s*yet|approval)\b/i
+    ],
     currentStatusPatterns: [
       /\b(current|currently|now|latest|present|today|status|tier|approval|active|approved|balance|exact)\b/i
     ],
     historicalPatterns: [
-      /\b(history|historical|previously|prior|in the past|past|earlier|initially|before|previously\s+receive|ever\s+receive)\b/i
+      /\b(history|historical|previously|prior|in the past|past|earlier|initially|before|received?|awarded?|first|grant)\b/i
     ],
     allowedHistoricalFacts: [
       'A prior award at the $10,000 tier was received under Amazon Web Services startup programme (AWS Activate).',
       'A subsequent application at the $25,000 tier was submitted through Mooreas Technologies as reseller partner.'
     ],
-    insufficientMessage: "I don't have enough verified information to confirm 10X Technologies' current AWS Activate status.",
+    insufficientMessage: "I don't have enough verified information to confirm 10X Technologies' current AWS Activate status or tier.",
     historicalAllowedSummary: "10X previously received an award at the $10,000 tier under the AWS Activate startup program, and submitted a subsequent $25,000 application via Mooreas Technologies; however, the current tier and approval status remain unverified."
   },
 
@@ -51,6 +55,9 @@ export const VERIFICATION_GUARDS = [
     issueType: 'publication_status',
     triggerPatterns: [
       /\b(publication|paper|papers|preprint|arxiv|published|journal|manuscript|dravidianlangtech)\b/i
+    ],
+    unresolvedPatterns: [
+      /\b(is.*published|published\s*yet|accepted|posted\s*yet|link|doi|pdf)\b/i
     ],
     currentStatusPatterns: [
       /\b(current|currently|now|latest|present|today|status|is.*published|published\s*yet|accepted|posted\s*yet|link|doi|pdf)\b/i
@@ -78,6 +85,9 @@ export const VERIFICATION_GUARDS = [
     triggerPatterns: [
       /\b(india\s*ai(\s*mission)?|indiaai)\b/i
     ],
+    unresolvedPatterns: [
+      /\b(participating|working\s+with|formal|partner|awarded|empanelled|allocation|contract|selected|funding)\b/i
+    ],
     currentStatusPatterns: [
       /\b(participating|working\s+with|formal|partner|awarded|empanelled|allocation|contract|selected|funding)\b/i
     ],
@@ -103,6 +113,9 @@ export const VERIFICATION_GUARDS = [
     issueType: 'exact_number',
     triggerPatterns: [
       /\b(patents?|provisional\s*patents?)\b/i
+    ],
+    unresolvedPatterns: [
+      /\b(numbers?|application\s*number|filing\s*date|grant(ed)?|exact|title)\b/i
     ],
     currentStatusPatterns: [
       /\b(numbers?|application\s*numbers?|filing\s*dates?|titles?|claims?|exact|granted|patented)\b/i
@@ -130,6 +143,9 @@ export const VERIFICATION_GUARDS = [
     triggerPatterns: [
       /\b(dpiit|startup\s*india)\b/i
     ],
+    unresolvedPatterns: [
+      /\b(numbers?|registration\s*number|certificate|date|exact|when\s+was.*recognized)\b/i
+    ],
     currentStatusPatterns: [
       /\b(numbers?|dates?|certificate|registration\s*number|exact|current\s*status)\b/i
     ],
@@ -154,6 +170,9 @@ export const VERIFICATION_GUARDS = [
     issueType: 'legal_status',
     triggerPatterns: [
       /\b(incorporation|incorporated|cin|corporate\s*id|registered\s*office|legal\s*entity|pikachu\s*global)\b/i
+    ],
+    unresolvedPatterns: [
+      /\b(cin|corporate\s*id|registration\s*number|incorporation\s*date|registered\s*address|when\s+was.*incorporated)\b/i
     ],
     currentStatusPatterns: [
       /\b(date|exact|cin|address|when\s+was.*incorporated|number)\b/i
@@ -182,6 +201,9 @@ export const VERIFICATION_GUARDS = [
       /\b(gcp|google\s*cloud)\b.*\b(credits?|funding|compute|tier|status)\b/i,
       /\b(google\s*cloud\s*credits?)\b/i
     ],
+    unresolvedPatterns: [
+      /\b(amount|how\s*much|exact|balance|dollar|value|tier)\b/i
+    ],
     currentStatusPatterns: [
       /\b(amount|how\s*much|exact|current|status|latest|balance|tier)\b/i
     ],
@@ -206,6 +228,9 @@ export const VERIFICATION_GUARDS = [
     issueType: 'current_status',
     triggerPatterns: [
       /\b(rtih|catalyst(\s*program)?|mvam|nvidia-aws(\s*collaboration)?(\s*grant)?)\b/i
+    ],
+    unresolvedPatterns: [
+      /\b(outcome|result|status|selected|selection|win|won|approved|final)\b/i
     ],
     currentStatusPatterns: [
       /\b(outcome|result|status|selected|selection|win|won|awarded|approved|final)\b/i
@@ -233,6 +258,9 @@ export const VERIFICATION_GUARDS = [
     triggerPatterns: [
       /\b(fertility\s*(table|number|numbers?|metric|score|scores?|values?|results?))\b/i,
       /\b(exact\s+fertility)\b/i
+    ],
+    unresolvedPatterns: [
+      /\b(table|exact|scores?|numbers?|eval\s*set|corpus|benchmarks?)\b/i
     ],
     currentStatusPatterns: [
       /\b(exact|numbers?|scores?|table|percentages?|what\s+is\s+the\s+fertility|how\s+fertile)\b/i
@@ -263,6 +291,9 @@ export const VERIFICATION_GUARDS = [
       /\b(qwen\s*(\d|\.)*|qwen3-0\.6b)\b.*\b(benchmark|score|accuracy|jee|numbers?|percentages?)\b/i,
       /\b(jee|curriculum)\b.*\b(scores?|accuracy|percentages?|exact\s+numbers?)\b/i
     ],
+    unresolvedPatterns: [
+      /\b(exact|percentage|scores?|numbers?|eval\s*set|accuracy\s*score)\b/i
+    ],
     currentStatusPatterns: [
       /\b(exact|numbers?|percentages?|scores?|how\s*much\s*better|metrics?|split)\b/i
     ],
@@ -290,6 +321,9 @@ export const VERIFICATION_GUARDS = [
       /\b(which\s+languages|language\s+list|supported\s+languages|how\s+many\s+languages)\b.*\b(model|trained|ready|complete|status)\b/i,
       /\b(model-complete|tokenizer-complete)\b/i
     ],
+    unresolvedPatterns: [
+      /\b(exact|list|completion|which\s+exactly|all\s+languages)\b/i
+    ],
     currentStatusPatterns: [
       /\b(exact|current|status|list|completion|which\s+exactly|all\s+languages)\b/i
     ],
@@ -316,6 +350,9 @@ export const VERIFICATION_GUARDS = [
     triggerPatterns: [
       /\b(orchestration\s*(layer)?)\b.*\b(status|implemented|working|runs|built|progress)\b/i
     ],
+    unresolvedPatterns: [
+      /\b(current|status|working|implemented|runs\s+today|ready|what\s+exists)\b/i
+    ],
     currentStatusPatterns: [
       /\b(current|status|working|implemented|runs\s+today|ready|what\s+exists)\b/i
     ],
@@ -340,6 +377,9 @@ export const VERIFICATION_GUARDS = [
     issueType: 'current_status',
     triggerPatterns: [
       /\b(libre\s*os)\b.*\b(technical\s*status|kernel|android\s*derivative|independent|what\s+runs\s+today)\b/i
+    ],
+    unresolvedPatterns: [
+      /\b(exact|kernel|android|runs\s+today|technical\s+status)\b/i
     ],
     currentStatusPatterns: [
       /\b(exact|current|status|kernel|android|runs\s+today|technical\s+status)\b/i
@@ -366,8 +406,11 @@ export const VERIFICATION_GUARDS = [
     triggerPatterns: [
       /\b(buy\s+luca|purchase\s+luca|luca\s+price|retail\s+price|cost\s+of\s+luca|shipped\s+luca|is\s+luca\s+shipped|has\s+10x\s+shipped\s+luca)\b/i
     ],
+    unresolvedPatterns: [
+      /\b(buy|purchase|price|cost|how\s*much|shipped|available|store|order)\b/i
+    ],
     currentStatusPatterns: [
-      /\b(current|exact|price|cost|how\s+much|shipped|available|buy\s+now|order|release\s+date|timeline)\b/i
+      /\b(current|exact|price|cost|how\s*much|shipped|available|buy\s+now|order|release\s+date|timeline)\b/i
     ],
     historicalPatterns: [
       /\b(history|historical|in\s+the\s+past|previously|prototype\s+design)\b/i
@@ -393,6 +436,9 @@ export const VERIFICATION_GUARDS = [
     triggerPatterns: [
       /\b(who\s+is\s+dina|dina\s+at\s+10x|dina\s+role|dina\s+full\s+name)\b/i
     ],
+    unresolvedPatterns: [
+      /\b(full\s*name|exact\s*role|title|start\s*date)\b/i
+    ],
     currentStatusPatterns: [
       /\b(full\s*name|exact\s*role|title|start\s*date|who\s*is|details)\b/i
     ],
@@ -417,6 +463,9 @@ export const VERIFICATION_GUARDS = [
     issueType: 'identity',
     triggerPatterns: [
       /\b(irfan|abidi|lmodroid)\b/i
+    ],
+    unresolvedPatterns: [
+      /\b(downloads?|users?|traction|metrics?|stats?|numbers?)\b/i
     ],
     currentStatusPatterns: [
       /\b(downloads?|users?|traction|metrics?|stats?|numbers?)\b/i
@@ -444,6 +493,9 @@ export const VERIFICATION_GUARDS = [
     triggerPatterns: [
       /\b(abhiram(\s+meenan)?|dr\.?\s*muralidhar)\b/i
     ],
+    unresolvedPatterns: [
+      /\b(background|domain|institution|title|full\s*name|bio)\b/i
+    ],
     currentStatusPatterns: [
       /\b(background|domain|institution|title|full\s*name|details|bio)\b/i
     ],
@@ -469,6 +521,9 @@ export const VERIFICATION_GUARDS = [
     issueType: 'legal_status',
     triggerPatterns: [
       /\b(license|licensing|open\s*source|commercial\s*license)\b.*\b(weights?|models?|libre\s*os)\b/i
+    ],
+    unresolvedPatterns: [
+      /\b(exact|decision|status|commercial|weights\s*open|libre\s*os\s*license)\b/i
     ],
     currentStatusPatterns: [
       /\b(exact|decision|status|commercial|weights\s*open|libre\s*os\s*license)\b/i
@@ -517,7 +572,7 @@ export function isUnsupportedGeneralQuery(normalizedQuery) {
 
   // Common off-topic patterns
   const generalPatterns = [
-    /\b(how\s+to|how\s+do\s+i|recipe|bake|cake|cook|weather|capital\s+of|who\s+is\s+president|cricket|football|movie|song|joke)\b/i
+    /\b(how\s+to|how\s+do\s+i|recipe|bake|cake|cook|weather|capital\s+of|who\s+is\s+president|who\s+is\s+prime\s+minister|cricket|football|movie|song|joke|write\s+a\s+poem|solve|equation|python|javascript|coding|translate|french|spanish|german)\b/i
   ];
 
   return generalPatterns.some(p => p.test(normalizedQuery));
@@ -556,8 +611,9 @@ export function analyzeVerification(query) {
   ];
   const historicalMarkers = [
     'history', 'historical', 'previously', 'prior', 'in the past', 'past',
-    'earlier', 'initially', 'before', 'started', 'origin', 'genesis',
-    'why did 10x move', 'why did 10x pivot', 'did 10x receive', 'was awarded'
+    'earlier', 'initial', 'initially', 'before', 'started', 'origin', 'genesis',
+    'first', 'did 10x receive', 'was awarded', 'received', 'awarded', 'grant',
+    'why did 10x move', 'why did 10x pivot'
   ];
   const futureMarkers = [
     'plan', 'planned', 'future', 'roadmap', 'will', 'going to', 'upcoming', 'next'
@@ -568,10 +624,10 @@ export function analyzeVerification(query) {
   const hasFutureMarker = futureMarkers.some(m => normalized.includes(m));
 
   let temporalClassification = 'general';
-  if (hasCurrentMarker && !hasHistoricalMarker) {
-    temporalClassification = 'current';
-  } else if (hasHistoricalMarker) {
+  if (hasHistoricalMarker) {
     temporalClassification = 'historical';
+  } else if (hasCurrentMarker) {
+    temporalClassification = 'current';
   } else if (hasFutureMarker) {
     temporalClassification = 'planned';
   }
@@ -581,13 +637,14 @@ export function analyzeVerification(query) {
     const isTopicMatch = guard.triggerPatterns.some(pattern => pattern.test(normalized));
     if (!isTopicMatch) continue;
 
-    const asksCurrentOrExact = guard.currentStatusPatterns.some(pattern => pattern.test(normalized));
-    const asksHistorical = guard.historicalPatterns.some(pattern => pattern.test(normalized));
+    const guardHistoricalRegex = /\b(history|historical|previously|prior|in the past|past|earlier|initial|initially|before|received?|awarded?|first|grant)\b/i;
+    const asksHistorical = guardHistoricalRegex.test(normalized) || hasHistoricalMarker || (guard.historicalPatterns && guard.historicalPatterns.some(p => p.test(normalized)));
 
-    // Priority 1: If asking for current status or exact details
-    // (exact / current / number overrides historical patterns, e.g. "What is 10X's exact DPIIT recognition number?")
-    const hasExactOrCurrentKeyword = normalized.includes('exact') || normalized.includes('current') || normalized.includes('status') || normalized.includes('number');
-    if (asksCurrentOrExact && (!asksHistorical || hasExactOrCurrentKeyword)) {
+    const unresolvedRegexes = guard.unresolvedPatterns || guard.currentStatusPatterns;
+    const asksUnresolved = unresolvedRegexes.some(pattern => pattern.test(normalized));
+
+    // Priority 1: Asking for unverified details (current status, exact number, unclosed round, retail availability)
+    if (asksUnresolved && !asksHistorical) {
       return {
         isUnsupportedGeneral: false,
         isVerificationSensitive: true,
@@ -595,7 +652,7 @@ export function analyzeVerification(query) {
         activeGuard: guard,
         isInsufficient: true,
         suggestedAnswer: guard.insufficientMessage,
-        guardReason: `Query requests current status or exact details of [${guard.topic}], which is unresolved in the corpus.`
+        guardReason: `Query requests unresolved detail for [${guard.topic}].`
       };
     }
 
@@ -608,19 +665,19 @@ export function analyzeVerification(query) {
         activeGuard: guard,
         isInsufficient: false,
         allowedHistoricalFacts: guard.allowedHistoricalFacts,
-        guardReason: `Query requests historical facts about [${guard.topic}]. Historical facts may be answered, but current status must not be inferred.`
+        guardReason: `Query requests historical facts about [${guard.topic}]. Answer using verified historical facts.`
       };
     }
 
-    // Priority 3: Inquiries about an intrinsically unverified status or detail
+    // Priority 3: General inquiry on a guarded topic where the entity is verified
+    // e.g. "Is 10X recognized by DPIIT?", "What is the legal entity name?", "How many provisional patents has 10X filed?"
     return {
       isUnsupportedGeneral: false,
       isVerificationSensitive: true,
       temporalClassification: 'current',
       activeGuard: guard,
-      isInsufficient: true,
-      suggestedAnswer: guard.insufficientMessage,
-      guardReason: `Query inquires about unresolved item [${guard.topic}].`
+      isInsufficient: false,
+      guardReason: `Query relates to [${guard.topic}]. Verified facts may be answered; unverified details remain guarded.`
     };
   }
 
