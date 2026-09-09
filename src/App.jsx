@@ -27,6 +27,7 @@ const App = () => {
         <Route path="/blog/:id" element={<BlogDetails />} />
         <Route path="/tokenizer-prototype" element={<TokenizerPrototype />} />
         <Route path="/qwen-webgpu-test" element={<QwenWebGPUTest />} />
+        <Route path="/qwen-test" element={<QwenWebGPUTest />} />
       </Routes>
       <ScrollToTopButton />
     </>

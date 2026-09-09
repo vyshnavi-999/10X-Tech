@@ -18,6 +18,9 @@ export {
   formatKnowledgeContext,
   getChunkById,
   getChunksByCategory,
-  getAllCategories
+  getAllCategories,
+  buildSystemPrompt,
+  formatAssistantResponseStyle,
+  isIdentityQuery
 } from './knowledgeRetriever.js';
 export { default } from './knowledgeRetriever.js';
