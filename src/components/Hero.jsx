@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { prewarmQwen } from '../services/qwenService.js';
 
-const Hero = ({ openContactModal, isLandingActive, isIntroDissolving }) => {
+const Hero = ({ openContactModal, isLandingActive, isContentActive }) => {
   const navigate = useNavigate();
   const eyesContainerRef = useRef(null);
   const leftEyeRef = useRef(null);
@@ -13,17 +13,37 @@ const Hero = ({ openContactModal, isLandingActive, isIntroDissolving }) => {
 
   const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // Once all elements have landed and settled (~1.2s), clear inline styles for 100% stable DOM
+  const [isSettled, setIsSettled] = useState(!isLandingActive);
+
+  useEffect(() => {
+    if (!isLandingActive) {
+      setIsSettled(true);
+      return;
+    }
+    if (isContentActive) {
+      const timer = setTimeout(() => {
+        setIsSettled(true);
+      }, 1200);
+      return () => clearTimeout(timer);
+    }
+  }, [isLandingActive, isContentActive]);
+
   // Staggered entrance styling for Apple/Stripe-tier landing choreography
-  const getEntranceStyle = (delayMs, translateDistance = 10, scale = 1) => {
-    if (!isLandingActive) return undefined;
+  const getEntranceStyle = (delayMs, translateDistance = 20, scale = 1) => {
+    if (!isLandingActive || isSettled) return undefined;
 
-    const translateVal = prefersReducedMotion ? 0 : translateDistance;
-    const scaleVal = prefersReducedMotion ? 1 : scale;
+    if (prefersReducedMotion) {
+      return {
+        opacity: isContentActive ? 1 : 0,
+        transition: 'none',
+      };
+    }
 
-    if (!isIntroDissolving) {
+    if (!isContentActive) {
       return {
         opacity: 0,
-        transform: `translateY(${translateVal}px)${scaleVal !== 1 ? ` scale(${scaleVal})` : ''}`,
+        transform: `translateY(${translateDistance}px)${scale !== 1 ? ` scale(${scale})` : ''}`,
         pointerEvents: 'none',
       };
     }
@@ -31,7 +51,7 @@ const Hero = ({ openContactModal, isLandingActive, isIntroDissolving }) => {
     return {
       opacity: 1,
       transform: 'translateY(0px) scale(1)',
-      transition: `opacity 650ms cubic-bezier(0.16, 1, 0.3, 1) ${delayMs}ms, transform 650ms cubic-bezier(0.16, 1, 0.3, 1) ${delayMs}ms`,
+      transition: `opacity 550ms cubic-bezier(0.16, 1, 0.3, 1) ${delayMs}ms, transform 550ms cubic-bezier(0.16, 1, 0.3, 1) ${delayMs}ms`,
       willChange: 'opacity, transform',
     };
   };
@@ -183,7 +203,7 @@ const Hero = ({ openContactModal, isLandingActive, isIntroDissolving }) => {
           
           {/* 1. Small contextual / credibility line */}
           <div 
-            style={getEntranceStyle(300, 8)}
+            style={getEntranceStyle(80, 16)}
             className="flex items-center gap-2 flex-wrap mb-2 sm:mb-2.5"
           >
             <span className="text-xs sm:text-[13px] font-normal text-zinc-400">
@@ -205,7 +225,7 @@ const Hero = ({ openContactModal, isLandingActive, isIntroDissolving }) => {
 
           {/* 2. Large headline */}
           <h1 
-            style={getEntranceStyle(220, 10)}
+            style={getEntranceStyle(0, 24)}
             className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[54px] 2xl:text-[60px] font-bold tracking-tight text-white leading-[1.06] mb-2.5 sm:mb-3"
           >
             Small language<br />
@@ -214,7 +234,7 @@ const Hero = ({ openContactModal, isLandingActive, isIntroDissolving }) => {
           </h1>
 
           {/* 3 & 4. Supporting description & statement */}
-          <div style={getEntranceStyle(340, 8)} className="w-full">
+          <div style={getEntranceStyle(150, 20)} className="w-full">
             <p className="text-xs sm:text-[14px] md:text-[15px] text-zinc-300 font-normal leading-relaxed mb-2 sm:mb-2.5 max-w-lg">
               Building small language models that run on<br className="hidden sm:inline" />
               {' '}your own server — or inside a device on your desk.
@@ -226,12 +246,10 @@ const Hero = ({ openContactModal, isLandingActive, isIntroDissolving }) => {
           </div>
 
           {/* 5. Two CTA buttons */}
-          <div 
-            style={getEntranceStyle(460, 6)}
-            className="flex items-center gap-3 sm:gap-3.5 flex-wrap"
-          >
+          <div className="flex items-center gap-3 sm:gap-3.5 flex-wrap">
             {/* Primary CTA (Filled Purple Pill) */}
             <button
+              style={getEntranceStyle(280, 16)}
               type="button"
               onClick={handleSeeItWork}
               onPointerEnter={prewarmQwen}
@@ -244,6 +262,7 @@ const Hero = ({ openContactModal, isLandingActive, isIntroDissolving }) => {
 
             {/* Secondary CTA (Restrained Outline Pill) */}
             <button
+              style={getEntranceStyle(360, 16)}
               type="button"
               onClick={handleInstitutions}
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-white/20 hover:border-white/40 hover:bg-white/5 text-zinc-200 hover:text-white text-xs sm:text-[13px] font-medium transition-all duration-200 cursor-pointer active:scale-95 group"
@@ -257,7 +276,7 @@ const Hero = ({ openContactModal, isLandingActive, isIntroDissolving }) => {
 
         {/* ── RIGHT COLUMN: ANCHORED DIRECTLY TO RIGHT SIDE (HERO VISUAL) ── */}
         <div 
-          style={getEntranceStyle(120, 12, 0.97)}
+          style={getEntranceStyle(180, 20, 0.97)}
           className="w-full lg:w-[46%] xl:w-[48%] flex flex-col items-center lg:items-end justify-center relative select-none mt-2 lg:mt-0"
         >
           

@@ -36,29 +36,51 @@ const LogoGroup = () => (
   </div>
 );
 
-const Logos = ({ isLandingActive, isIntroDissolving }) => {
+const Logos = ({ isLandingActive, isContentActive }) => {
   const [mounted, setMounted] = useState(false);
+  const [isSettled, setIsSettled] = useState(!isLandingActive);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (!isLandingActive) {
+      setIsSettled(true);
+      return;
+    }
+    if (isContentActive) {
+      const timer = setTimeout(() => {
+        setIsSettled(true);
+      }, 1200);
+      return () => clearTimeout(timer);
+    }
+  }, [isLandingActive, isContentActive]);
+
   const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const getLogosEntranceStyle = () => {
-    if (!isLandingActive) return undefined;
-    const translateVal = prefersReducedMotion ? 0 : 6;
-    if (!isIntroDissolving) {
+    if (!isLandingActive || isSettled) return undefined;
+
+    if (prefersReducedMotion) {
+      return {
+        opacity: isContentActive ? 1 : 0,
+        transition: 'none',
+      };
+    }
+
+    if (!isContentActive) {
       return {
         opacity: 0,
-        transform: `translateY(${translateVal}px)`,
+        transform: 'translateY(14px)',
         pointerEvents: 'none',
       };
     }
+
     return {
       opacity: 1,
       transform: 'translateY(0px)',
-      transition: 'opacity 550ms cubic-bezier(0.16, 1, 0.3, 1) 520ms, transform 550ms cubic-bezier(0.16, 1, 0.3, 1) 520ms',
+      transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1) 460ms, transform 500ms cubic-bezier(0.16, 1, 0.3, 1) 460ms',
       willChange: 'opacity, transform',
     };
   };
