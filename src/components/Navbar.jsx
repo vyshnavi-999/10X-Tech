@@ -2,13 +2,36 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
-const Navbar = ({ openContactModal }) => {
+const Navbar = ({ openContactModal, isLandingActive, isIntroDissolving }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isBentoExpanded, setIsBentoExpanded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const lastScrollYRef = useRef(0);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const getNavbarEntranceStyle = () => {
+    if (!isLandingActive) return undefined;
+
+    const translateOffset = prefersReducedMotion ? 0 : -10;
+
+    if (!isIntroDissolving) {
+      return {
+        opacity: 0,
+        transform: `translateY(${translateOffset}px)`,
+        pointerEvents: 'none',
+      };
+    }
+
+    return {
+      opacity: 1,
+      transform: 'translateY(0px)',
+      transition: 'opacity 600ms cubic-bezier(0.16, 1, 0.3, 1), transform 600ms cubic-bezier(0.16, 1, 0.3, 1)',
+      willChange: 'opacity, transform',
+    };
+  };
 
   const handleNavClick = (e, path) => {
     setIsMobileMenuOpen(false);
@@ -62,6 +85,7 @@ const Navbar = ({ openContactModal }) => {
 
       {/* GPU-Accelerated Fixed Navbar Wrapper */}
       <div 
+        style={getNavbarEntranceStyle()}
         className={`fixed w-full z-50 flex flex-col items-center px-3 sm:px-4 lg:px-6 pointer-events-none top-4 sm:top-6 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isBentoExpanded ? '-translate-y-[200%] opacity-0' : 'translate-y-0'
         }`}

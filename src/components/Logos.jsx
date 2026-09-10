@@ -36,17 +36,40 @@ const LogoGroup = () => (
   </div>
 );
 
-const Logos = () => {
+const Logos = ({ isLandingActive, isIntroDissolving }) => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const getLogosEntranceStyle = () => {
+    if (!isLandingActive) return undefined;
+    const translateVal = prefersReducedMotion ? 0 : 6;
+    if (!isIntroDissolving) {
+      return {
+        opacity: 0,
+        transform: `translateY(${translateVal}px)`,
+        pointerEvents: 'none',
+      };
+    }
+    return {
+      opacity: 1,
+      transform: 'translateY(0px)',
+      transition: 'opacity 550ms cubic-bezier(0.16, 1, 0.3, 1) 520ms, transform 550ms cubic-bezier(0.16, 1, 0.3, 1) 520ms',
+      willChange: 'opacity, transform',
+    };
+  };
+
   if (!mounted) return <div className="h-16 w-full" />;
 
   return (
-    <section className="relative z-20 mt-auto pb-4 sm:pb-6 pt-2 w-full overflow-hidden flex flex-col items-center">
+    <section 
+      style={getLogosEntranceStyle()}
+      className="relative z-20 mt-auto pb-4 sm:pb-6 pt-2 w-full overflow-hidden flex flex-col items-center"
+    >
       <p className="text-tagline-02 text-purple-400 uppercase mb-2 sm:mb-2.5 text-center tracking-widest font-mono text-[10px] sm:text-[11px] font-bold">
         COLLABORATED & BACKED BY
       </p>

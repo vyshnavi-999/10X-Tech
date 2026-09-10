@@ -3,13 +3,38 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { prewarmQwen } from '../services/qwenService.js';
 
-const Hero = ({ openContactModal }) => {
+const Hero = ({ openContactModal, isLandingActive, isIntroDissolving }) => {
   const navigate = useNavigate();
   const eyesContainerRef = useRef(null);
   const leftEyeRef = useRef(null);
   const rightEyeRef = useRef(null);
   const leftReflectionRef = useRef(null);
   const rightReflectionRef = useRef(null);
+
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Staggered entrance styling for Apple/Stripe-tier landing choreography
+  const getEntranceStyle = (delayMs, translateDistance = 10, scale = 1) => {
+    if (!isLandingActive) return undefined;
+
+    const translateVal = prefersReducedMotion ? 0 : translateDistance;
+    const scaleVal = prefersReducedMotion ? 1 : scale;
+
+    if (!isIntroDissolving) {
+      return {
+        opacity: 0,
+        transform: `translateY(${translateVal}px)${scaleVal !== 1 ? ` scale(${scaleVal})` : ''}`,
+        pointerEvents: 'none',
+      };
+    }
+
+    return {
+      opacity: 1,
+      transform: 'translateY(0px) scale(1)',
+      transition: `opacity 650ms cubic-bezier(0.16, 1, 0.3, 1) ${delayMs}ms, transform 650ms cubic-bezier(0.16, 1, 0.3, 1) ${delayMs}ms`,
+      willChange: 'opacity, transform',
+    };
+  };
 
   // Multi-layered organic gaze physics references
   const targetOffsetRef = useRef({ x: 0, y: 0 });
@@ -20,7 +45,6 @@ const Hero = ({ openContactModal }) => {
 
   // 60fps Direct DOM GPU Animation Loop (Zero React re-render overhead)
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
     const lerp = (start, end, factor) => start + (end - start) * factor;
@@ -73,7 +97,7 @@ const Hero = ({ openContactModal }) => {
         cancelAnimationFrame(animIdRef.current);
       }
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   // Window mouse movement listener (calculates gaze vector toward cursor)
   useEffect(() => {
@@ -158,7 +182,10 @@ const Hero = ({ openContactModal }) => {
         <div className="w-full lg:w-[54%] xl:w-[52%] flex flex-col items-start text-left z-20">
           
           {/* 1. Small contextual / credibility line */}
-          <div className="flex items-center gap-2 flex-wrap mb-2 sm:mb-2.5">
+          <div 
+            style={getEntranceStyle(300, 8)}
+            className="flex items-center gap-2 flex-wrap mb-2 sm:mb-2.5"
+          >
             <span className="text-xs sm:text-[13px] font-normal text-zinc-400">
               Recognised by MeitY
             </span>
@@ -177,26 +204,32 @@ const Hero = ({ openContactModal }) => {
           </div>
 
           {/* 2. Large headline */}
-          {/* 2. Large headline */}
-          <h1 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[54px] 2xl:text-[60px] font-bold tracking-tight text-white leading-[1.06] mb-2.5 sm:mb-3">
+          <h1 
+            style={getEntranceStyle(220, 10)}
+            className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[54px] 2xl:text-[60px] font-bold tracking-tight text-white leading-[1.06] mb-2.5 sm:mb-3"
+          >
             Small language<br />
             models for<br />
             <span className="text-violet-drift" style={{ animationDelay: '5s' }}>Indian languages.</span>
           </h1>
 
-          {/* 3. Short supporting description */}
-          <p className="text-xs sm:text-[14px] md:text-[15px] text-zinc-300 font-normal leading-relaxed mb-2 sm:mb-2.5 max-w-lg">
-            Building small language models that run on<br className="hidden sm:inline" />
-            {' '}your own server — or inside a device on your desk.
-          </p>
+          {/* 3 & 4. Supporting description & statement */}
+          <div style={getEntranceStyle(340, 8)} className="w-full">
+            <p className="text-xs sm:text-[14px] md:text-[15px] text-zinc-300 font-normal leading-relaxed mb-2 sm:mb-2.5 max-w-lg">
+              Building small language models that run on<br className="hidden sm:inline" />
+              {' '}your own server — or inside a device on your desk.
+            </p>
 
-          {/* 4. Short purple statement */}
-          <p className="text-xs sm:text-[13px] md:text-[14px] text-purple-400 font-medium tracking-normal mb-4 sm:mb-4.5">
-            You do not need frontier AI for every workflow.
-          </p>
+            <p className="text-xs sm:text-[13px] md:text-[14px] text-purple-400 font-medium tracking-normal mb-4 sm:mb-4.5">
+              You do not need frontier AI for every workflow.
+            </p>
+          </div>
 
           {/* 5. Two CTA buttons */}
-          <div className="flex items-center gap-3 sm:gap-3.5 flex-wrap">
+          <div 
+            style={getEntranceStyle(460, 6)}
+            className="flex items-center gap-3 sm:gap-3.5 flex-wrap"
+          >
             {/* Primary CTA (Filled Purple Pill) */}
             <button
               type="button"
@@ -222,8 +255,11 @@ const Hero = ({ openContactModal }) => {
 
         </div>
 
-        {/* ── RIGHT COLUMN: ANCHORED DIRECTLY TO RIGHT SIDE ── */}
-        <div className="w-full lg:w-[46%] xl:w-[48%] flex flex-col items-center lg:items-end justify-center relative select-none mt-2 lg:mt-0">
+        {/* ── RIGHT COLUMN: ANCHORED DIRECTLY TO RIGHT SIDE (HERO VISUAL) ── */}
+        <div 
+          style={getEntranceStyle(120, 12, 0.97)}
+          className="w-full lg:w-[46%] xl:w-[48%] flex flex-col items-center lg:items-end justify-center relative select-none mt-2 lg:mt-0"
+        >
           
           <div 
             ref={eyesContainerRef}
