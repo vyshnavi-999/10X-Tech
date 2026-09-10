@@ -43,19 +43,14 @@ const Home = () => {
       {/* Global Noise Overlay */}
       <div className="bg-noise fixed pointer-events-none z-50"></div>
 
-      {/* Homepage Content - Smooth down-to-up butter glide */}
+      {/* Homepage Content - Stable backdrop and base reveal */}
       <div
-        className="w-full flex-1 flex flex-col relative z-10 will-change-[transform,opacity]"
+        className="w-full flex-1 flex flex-col relative z-10"
         style={{
           opacity: isIntroComplete || isIntroDissolving ? 1 : 0,
-          transform: isIntroComplete
-            ? 'none'
-            : isIntroDissolving
-            ? 'translateY(0px)'
-            : 'translateY(80px)',
           transition: isIntroComplete
             ? 'none'
-            : 'transform 850ms cubic-bezier(0.16, 1, 0.3, 1), opacity 700ms cubic-bezier(0.16, 1, 0.3, 1)',
+            : 'opacity 600ms cubic-bezier(0.16, 1, 0.3, 1)',
           pointerEvents: isIntroComplete ? 'auto' : 'none',
         }}
       >
@@ -66,32 +61,43 @@ const Home = () => {
 
         {/* Main Content Container */}
         <div className="relative z-10">
-          <Navbar openContactModal={() => setIsContactModalOpen(true)} />
+          <Navbar 
+            openContactModal={() => setIsContactModalOpen(true)} 
+            isLandingActive={!isIntroComplete}
+            isIntroDissolving={isIntroDissolving}
+          />
         
-        {/* Full Viewport Hero Screen: Navbar at top, Hero centered in middle, Logos at bottom */}
-        <div className="min-h-[100svh] flex flex-col justify-between pt-20 sm:pt-24 relative">
-          <Hero openContactModal={() => setIsContactModalOpen(true)} />
-          <Logos />
+          {/* Full Viewport Hero Screen: Navbar at top, Hero centered in middle, Logos at bottom */}
+          <div className="min-h-[100svh] flex flex-col justify-between pt-20 sm:pt-24 relative">
+            <Hero 
+              openContactModal={() => setIsContactModalOpen(true)} 
+              isLandingActive={!isIntroComplete}
+              isIntroDissolving={isIntroDissolving}
+            />
+            <Logos 
+              isLandingActive={!isIntroComplete}
+              isIntroDissolving={isIntroDissolving}
+            />
+          </div>
+
+          <div className="relative z-20 w-full max-w-[1360px] mx-auto px-6 pt-12 sm:pt-16 pb-2 text-left">
+            <h2 className="text-tier-1">Announcements</h2>
+          </div>
+
+          <BackingCards />
+          <TechnicalFiller />
+
+          <FeatureLinks mode="home" />
+          <TechnicalFiller />
+
+          <PageGateways />
+          <TechnicalFiller />
+
+          <Team />
+          <TechnicalFiller />
+
+          <Footer openContactModal={() => setIsContactModalOpen(true)} />
         </div>
-
-        <div className="relative z-20 w-full max-w-[1360px] mx-auto px-6 pt-12 sm:pt-16 pb-2 text-left">
-          <h2 className="text-tier-1">Announcements</h2>
-        </div>
-
-        <BackingCards />
-        <TechnicalFiller />
-
-        <FeatureLinks mode="home" />
-        <TechnicalFiller />
-
-        <PageGateways />
-        <TechnicalFiller />
-
-        <Team />
-        <TechnicalFiller />
-
-        <Footer openContactModal={() => setIsContactModalOpen(true)} />
-      </div>
       </div>
 
       {/* Global Contact Modal */}

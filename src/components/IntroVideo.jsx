@@ -260,8 +260,8 @@ const IntroVideo = ({ onDissolve, onComplete }) => {
         pointerEvents: isFading ? 'none' : 'auto',
         userSelect: 'none',
         WebkitUserSelect: 'none',
-        transform: isFading ? 'translateY(-40px)' : 'translateY(0px)',
-        transition: 'opacity 750ms cubic-bezier(0.16, 1, 0.3, 1), transform 850ms cubic-bezier(0.16, 1, 0.3, 1)',
+        transform: 'none',
+        transition: 'opacity 750ms cubic-bezier(0.16, 1, 0.3, 1)',
         opacity: isFading ? 0 : 1,
       }}
       aria-label="10X Technologies Intro Video"
