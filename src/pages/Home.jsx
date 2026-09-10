@@ -10,9 +10,12 @@ import FeatureLinks from '../components/FeatureLinks';
 import BackingCards from '../components/BackingCards';
 import PageGateways from '../components/PageGateways';
 import TechnicalFiller from '../components/TechnicalFiller';
+import IntroVideo from '../components/IntroVideo';
 
 const Home = () => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isIntroComplete, setIsIntroComplete] = useState(false);
+  const [isIntroDissolving, setIsIntroDissolving] = useState(false);
 
   useEffect(() => {
     if (window.location.hash) {
@@ -29,24 +32,41 @@ const Home = () => {
 
   return (
     <div className="min-h-[100svh] bg-black text-white selection:bg-purple-500/30 font-sans relative w-full flex flex-col">
+      {/* Production Intro Video Portal */}
+      {!isIntroComplete && (
+        <IntroVideo
+          onDissolve={() => setIsIntroDissolving(true)}
+          onComplete={() => setIsIntroComplete(true)}
+        />
+      )}
 
       {/* Global Noise Overlay */}
       <div className="bg-noise fixed pointer-events-none z-50"></div>
 
-      {/* Blueprint Grid Overlay Removed */}
+      {/* Homepage Content - Smooth down-to-up butter glide */}
+      <div
+        className="w-full flex-1 flex flex-col relative z-10 will-change-[transform,opacity]"
+        style={{
+          opacity: isIntroComplete || isIntroDissolving ? 1 : 0,
+          transform: isIntroComplete
+            ? 'none'
+            : isIntroDissolving
+            ? 'translateY(0px)'
+            : 'translateY(80px)',
+          transition: isIntroComplete
+            ? 'none'
+            : 'transform 850ms cubic-bezier(0.16, 1, 0.3, 1), opacity 700ms cubic-bezier(0.16, 1, 0.3, 1)',
+          pointerEvents: isIntroComplete ? 'auto' : 'none',
+        }}
+      >
+        {/* Starfield */}
+        <div className="absolute top-0 left-0 right-0 h-[1000px] w-full pointer-events-none z-0 overflow-hidden">
+          <Starfield />
+        </div>
 
-      {/* Starfield */}
-      <div className="absolute top-0 left-0 right-0 h-[1000px] w-full pointer-events-none z-0 overflow-hidden">
-        <Starfield />
-      </div>
-
-
-
-
-
-      {/* Main Content Container */}
-      <div className="relative z-10">
-        <Navbar openContactModal={() => setIsContactModalOpen(true)} />
+        {/* Main Content Container */}
+        <div className="relative z-10">
+          <Navbar openContactModal={() => setIsContactModalOpen(true)} />
         
         {/* Full Viewport Hero Screen: Navbar at top, Hero centered in middle, Logos at bottom */}
         <div className="min-h-[100svh] flex flex-col justify-between pt-20 sm:pt-24 relative">
@@ -71,6 +91,7 @@ const Home = () => {
         <TechnicalFiller />
 
         <Footer openContactModal={() => setIsContactModalOpen(true)} />
+      </div>
       </div>
 
       {/* Global Contact Modal */}
