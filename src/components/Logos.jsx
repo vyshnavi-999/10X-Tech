@@ -38,7 +38,10 @@ const LogoGroup = () => (
 
 const Logos = ({ isLandingActive, isContentActive }) => {
   const [mounted, setMounted] = useState(false);
-  const [isSettled, setIsSettled] = useState(!isLandingActive);
+  // logosVisible: flips true via timer, triggering the fade+slide entrance
+  // logosSettled: flips true to clear inline styles for stable DOM
+  const [logosVisible, setLogosVisible]   = useState(!isLandingActive);
+  const [logosSettled, setLogosSettled]   = useState(!isLandingActive);
 
   useEffect(() => {
     setMounted(true);
@@ -46,41 +49,38 @@ const Logos = ({ isLandingActive, isContentActive }) => {
 
   useEffect(() => {
     if (!isLandingActive) {
-      setIsSettled(true);
+      setLogosVisible(true);
+      setLogosSettled(true);
       return;
     }
-    if (isContentActive) {
-      const timer = setTimeout(() => {
-        setIsSettled(true);
-      }, 1200);
-      return () => clearTimeout(timer);
-    }
-  }, [isLandingActive, isContentActive]);
+    if (!isContentActive) return;
+
+    // Logos appear after Hero step 5 (800ms) + 200ms buffer = 1000ms
+    const showTimer   = setTimeout(() => setLogosVisible(true),  1000);
+    const settleTimer = setTimeout(() => setLogosSettled(true),  1600);
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(settleTimer);
+    };
+  }, [isContentActive, isLandingActive]);
 
   const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const getLogosEntranceStyle = () => {
-    if (!isLandingActive || isSettled) return undefined;
+    if (!isLandingActive || logosSettled) return undefined;
 
     if (prefersReducedMotion) {
-      return {
-        opacity: isContentActive ? 1 : 0,
-        transition: 'none',
-      };
+      return { opacity: logosVisible ? 1 : 0, transition: 'none' };
     }
 
-    if (!isContentActive) {
-      return {
-        opacity: 0,
-        transform: 'translateY(14px)',
-        pointerEvents: 'none',
-      };
+    if (!logosVisible) {
+      return { opacity: 0, transform: 'translateY(14px)', pointerEvents: 'none' };
     }
 
     return {
       opacity: 1,
       transform: 'translateY(0px)',
-      transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1) 460ms, transform 500ms cubic-bezier(0.16, 1, 0.3, 1) 460ms',
+      transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1), transform 500ms cubic-bezier(0.16, 1, 0.3, 1)',
       willChange: 'opacity, transform',
     };
   };

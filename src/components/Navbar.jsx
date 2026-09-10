@@ -130,6 +130,17 @@ const Navbar = ({ openContactModal, isLandingActive, isIntroDissolving, hasStart
     };
   };
 
+  // Banner entrance: mirrors navbar — hidden during intro, fades in with navbar.
+  // On non-Home pages (isLandingActive is falsy), returns undefined → always visible.
+  const getBannerStyle = () => {
+    if (!isLandingActive) return undefined;
+    if (!isNavbarActive) return { opacity: 0, pointerEvents: 'none' };
+    return {
+      opacity: 1,
+      transition: 'opacity 350ms cubic-bezier(0.16, 1, 0.3, 1)',
+    };
+  };
+
   const handleNavClick = (e, path) => {
     setIsMobileMenuOpen(false);
     if (location.pathname === path) {
@@ -171,7 +182,30 @@ const Navbar = ({ openContactModal, isLandingActive, isIntroDissolving, hasStart
   }, [isMobileMenuOpen]);
 
   return (
-    <>
+    <>      {/* ── ANNOUNCEMENT BANNER ── sits above navbar, same z-stack */}
+      <div
+        style={getBannerStyle()}
+        className={`fixed top-0 left-0 right-0 w-full z-[55] h-7 flex items-center justify-center overflow-hidden
+          bg-gradient-to-r from-[#09070f] via-[#130e28] to-[#09070f] border-b border-purple-900/30
+          transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
+          ${isBentoExpanded ? '-translate-y-full opacity-0' : 'translate-y-0'}`}
+        role="banner"
+        aria-label="Site announcement"
+      >
+        <p className="text-[10px] sm:text-[11px] text-white/45 text-center px-4 whitespace-nowrap overflow-hidden text-ellipsis max-w-full leading-none">
+          10X Technologies site is still under construction.
+          <span className="mx-2 text-white/20" aria-hidden="true">•</span>
+          <button
+            type="button"
+            onClick={openContactModal}
+            className="text-white/60 underline underline-offset-[3px] decoration-white/30 hover:text-white/90 hover:decoration-white/60 transition-colors duration-200 cursor-pointer"
+          >
+            contact support
+          </button>
+        </p>
+      </div>
+
+
       {/* Backdrop when Mobile/Tablet Menu is open */}
       {isMobileMenuOpen && (
         <div 
@@ -180,10 +214,10 @@ const Navbar = ({ openContactModal, isLandingActive, isIntroDissolving, hasStart
         />
       )}
 
-      {/* GPU-Accelerated Fixed Navbar Wrapper */}
+      {/* GPU-Accelerated Fixed Navbar Wrapper — top offset accounts for 28px banner above */}
       <div 
         style={getNavbarEntranceStyle()}
-        className={`fixed w-full z-50 flex flex-col items-center px-3 sm:px-4 lg:px-6 pointer-events-none top-4 sm:top-6 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        className={`fixed w-full z-50 flex flex-col items-center px-3 sm:px-4 lg:px-6 pointer-events-none top-[44px] sm:top-[52px] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isBentoExpanded ? '-translate-y-[200%] opacity-0' : 'translate-y-0'
         }`}
       >
