@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
-const Navbar = ({ openContactModal, isLandingActive, isIntroDissolving }) => {
+const Navbar = ({ openContactModal, isLandingActive, isIntroDissolving, hasStartedNavbar, onLogoComplete }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isBentoExpanded, setIsBentoExpanded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -12,12 +12,109 @@ const Navbar = ({ openContactModal, isLandingActive, isIntroDissolving }) => {
 
   const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // Track if navbar has been triggered to enter
+  const isNavbarActive = hasStartedNavbar ?? isIntroDissolving;
+
+  // Navbar logo dust animation state
+  const [isLogoStaticVisible, setIsLogoStaticVisible] = useState(!isLandingActive);
+  const [showLogoVideo, setShowLogoVideo] = useState(false);
+  const [isVideoFadingOut, setIsVideoFadingOut] = useState(false);
+  const logoVideoRef = useRef(null);
+  const logoAnimatedRef = useRef(false);
+  const onLogoCompleteRef = useRef(onLogoComplete);
+
+  useEffect(() => {
+    onLogoCompleteRef.current = onLogoComplete;
+  }, [onLogoComplete]);
+
+  const handleLogoVideoEnd = useCallback(() => {
+    if (logoVideoRef.current) {
+      try {
+        logoVideoRef.current.pause();
+      } catch (e) {
+        // Ignore
+      }
+    }
+    // Seamless handoff: reveal static logo underneath and crossfade video out over 200ms
+    setIsLogoStaticVisible(true);
+    setIsVideoFadingOut(true);
+    setTimeout(() => {
+      setShowLogoVideo(false);
+      if (typeof onLogoCompleteRef.current === 'function') {
+        onLogoCompleteRef.current();
+      }
+    }, 200);
+  }, []);
+
+  const handleLogoVideoError = useCallback(() => {
+    setIsLogoStaticVisible(true);
+    setShowLogoVideo(false);
+    if (typeof onLogoCompleteRef.current === 'function') {
+      onLogoCompleteRef.current();
+    }
+  }, []);
+
+  // Trigger logo video animation when navbar enters
+  useEffect(() => {
+    if (!isLandingActive || logoAnimatedRef.current) {
+      setIsLogoStaticVisible(true);
+      setShowLogoVideo(false);
+      return;
+    }
+
+    if (prefersReducedMotion) {
+      setIsLogoStaticVisible(true);
+      setShowLogoVideo(false);
+      logoAnimatedRef.current = true;
+      if (typeof onLogoCompleteRef.current === 'function') {
+        onLogoCompleteRef.current();
+      }
+      return;
+    }
+
+    if (isNavbarActive && !logoAnimatedRef.current) {
+      logoAnimatedRef.current = true;
+      // 150ms pause as navbar settles, keeping logo area initially empty, then start dust video
+      const startTimer = setTimeout(() => {
+        setShowLogoVideo(true);
+      }, 150);
+
+      // Failsafe timer (3.5s) to guarantee logo and page are never stuck
+      const safetyTimer = setTimeout(() => {
+        setIsLogoStaticVisible(true);
+        setShowLogoVideo(false);
+        if (typeof onLogoCompleteRef.current === 'function') {
+          onLogoCompleteRef.current();
+        }
+      }, 3500);
+
+      return () => {
+        clearTimeout(startTimer);
+        clearTimeout(safetyTimer);
+      };
+    }
+  }, [isLandingActive, isNavbarActive, prefersReducedMotion]);
+
+  useEffect(() => {
+    if (showLogoVideo && logoVideoRef.current) {
+      logoVideoRef.current.muted = true;
+      logoVideoRef.current.defaultMuted = true;
+      logoVideoRef.current.playsInline = true;
+      const p = logoVideoRef.current.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          handleLogoVideoError();
+        });
+      }
+    }
+  }, [showLogoVideo, handleLogoVideoError]);
+
   const getNavbarEntranceStyle = () => {
     if (!isLandingActive) return undefined;
 
-    const translateOffset = prefersReducedMotion ? 0 : -10;
+    const translateOffset = prefersReducedMotion ? 0 : -6;
 
-    if (!isIntroDissolving) {
+    if (!isNavbarActive) {
       return {
         opacity: 0,
         transform: `translateY(${translateOffset}px)`,
@@ -28,7 +125,7 @@ const Navbar = ({ openContactModal, isLandingActive, isIntroDissolving }) => {
     return {
       opacity: 1,
       transform: 'translateY(0px)',
-      transition: 'opacity 600ms cubic-bezier(0.16, 1, 0.3, 1), transform 600ms cubic-bezier(0.16, 1, 0.3, 1)',
+      transition: 'opacity 350ms cubic-bezier(0.16, 1, 0.3, 1), transform 350ms cubic-bezier(0.16, 1, 0.3, 1)',
       willChange: 'opacity, transform',
     };
   };
@@ -98,14 +195,50 @@ const Navbar = ({ openContactModal, isLandingActive, isIntroDissolving }) => {
 
             {/* Left Nav Area: Logo & Core Navigation Links */}
             <div className="relative z-10 flex items-center gap-4 lg:gap-8 min-w-0">
-              <Link to="/" onClick={(e) => handleNavClick(e, '/')} className="flex items-center cursor-pointer group shrink-0">
+              <Link 
+                to="/" 
+                onClick={(e) => handleNavClick(e, '/')} 
+                className="relative flex items-center cursor-pointer group shrink-0"
+                style={{
+                  pointerEvents: isLandingActive && !isLogoStaticVisible ? 'none' : 'auto',
+                }}
+              >
+                {/* Base Static Logo: defines natural flex dimensions and holds slot */}
                 <img 
-                  src="https://i.ibb.co/Y781ky06/Screenshot-2026-05-26-000916-removebg-preview.png"
+                  src="/10X-navbar-logo.png"
                   alt="10X Technologies Logo"
-                  className={`h-7 sm:h-8 lg:h-9 xl:h-10 w-auto object-contain transition-all duration-700 group-hover:scale-[1.02] ${
-                    location.pathname === '/' ? 'drop-shadow-[0_0_12px_rgba(255,255,255,0.4)] brightness-110' : 'opacity-90 hover:opacity-100'
-                  }`}
+                  className="h-7 sm:h-8 lg:h-9 xl:h-10 w-auto object-contain transition-all duration-300 group-hover:scale-[1.02] opacity-90 hover:opacity-100"
+                  style={{
+                    opacity: isLogoStaticVisible ? 1 : 0,
+                    transition: 'opacity 300ms ease-out',
+                  }}
                 />
+
+                {/* Animated Reversed Dust Video Overlay - Exactly aligned 1032x274 canvas */}
+                {showLogoVideo && (
+                  <video
+                    ref={logoVideoRef}
+                    src="/10X-navbar-logo.mp4"
+                    autoPlay
+                    muted
+                    playsInline
+                    preload="auto"
+                    onEnded={handleLogoVideoEnd}
+                    onError={handleLogoVideoError}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain',
+                      pointerEvents: 'none',
+                      mixBlendMode: 'screen',
+                      opacity: isVideoFadingOut ? 0 : 1,
+                      transition: 'opacity 300ms ease-out',
+                    }}
+                  />
+                )}
               </Link>
               
               {/* Desktop Navigation Links â€” Shown on lg (1024px+) viewports */}

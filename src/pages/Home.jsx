@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import Logos from '../components/Logos';
@@ -12,10 +12,28 @@ import PageGateways from '../components/PageGateways';
 import TechnicalFiller from '../components/TechnicalFiller';
 import IntroVideo from '../components/IntroVideo';
 
+// In-memory flag — resets on every full page reload/F5, survives SPA navigation.
+// sessionStorage is intentionally NOT used: it persists across F5 within the same
+// tab, which would prevent the intro from replaying on refresh (undesired).
+let hasIntroPlayedInSession = false;
+
+// Check if intro has already played in this in-memory JS session
+const checkHasSeenIntro = () => hasIntroPlayedInSession;
+
+// Mark intro as done so SPA navigation back to Home skips intro instantly
+const markIntroDone = () => {
+  hasIntroPlayedInSession = true;
+};
+
 const Home = () => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const [isIntroComplete, setIsIntroComplete] = useState(false);
-  const [isIntroDissolving, setIsIntroDissolving] = useState(false);
+  const alreadySeen = checkHasSeenIntro();
+
+  // Phase states initialized according to whether intro already played
+  const [isIntroVideoActive, setIsIntroVideoActive] = useState(!alreadySeen);
+  const [hasStartedNavbar, setHasStartedNavbar] = useState(alreadySeen);
+  const [isContentActive, setIsContentActive] = useState(alreadySeen);
+  const [isLandingSequenceComplete, setIsLandingSequenceComplete] = useState(alreadySeen);
 
   useEffect(() => {
     if (window.location.hash) {
@@ -30,53 +48,76 @@ const Home = () => {
     }
   }, []);
 
+  const handleLogoComplete = useCallback(() => {
+    markIntroDone();
+    setIsContentActive(true);
+    // Mark landing sequence complete after content settles (~1.2s)
+    setTimeout(() => {
+      setIsLandingSequenceComplete(true);
+    }, 1200);
+  }, []);
+
   return (
     <div className="min-h-[100svh] bg-black text-white selection:bg-purple-500/30 font-sans relative w-full flex flex-col">
-      {/* Production Intro Video Portal */}
-      {!isIntroComplete && (
+      {/* Production Intro Video Portal - Plays ONLY on initial site entry */}
+      {isIntroVideoActive && (
         <IntroVideo
-          onDissolve={() => setIsIntroDissolving(true)}
-          onComplete={() => setIsIntroComplete(true)}
+          onDissolve={() => {
+            markIntroDone();
+            setHasStartedNavbar(true);
+          }}
+          onComplete={() => {
+            markIntroDone();
+            setIsIntroVideoActive(false);
+          }}
         />
       )}
 
       {/* Global Noise Overlay */}
       <div className="bg-noise fixed pointer-events-none z-50"></div>
 
-      {/* Homepage Content - Stable backdrop and base reveal */}
+      {/* Top Navigation Bar - Enters first after pitch-black screen */}
+      <Navbar 
+        openContactModal={() => setIsContactModalOpen(true)} 
+        isLandingActive={!isLandingSequenceComplete}
+        hasStartedNavbar={hasStartedNavbar}
+        onLogoComplete={handleLogoComplete}
+      />
+
+      {/* Starfield Backdrop - Fades in together with homepage content */}
+      <div 
+        className="absolute top-0 left-0 right-0 h-[1000px] w-full pointer-events-none z-0 overflow-hidden"
+        style={{
+          opacity: isContentActive ? 1 : 0,
+          transition: isLandingSequenceComplete ? 'none' : 'opacity 800ms cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      >
+        <Starfield />
+      </div>
+
+      {/* Homepage Content - STRICTLY HIDDEN until navbar logo sequence finishes */}
       <div
         className="w-full flex-1 flex flex-col relative z-10"
         style={{
-          opacity: isIntroComplete || isIntroDissolving ? 1 : 0,
-          transition: isIntroComplete
+          opacity: isContentActive ? 1 : 0,
+          transition: isLandingSequenceComplete
             ? 'none'
-            : 'opacity 600ms cubic-bezier(0.16, 1, 0.3, 1)',
-          pointerEvents: isIntroComplete ? 'auto' : 'none',
+            : 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1)',
+          pointerEvents: isContentActive ? 'auto' : 'none',
         }}
       >
-        {/* Starfield */}
-        <div className="absolute top-0 left-0 right-0 h-[1000px] w-full pointer-events-none z-0 overflow-hidden">
-          <Starfield />
-        </div>
-
         {/* Main Content Container */}
         <div className="relative z-10">
-          <Navbar 
-            openContactModal={() => setIsContactModalOpen(true)} 
-            isLandingActive={!isIntroComplete}
-            isIntroDissolving={isIntroDissolving}
-          />
-        
           {/* Full Viewport Hero Screen: Navbar at top, Hero centered in middle, Logos at bottom */}
           <div className="min-h-[100svh] flex flex-col justify-between pt-20 sm:pt-24 relative">
             <Hero 
               openContactModal={() => setIsContactModalOpen(true)} 
-              isLandingActive={!isIntroComplete}
-              isIntroDissolving={isIntroDissolving}
+              isLandingActive={!isLandingSequenceComplete}
+              isContentActive={isContentActive}
             />
             <Logos 
-              isLandingActive={!isIntroComplete}
-              isIntroDissolving={isIntroDissolving}
+              isLandingActive={!isLandingSequenceComplete}
+              isContentActive={isContentActive}
             />
           </div>
 
