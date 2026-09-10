@@ -13,34 +13,46 @@ const Hero = ({ openContactModal, isLandingActive, isContentActive }) => {
 
   const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Once all elements have landed and settled (~1.2s), clear inline styles for 100% stable DOM
-  const [isSettled, setIsSettled] = useState(!isLandingActive);
+  // revealStep: 0 = all hidden, 1–5 = elements revealed one by one, 99 = settled (no inline styles)
+  const [revealStep, setRevealStep] = useState(!isLandingActive ? 99 : 0);
 
   useEffect(() => {
     if (!isLandingActive) {
-      setIsSettled(true);
+      setRevealStep(99);
       return;
     }
-    if (isContentActive) {
-      const timer = setTimeout(() => {
-        setIsSettled(true);
-      }, 1200);
-      return () => clearTimeout(timer);
-    }
-  }, [isLandingActive, isContentActive]);
+    if (!isContentActive) return;
 
-  // Staggered entrance styling for Apple/Stripe-tier landing choreography
-  const getEntranceStyle = (delayMs, translateDistance = 20, scale = 1) => {
-    if (!isLandingActive || isSettled) return undefined;
+    // Each step fires 200ms apart so elements enter strictly one-by-one:
+    // step 1 (t+0ms): recognition tag
+    // step 2 (t+200ms): main headline
+    // step 3 (t+400ms): supporting text + LUCA eyes
+    // step 4 (t+600ms): primary CTA
+    // step 5 (t+800ms): secondary CTA
+    // step 99 (t+1500ms): clear inline styles, fully settled DOM
+    const timers = [
+      setTimeout(() => setRevealStep(1),  0),
+      setTimeout(() => setRevealStep(2),  200),
+      setTimeout(() => setRevealStep(3),  400),
+      setTimeout(() => setRevealStep(4),  600),
+      setTimeout(() => setRevealStep(5),  800),
+      setTimeout(() => setRevealStep(99), 1500),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, [isContentActive, isLandingActive]);
+
+  // Returns entrance inline style for a given reveal step.
+  // When step has not been reached yet: element is invisible, shifted down.
+  // When step is reached: smooth fade + slide-up transition fires.
+  // When revealStep >= 99 (or not in landing mode): returns undefined (no inline style, normal CSS).
+  const getEntranceStyle = (step, translateDistance = 20, scale = 1) => {
+    if (!isLandingActive || revealStep >= 99) return undefined;
 
     if (prefersReducedMotion) {
-      return {
-        opacity: isContentActive ? 1 : 0,
-        transition: 'none',
-      };
+      return { opacity: revealStep >= step ? 1 : 0, transition: 'none' };
     }
 
-    if (!isContentActive) {
+    if (revealStep < step) {
       return {
         opacity: 0,
         transform: `translateY(${translateDistance}px)${scale !== 1 ? ` scale(${scale})` : ''}`,
@@ -51,7 +63,7 @@ const Hero = ({ openContactModal, isLandingActive, isContentActive }) => {
     return {
       opacity: 1,
       transform: 'translateY(0px) scale(1)',
-      transition: `opacity 550ms cubic-bezier(0.16, 1, 0.3, 1) ${delayMs}ms, transform 550ms cubic-bezier(0.16, 1, 0.3, 1) ${delayMs}ms`,
+      transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1), transform 500ms cubic-bezier(0.16, 1, 0.3, 1)',
       willChange: 'opacity, transform',
     };
   };
@@ -201,9 +213,9 @@ const Hero = ({ openContactModal, isLandingActive, isContentActive }) => {
         {/* ── LEFT COLUMN: ANCHORED DIRECTLY TO LEFT SIDE ── */}
         <div className="w-full lg:w-[54%] xl:w-[52%] flex flex-col items-start text-left z-20">
           
-          {/* 1. Small contextual / credibility line */}
+          {/* 1. Small contextual / credibility line — step 1 */}
           <div 
-            style={getEntranceStyle(80, 16)}
+            style={getEntranceStyle(1, 16)}
             className="flex items-center gap-2 flex-wrap mb-2 sm:mb-2.5"
           >
             <span className="text-xs sm:text-[13px] font-normal text-zinc-400">
@@ -223,9 +235,9 @@ const Hero = ({ openContactModal, isLandingActive, isContentActive }) => {
             </span>
           </div>
 
-          {/* 2. Large headline */}
+          {/* 2. Large headline — step 2 */}
           <h1 
-            style={getEntranceStyle(0, 24)}
+            style={getEntranceStyle(2, 24)}
             className="text-3xl sm:text-4xl md:text-[42px] lg:text-[48px] xl:text-[54px] 2xl:text-[60px] font-bold tracking-tight text-white leading-[1.06] mb-2.5 sm:mb-3"
           >
             Small language<br />
@@ -233,8 +245,8 @@ const Hero = ({ openContactModal, isLandingActive, isContentActive }) => {
             <span className="text-violet-drift" style={{ animationDelay: '5s' }}>Indian languages.</span>
           </h1>
 
-          {/* 3 & 4. Supporting description & statement */}
-          <div style={getEntranceStyle(150, 20)} className="w-full">
+          {/* 3 & 4. Supporting description & statement — step 3 */}
+          <div style={getEntranceStyle(3, 18)} className="w-full">
             <p className="text-xs sm:text-[14px] md:text-[15px] text-zinc-300 font-normal leading-relaxed mb-2 sm:mb-2.5 max-w-lg">
               Building small language models that run on<br className="hidden sm:inline" />
               {' '}your own server — or inside a device on your desk.
@@ -247,9 +259,9 @@ const Hero = ({ openContactModal, isLandingActive, isContentActive }) => {
 
           {/* 5. Two CTA buttons */}
           <div className="flex items-center gap-3 sm:gap-3.5 flex-wrap">
-            {/* Primary CTA (Filled Purple Pill) */}
+            {/* Primary CTA — step 4 */}
             <button
-              style={getEntranceStyle(280, 16)}
+              style={getEntranceStyle(4, 14)}
               type="button"
               onClick={handleSeeItWork}
               onPointerEnter={prewarmQwen}
@@ -260,9 +272,9 @@ const Hero = ({ openContactModal, isLandingActive, isContentActive }) => {
               <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
             </button>
 
-            {/* Secondary CTA (Restrained Outline Pill) */}
+            {/* Secondary CTA — step 5 */}
             <button
-              style={getEntranceStyle(360, 16)}
+              style={getEntranceStyle(5, 14)}
               type="button"
               onClick={handleInstitutions}
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-white/20 hover:border-white/40 hover:bg-white/5 text-zinc-200 hover:text-white text-xs sm:text-[13px] font-medium transition-all duration-200 cursor-pointer active:scale-95 group"
@@ -274,9 +286,9 @@ const Hero = ({ openContactModal, isLandingActive, isContentActive }) => {
 
         </div>
 
-        {/* ── RIGHT COLUMN: ANCHORED DIRECTLY TO RIGHT SIDE (HERO VISUAL) ── */}
+        {/* ── RIGHT COLUMN: LUCA eyes — step 3 (appears with supporting text) ── */}
         <div 
-          style={getEntranceStyle(180, 20, 0.97)}
+          style={getEntranceStyle(3, 20, 0.97)}
           className="w-full lg:w-[46%] xl:w-[48%] flex flex-col items-center lg:items-end justify-center relative select-none mt-2 lg:mt-0"
         >
           

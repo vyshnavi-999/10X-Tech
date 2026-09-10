@@ -48,13 +48,25 @@ const Home = () => {
     }
   }, []);
 
+  // As soon as the navbar appears, start revealing homepage content in parallel
+  // with the logo animation (200ms grace period so navbar settles first).
+  // The logo animation itself is completely untouched.
+  useEffect(() => {
+    if (!hasStartedNavbar) return;
+    // 700ms grace: navbar settles → first homepage element begins appearing
+    const timer = setTimeout(() => {
+      setIsContentActive(true);
+    }, 700);
+    return () => clearTimeout(timer);
+  }, [hasStartedNavbar]);
+
   const handleLogoComplete = useCallback(() => {
     markIntroDone();
-    setIsContentActive(true);
-    // Mark landing sequence complete after content settles (~1.2s)
+    // Content is already visible by now — just settle the landing sequence
+    // so Hero/Logos clear their inline transition styles.
     setTimeout(() => {
       setIsLandingSequenceComplete(true);
-    }, 1200);
+    }, 600);
   }, []);
 
   return (
@@ -95,21 +107,15 @@ const Home = () => {
         <Starfield />
       </div>
 
-      {/* Homepage Content - STRICTLY HIDDEN until navbar logo sequence finishes */}
+      {/* Homepage Content — each element has its own staggered entrance via Hero/Logos */}
       <div
         className="w-full flex-1 flex flex-col relative z-10"
-        style={{
-          opacity: isContentActive ? 1 : 0,
-          transition: isLandingSequenceComplete
-            ? 'none'
-            : 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1)',
-          pointerEvents: isContentActive ? 'auto' : 'none',
-        }}
+        style={{ pointerEvents: isContentActive ? 'auto' : 'none' }}
       >
         {/* Main Content Container */}
         <div className="relative z-10">
           {/* Full Viewport Hero Screen: Navbar at top, Hero centered in middle, Logos at bottom */}
-          <div className="min-h-[100svh] flex flex-col justify-between pt-20 sm:pt-24 relative">
+          <div className="min-h-[100svh] flex flex-col justify-between pt-[108px] sm:pt-[124px] relative">
             <Hero 
               openContactModal={() => setIsContactModalOpen(true)} 
               isLandingActive={!isLandingSequenceComplete}
