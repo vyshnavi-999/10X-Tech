@@ -49,6 +49,9 @@ const ProductPage = () => {
         <TechnicalFiller />
 
         <ProductShowcase openContactModal={() => setIsContactModalOpen(true)} />
+        
+        {/* Elegant margin between Showcase and Footer */}
+        <div className="w-full h-16 sm:h-24 bg-black pointer-events-none" aria-hidden="true" />
 
         <Footer minimal={true} openContactModal={() => setIsContactModalOpen(true)} />
       </div>
