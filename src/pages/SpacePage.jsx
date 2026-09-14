@@ -50,6 +50,7 @@ const SpacePage = () => {
     const cached = getCachedCapability();
     return cached ? !!cached.hasLowMemory : false;
   });
+  const [activeReplyId, setActiveReplyId] = useState(null);
   const messagesEndRef = useRef(null);
 
   // Auto-scroll to bottom on new messages
@@ -165,10 +166,11 @@ const SpacePage = () => {
     // Add user message to conversation
     const userMsg = { id: Date.now().toString(), sender: 'user', text: trimmedInput };
     const replyMsgId = (Date.now() + 1).toString();
+    setActiveReplyId(replyMsgId);
     setMessages((prev) => [
       ...prev,
       userMsg,
-      { id: replyMsgId, sender: 'assistant', text: '' },
+      { id: replyMsgId, sender: 'assistant', text: '', status: 'Thinking…' },
     ]);
     setInput('');
     setIsTyping(true);
@@ -270,6 +272,11 @@ const SpacePage = () => {
 
       const formattingTime = performance.now() - tStartFormatting;
 
+      // Update progressive status to show local computation is underway
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === replyMsgId && !msg.text ? { ...msg, status: 'Processing locally…' } : msg))
+      );
+
       // Detect if user specifically asked who LUCA is
       const isIdentity = isIdentityQuery(trimmedInput);
 
@@ -326,6 +333,7 @@ const SpacePage = () => {
       );
     } finally {
       setIsTyping(false);
+      setActiveReplyId(null);
     }
   };
 
@@ -507,12 +515,22 @@ const SpacePage = () => {
                   }`}
                 >
                   {msg.text ? (
-                    msg.text
+                    <span>
+                      {msg.text}
+                      {isTyping && msg.id === activeReplyId && (
+                        <span className="inline-block w-1.5 h-3.5 ml-1 bg-purple-400/80 animate-pulse rounded-full align-baseline select-none" />
+                      )}
+                    </span>
                   ) : msg.sender === 'assistant' ? (
-                    <div className="flex items-center gap-1.5 py-0.5">
-                      <span className="w-2 h-2 rounded-full bg-white/40 animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <span className="w-2 h-2 rounded-full bg-white/40 animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <span className="w-2 h-2 rounded-full bg-white/40 animate-bounce" style={{ animationDelay: '300ms' }} />
+                    <div className="flex items-center gap-2.5 py-0.5 text-white/50 text-[13px] font-normal">
+                      <div className="flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-purple-400/80 animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <span className="w-1.5 h-1.5 rounded-full bg-purple-400/80 animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <span className="w-1.5 h-1.5 rounded-full bg-purple-400/80 animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </div>
+                      <span className="text-white/40 tracking-normal select-none">
+                        {msg.status || 'Thinking…'}
+                      </span>
                     </div>
                   ) : null}
                 </div>
